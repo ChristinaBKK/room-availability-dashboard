@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Room Availability Dashboard — User Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; color: #1e293b; background: #f8fafc; line-height: 1.6; }
+  .page { max-width: 820px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 26px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+  .subtitle { color: #64748b; font-size: 14px; margin-bottom: 40px; }
+  h2 { font-size: 17px; font-weight: 700; color: #1e293b; margin: 36px 0 14px; display: flex; align-items: center; gap: 9px; }
+  h2 .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  h3 { font-size: 14px; font-weight: 600; color: #334155; margin: 20px 0 8px; }
+  p { margin-bottom: 10px; color: #475569; }
+  ul, ol { padding-left: 20px; color: #475569; }
+  li { margin-bottom: 5px; }
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 12px; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+  .badge-red   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .badge-amber { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
+  .badge-blue  { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .badge-gray  { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+  .chip-demo { display: inline-block; padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500; border: 1.5px solid #667eea; background: #667eea; color: white; margin: 2px; }
+  .chip-demo.off { background: white; color: #4a5568; border-color: #cbd5e0; }
+  .chip-demo.blocked { background: white; color: #94a3b8; border-color: #e2e8f0; }
+  .step { display: flex; gap: 14px; margin-bottom: 12px; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: #667eea; color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-body { flex: 1; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th { background: #f1f5f9; text-align: left; padding: 8px 12px; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; color: #475569; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .divider { border: none; border-top: 1px solid #e2e8f0; margin: 32px 0; }
+  code { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; font-size: 13px; font-family: 'SF Mono', monospace; color: #334155; }
+  .note { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 10px 14px; border-radius: 0 6px 6px 0; color: #1e40af; font-size: 13px; margin: 10px 0; }
+  .warn { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 0 6px 6px 0; color: #92400e; font-size: 13px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Room Availability &amp; Booking Dashboard</h1>
+  <p class="subtitle">User Guide &mdash; B-Building Rooms, May–June 2026 Exam Period</p>
+
+  <!-- OVERVIEW -->
+  <div class="card">
+    <p>This dashboard shows all scheduled lessons, exams, and room bookings for B-Building in real time. Use it to check which rooms are free, view what is happening in a room, and make ad-hoc room bookings that are visible to everyone instantly.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TAB 1: SCHEDULE VIEW -->
+  <h2><span class="icon" style="background:#eef2ff;">📅</span> Tab 1 — Schedule View</h2>
+  <p>The main view. Shows all rooms for a chosen date and which sessions are running in each.</p>
+
+  <h3>Filters</h3>
+  <div class="card">
+    <table>
+      <tr><th style="width:120px">Control</th><th>What it does</th></tr>
+      <tr><td><strong>Date</strong></td><td>Pick any date. Defaults to today. The grid updates immediately.</td></tr>
+      <tr><td><strong>Room</strong></td><td>Click the button to open the room picker panel. Rooms are grouped by floor. Click one or more rooms to narrow the grid; click <strong>All Rooms</strong> to reset. The button label shows your selection. Rooms marked <span style="color:#94a3b8">✕</span> are blocked from booking but still shown for visibility.</td></tr>
+      <tr><td><strong>Refresh Now</strong></td><td>Force-reloads all data from the database. Also available as an auto-refresh toggle (top-right).</td></tr>
+    </table>
+  </div>
+
+  <h3>Summary bar</h3>
+  <div class="card">
+    <table>
+      <tr><th style="width:160px">Stat</th><th>Meaning</th></tr>
+      <tr><td>Rooms in Use</td><td>B-rooms with at least one session on the selected date.</td></tr>
+      <tr><td>Total Sessions</td><td>Total lesson/exam/booking slots across all rooms that day.</td></tr>
+      <tr><td>Available Rooms</td><td>B-rooms with no sessions and not blocked.</td></tr>
+      <tr><td>Conflicts</td><td>Number of true scheduling conflicts (different teachers, same room &amp; time).</td></tr>
+    </table>
+  </div>
+
+  <h3>Room cards</h3>
+  <div class="card">
+    <p>Each card represents one room. Inside you will see:</p>
+    <ul>
+      <li><strong>Session rows</strong> — time slot, class name, teacher name.</li>
+      <li><span class="badge badge-blue">EXAM</span> tag — this session is an official exam.</li>
+      <li><span class="badge badge-amber">Exam Protection</span> tag in the room header — the room has an exam the <em>next day</em>, so it should not be disturbed today.</li>
+      <li>A yellow banner at the card bottom naming the exam happening tomorrow and its time.</li>
+    </ul>
+    <div class="note">Rooms showing only an exam protection banner (no sessions listed) are free today but reserved for tomorrow's exam preparation.</div>
+  </div>
+
+  <h3>Alerts</h3>
+  <div class="card">
+    <table>
+      <tr>
+        <td style="width:36px"><span style="color:#dc2626;font-size:18px">⚠</span></td>
+        <td><strong>Room Booking Conflicts</strong> (red) — two <em>different</em> teachers are scheduled in the same room at an overlapping time. This needs to be resolved.</td>
+      </tr>
+      <tr>
+        <td><span style="color:#b45309;font-size:18px">ℹ</span></td>
+        <td><strong>Special Attention</strong> (amber) — same teacher appears in two rooms at the same time, or some other scheduling overlap that does not constitute a hard conflict but is worth checking.</td>
+      </tr>
+    </table>
+    <div class="note">IBDP exam sessions sharing a room are intentional and are silently ignored by the conflict detector.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TAB 2: BOOK A ROOM -->
+  <h2><span class="icon" style="background:#f0fdf4;">📝</span> Tab 2 — Book a Room</h2>
+  <p>Reserve a room for an ad-hoc session. Bookings are saved to the database and appear immediately in the Schedule View for everyone.</p>
+
+  <h3>How to book</h3>
+  <div class="card">
+    <div class="step"><div class="step-num">1</div><div class="step-body">Select a <strong>Room</strong> from the dropdown (blocked and exam rooms are excluded).</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body">Pick the <strong>Date</strong> (defaults to today).</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body">Enter <strong>Start Time</strong> and <strong>End Time</strong>.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body">Enter a <strong>Booking Title</strong> (e.g., "Mathematics Revision") and <strong>Your Name</strong>.</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-body">Optionally tick <strong>Recurring every week</strong> to repeat the booking on the same day each week.</div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-body">The <em>Available Rooms</em> section below the form shows which rooms are free for the chosen date and time. Clicking a room name there auto-fills the Room field.</div></div>
+    <div class="step"><div class="step-num">7</div><div class="step-body">Click <strong>Book Room</strong>. A confirmation message will appear.</div></div>
+  </div>
+
+  <div class="warn">Bookings cannot be made on exam days or the day before an exam for rooms that are exam rooms. The system will show an error if you try.</div>
+
+  <hr class="divider">
+
+  <!-- TAB 3: ALL BOOKINGS -->
+  <h2><span class="icon" style="background:#fdf4ff;">📋</span> Tab 3 — All Bookings</h2>
+  <p>A full list of every ad-hoc booking in the system (not regular lessons or exams). Use this to review or delete bookings.</p>
+  <div class="card">
+    <ul>
+      <li>Bookings are listed in chronological order.</li>
+      <li>Click the <strong>Delete</strong> button next to any booking to remove it. This is immediate and cannot be undone.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TAB 4: ROOM INFO -->
+  <h2><span class="icon" style="background:#fff7ed;">🏢</span> Tab 4 — Room Info</h2>
+  <p>Reference information about the room setup:</p>
+  <div class="card">
+    <table>
+      <tr><th style="width:160px">Section</th><th>Details</th></tr>
+      <tr><td>Same rooms</td><td>Rooms that are the same physical space listed under two codes (e.g., B2036).</td></tr>
+      <tr><td>Blocked from Booking</td><td>Rooms that cannot be booked — administration rooms, storage, etc.</td></tr>
+      <tr><td>Exam Rooms</td><td>Rooms used for IB and Cambridge exams during the exam period.</td></tr>
+    </table>
+    <h3 style="margin-top:14px">Exam Room Protection Rules</h3>
+    <ul>
+      <li>Exam rooms <strong>cannot be booked on the exam day</strong>.</li>
+      <li>Exam rooms <strong>cannot be booked the day before</strong> an exam.</li>
+      <li>This ensures rooms are always available and properly prepared.</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- QUICK REFERENCE -->
+  <h2><span class="icon" style="background:#f0f9ff;">⚡</span> Quick Reference</h2>
+  <div class="card">
+    <table>
+      <tr><th>I want to…</th><th>How</th></tr>
+      <tr><td>See what's happening today</td><td>Open <strong>Schedule View</strong> — it defaults to today.</td></tr>
+      <tr><td>Check if a specific room is free</td><td>Schedule View → click the Room filter → select the room.</td></tr>
+      <tr><td>See multiple floors at once</td><td>Room filter → select several rooms (e.g., all Floor 3 rooms).</td></tr>
+      <tr><td>Book a room</td><td><strong>Book a Room</strong> tab → fill in details → Book Room.</td></tr>
+      <tr><td>Cancel a booking I made</td><td><strong>All Bookings</strong> tab → Delete.</td></tr>
+      <tr><td>See which rooms have exams tomorrow</td><td>Schedule View → rooms with a yellow <em>Exam Protection</em> banner.</td></tr>
+      <tr><td>Get the latest data</td><td>Click <strong>Refresh Now</strong> or enable <strong>Auto-refresh</strong>.</td></tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
