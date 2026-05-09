@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Availability & Booking Dashboard</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #333; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 30px; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .header .subtitle { opacity: 0.9; font-size: 14px; }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: white; border-bottom: 1px solid #e1e5eb; flex-wrap: wrap; gap: 10px; }
+        .status-item { display: flex; align-items: center; gap: 8px; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+        .status-dot.error { background: #ef4444; }
+        .status-dot.loading { background: #f59e0b; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .tabs { display: flex; gap: 0; padding: 0 30px; background: white; border-bottom: 1px solid #e1e5eb; }
+        .tab { padding: 15px 25px; cursor: pointer; font-weight: 500; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; position: relative; }
+        .tab:hover { color: #667eea; }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab .badge { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; min-width: 24px; text-align: center; line-height: 16px; }
+        .tab.active .badge { background: #667eea; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .controls { display: flex; gap: 15px; align-items: center; padding: 15px 30px; background: white; border-bottom: 1px solid #e1e5eb; flex-wrap: wrap; }
+        .control-group { display: flex; align-items: center; gap: 8px; }
+        label { font-size: 14px; font-weight: 500; color: #64748b; }
+        select, input { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; background: white; cursor: pointer; }
+        select:focus, input:focus { outline: none; border-color: #667eea; }
+        
+        /* Alert Styles */
+        .conflict-alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px 30px; margin: 20px 30px; }
+        .conflict-alert h3 { color: #dc2626; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .conflict-item { background: white; border-radius: 6px; padding: 12px 15px; margin-bottom: 8px; border-left: 4px solid #ef4444; }
+        .conflict-item:last-child { margin-bottom: 0; }
+        .conflict-item .room { font-weight: 600; color: #dc2626; }
+        .conflict-item .details { font-size: 13px; color: #64748b; margin-top: 4px; }
+        
+        .exam-alert { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 15px 30px; margin: 20px 30px; }
+        .exam-alert h3 { color: #b45309; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .exam-item { background: white; border-radius: 6px; padding: 12px 15px; margin-bottom: 8px; border-left: 4px solid #f59e0b; }
+        .exam-item:last-child { margin-bottom: 0; }
+        .exam-item .room { font-weight: 600; color: #b45309; }
+        .exam-item .details { font-size: 13px; color: #64748b; margin-top: 4px; }
+        
+        .content { padding: 20px 30px; }
+        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .tag-protection { background: #fef3c7; color: #92400e; }
+        .room-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .room-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .room-card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .room-card-header h3 { font-size: 18px; }
+        .session-count { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+        .room-card-body { padding: 15px; max-height: 400px; overflow-y: auto; }
+        .session-item { padding: 10px; border-radius: 8px; margin-bottom: 8px; background: #f8fafc; border-left: 3px solid #667eea; }
+        .session-item:last-child { margin-bottom: 0; }
+        .session-item .time { font-weight: 600; color: #334155; font-size: 14px; }
+        .session-item .component { font-size: 13px; color: #64748b; margin: 4px 0; }
+        .session-item .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: #94a3b8; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+        .tag-exam { background: #fee2e2; color: #991b1b; }
+        .tag-protection { background: #fef3c7; color: #92400e; }
+        .tag-blocked { background: #e5e7eb; color: #6b7280; }
+        .no-session { text-align: center; padding: 30px; color: #94a3b8; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .summary-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .summary-card .number { font-size: 32px; font-weight: 700; color: #667eea; }
+        .summary-card .label { color: #64748b; font-size: 14px; margin-top: 4px; }
+        .refresh-btn { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
+        .refresh-btn:hover { background: #5a67d8; }
+        .auto-refresh-toggle { display: flex; align-items: center; gap: 8px; }
+        .auto-refresh-toggle input { width: 18px; height: 18px; }
+        
+        /* Booking Form Styles */
+        .booking-section { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .booking-section h2 { font-size: 20px; margin-bottom: 20px; color: #334155; }
+        .booking-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 14px; font-weight: 500; color: #64748b; }
+        .form-group input, .form-group select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; }
+        .checkbox-group input { width: 18px; height: 18px; }
+        .btn-primary { background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px; }
+        .btn-primary:hover { background: #5a67d8; }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+        .btn-secondary { background: #64748b; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px; }
+        .btn-secondary:hover { background: #475569; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        
+        /* Available Rooms Suggestion */
+        .available-rooms { margin-top: 20px; }
+        .available-rooms h3 { font-size: 16px; color: #334155; margin-bottom: 10px; }
+        .room-suggestion { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .room-chip { padding: 8px 16px; background: #d1fae5; color: #065f46; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .room-chip:hover { background: #10b981; color: white; }
+        .room-chip.selected { background: #10b981; color: white; }
+        .room-chip.unavailable { background: #fee2e2; color: #991b1b; cursor: not-allowed; opacity: 0.6; }
+        .room-chip.exam-blocked { background: #fef3c7; color: #92400e; cursor: not-allowed; opacity: 0.8; }
+        
+        /* Recurring options */
+        .recurring-options { display: none; margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; }
+        .recurring-options.visible { display: block; }
+        .weekday-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .weekday-chip { padding: 8px 16px; background: #e2e8f0; color: #64748b; border-radius: 20px; font-size: 13px; cursor: pointer; }
+        .weekday-chip:hover { background: #cbd5e1; }
+        .weekday-chip.selected { background: #667eea; color: white; }
+        
+        /* Bookings List */
+        .bookings-list { margin-top: 30px; }
+        .bookings-list h3 { font-size: 18px; margin-bottom: 15px; }
+        .booking-entry { background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #10b981; }
+        .booking-entry .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .booking-entry .room { font-weight: 600; color: #10b981; }
+        .booking-entry .actions { display: flex; gap: 10px; }
+        .booking-entry .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .booking-entry .details { font-size: 13px; color: #64748b; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { font-size: 20px; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
+        .modal-body { margin-bottom: 20px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; }
+        .alert { padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .alert-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        
+        /* Setup section */
+        .setup-required { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 20px; margin: 20px 30px; }
+        .setup-required h3 { color: #92400e; margin-bottom: 10px; }
+        .setup-required pre { background: #1f2937; color: #10b981; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+        .setup-required code { font-family: monospace; }
+        
+        /* Backup */
+        .backup-section { display: flex; gap: 10px; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0; }
+        .btn-export { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+        .btn-export:hover { background: #059669; }
+        .btn-import { background: #6366f1; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+        .btn-import:hover { background: #4f46e5; }
+        .file-input { display: none; }
+        .storage-note { font-size: 12px; color: #94a3b8; margin-top: 10px; }
+        
+        /* Shared indicator */
+        .shared-badge { background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        
+        /* Info panel */
+        .info-panel { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .info-panel h3 { font-size: 16px; color: #334155; margin-bottom: 15px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .info-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: #f8fafc; border-radius: 8px; }
+        .info-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .info-icon.blocked { background: #e5e7eb; color: #6b7280; }
+        .info-icon.exam { background: #fee2e2; color: #991b1b; }
+        .info-icon.same { background: #dbeafe; color: #1e40af; }
+        .info-text { flex: 1; }
+        .info-text strong { display: block; color: #334155; }
+        .info-text span { font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Room Availability & Booking Dashboard</h1>
+        <div class="subtitle">Real-time shared room scheduling system</div>
+    </div>
+    
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">Loading data...</span>
+        </div>
+        <div class="status-item">
+            <span>Last updated: </span>
+            <span id="lastUpdated">-</span>
+        </div>
+        <div class="status-item">
+            <label class="auto-refresh-toggle">
+                <input type="checkbox" id="autoRefreshToggle">
+                <span>Auto-refresh</span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="schedule">Schedule View</div>
+        <div class="tab" data-tab="booking">Book a Room</div>
+        <div class="tab" data-tab="bookings">All Bookings<span class="badge" id="bookingsBadge" style="display:none;">0</span></div>
+        <div class="tab" data-tab="info">Room Info</div>
+    </div>
+    
+    <!-- Setup Required Section -->
+    <div id="setupSection" class="setup-required" style="display: none;">
+        <h3>Database Setup Required</h3>
+        <p>Please run this SQL in your Supabase SQL Editor to create the tables:</p>
+        <pre><code id="setupSQL"></code></pre>
+        <p style="margin-top: 15px; font-size: 13px; color: #64748b;">
+            After running the SQL, click "Retry Connection" button below.
+        </p>
+        <button class="btn-primary" onclick="checkConnection()" style="margin-top: 15px;">Retry Connection</button>
+    </div>
+    
+    <!-- Schedule View Tab -->
+    <div id="schedule-tab" class="tab-content active">
+        <div class="controls">
+            <div class="control-group">
+                <label for="scheduleDate">Date:</label>
+                <input type="date" id="scheduleDate" onchange="onScheduleDateChange()">
+            </div>
+            <div class="control-group">
+                <label for="roomFilter">Room:</label>
+                <select id="roomFilter"><option value="">All Rooms</option></select>
+            </div>
+            <button class="refresh-btn" onclick="loadAllData()">Refresh Now</button>
+        </div>
+        
+        <div id="conflictSection" style="display: none;">
+            <div class="conflict-alert">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Room Booking Conflicts Detected
+                </h3>
+                <div id="conflictList"></div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="summary-cards">
+                <div class="summary-card"><div class="number" id="totalRooms">0</div><div class="label">Rooms in Use</div></div>
+                <div class="summary-card"><div class="number" id="totalSessions">0</div><div class="label">Total Sessions</div></div>
+                <div class="summary-card"><div class="number" id="availableRooms">0</div><div class="label">Available Rooms</div></div>
+                <div class="summary-card"><div class="number" id="conflictCount">0</div><div class="label">Conflicts</div></div>
+            </div>
+            <div class="room-grid" id="roomGrid"></div>
+        </div>
+    </div>
+    
+    <!-- Booking Tab -->
+    <div id="booking-tab" class="tab-content">
+        <div class="content">
+            <div id="bookingAlert"></div>
+            
+            <div class="booking-section">
+                <h2>New Room Booking</h2>
+                <form class="booking-form" id="bookingForm">
+                    <div class="form-group">
+                        <label for="bookingRoom">Room *</label>
+                        <select id="bookingRoom" required onchange="checkRoomAvailability()">
+                            <option value="">Select a room</option>
+                        </select>
+                        <div id="bookingRoomError" style="display:none; margin-top:5px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingDate">Date *</label>
+                        <input type="date" id="bookingDate" required onchange="checkRoomAvailability()">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingStart">Start Time *</label>
+                        <input type="time" id="bookingStart" required step="300" min="08:00" max="20:00" onchange="checkRoomAvailability()">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingEnd">End Time *</label>
+                        <input type="time" id="bookingEnd" required step="300" min="08:00" max="20:00">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="bookingTitle">Booking Title *</label>
+                        <input type="text" id="bookingTitle" placeholder="e.g., Mathematics Revision Class" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="bookingTeacher">Your Name *</label>
+                        <input type="text" id="bookingTeacher" placeholder="e.g., John Smith" required>
+                    </div>
+                    <div class="form-group full-width checkbox-group">
+                        <input type="checkbox" id="recurringCheck">
+                        <label for="recurringCheck">Recurring every week</label>
+                    </div>
+                    <div class="form-group full-width recurring-options" id="recurringOptions">
+                        <label>Repeat on:</label>
+                        <div class="weekday-chips" id="weekdayChips">
+                            <div class="weekday-chip" data-day="1">Mon</div>
+                            <div class="weekday-chip" data-day="2">Tue</div>
+                            <div class="weekday-chip" data-day="3">Wed</div>
+                            <div class="weekday-chip" data-day="4">Thu</div>
+                            <div class="weekday-chip" data-day="5">Fri</div>
+                            <div class="weekday-chip" data-day="6">Sat</div>
+                            <div class="weekday-chip" data-day="0">Sun</div>
+                        </div>
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label for="recurringEnd">End date (last booking date)</label>
+                            <input type="date" id="recurringEnd" placeholder="Optional">
+                        </div>
+                    </div>
+                    <div class="form-group full-width available-rooms">
+<h3>Available Rooms for Selected Date & Time:</h3>
+                        <div class="room-suggestion" id="roomSuggestions"></div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn-primary">Book Room</button>
+                        <button type="reset" class="btn-secondary">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- All Bookings Tab -->
+    <div id="bookings-tab" class="tab-content">
+        <div class="content">
+            <div class="bookings-list" id="bookingsList"></div>
+            <div class="booking-section" style="margin-top: 20px;">
+                <h2>Backup & Restore</h2>
+                <p class="storage-note">Export or import bookings for backup. Data is also saved to the shared database.</p>
+                <div class="backup-section">
+                    <button class="btn-export" onclick="exportBookings()">Export Bookings (.json)</button>
+                    <button class="btn-import" onclick="document.getElementById('importFile').click()">Import Bookings</button>
+                    <input type="file" id="importFile" class="file-input" accept=".json" onchange="importBookings(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info Tab -->
+    <div id="info-tab" class="tab-content">
+        <div class="content">
+            <div class="info-panel">
+                <h3>Room Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-icon same">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <strong>B2036</strong>
+                            <span>These are the same room</span>
+                        </div>
+                    </div>
+                    <div id="blockedRoomsInfo" class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-icon blocked">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <strong>Blocked from Booking</strong>
+                            <span id="blockedRoomsList">B1011, B1037, B2003, B2004, B2005, B2026, B2014, B2022, B4038, B4039, B4040, B4041, B4042, B4043, TEST, E1011</span>
+                        </div>
+                    </div>
+                    <div id="examRoomsInfo" class="info-item" style="grid-column: 1 / -1;">
+                        <div class="info-icon exam">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="info-text">
+                            <strong>Exam Rooms</strong>
+                            <span id="examRoomsList">Loading exam rooms...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <h3>Exam Room Protection Rules</h3>
+                <ul style="color: #64748b; font-size: 14px; line-height: 1.8; padding-left: 20px;">
+                    <li>Rooms used for exams cannot be booked on the <strong>exam day</strong></li>
+                    <li>Rooms used for exams cannot be booked on the <strong>day before</strong> the exam</li>
+                    <li>This ensures exam rooms are always available and properly prepared</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Booking</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="confirmBooking()">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="width: 80px; height: 80px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h3 style="font-size: 24px; color: #10b981; margin-bottom: 10px;">Booking Confirmed!</h3>
+            <p id="successMessage" style="color: #64748b; margin-bottom: 20px;"></p>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn-primary" onclick="closeSuccessModal()">View All Bookings</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://fgewwriulwdodmlbsotp.supabase.co';
+        // Use service key for room_sessions (has RLS that blocks anon access)
+        const SUPABASE_ANON_KEY = 'sb_publishable_yvdyY62yUu7HgPw7wjy9XQ_jmcje9te';
+        
+        // Data state
+        let allScheduleData = [];
+        let allBookingsData = [];
+        let studentScheduleData = [];
+        // Exam data now comes from database only
+        // Exam data now comes from database only
+        let examRooms = new Set();
+        let examDates = new Map(); // room -> [dates with exams]
+        let allRooms = new Set();
+        let pendingBooking = null;
+        let selectedWeekdays = [];
+        let lastFileModified = null;
+        let autoRefreshInterval = null;
+        
+        // Rooms blocked from booking (not regular rooms for user booking)
+        const BLOCKED_ROOMS = ['TEST', 'E1011', 'B1011', 'B2003', 'B2004', 'B2005', 'B2026', 'B2014', 'B2022', 'B1037', 'B4043', 'B4042', 'B4041', 'B4040', 'B4038', 'B4039'];
+        
+        // Room aliases (same room different names - convert all to B### format)
+        const ROOM_ALIASES = {
+            'B2036': 'B2036',
+            'Meeting Room': 'B2036',
+            'B1037': 'B1037',
+            'TOEFL Testing ICT Lab': 'B1037'
+        };
+        
+        // SQL to create tables
+        const SETUP_SQL = `-- Create schedule table
+DROP TABLE IF EXISTS schedule CASCADE;
+CREATE TABLE schedule (
+    id SERIAL PRIMARY KEY,
+    date VARCHAR(20) NOT NULL,
+    start_time VARCHAR(10) NOT NULL,
+    end_time VARCHAR(10) NOT NULL,
+    class_name VARCHAR(200),
+    room VARCHAR(50) NOT NULL,
+    teacher VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE schedule ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "schedule_read" ON schedule FOR SELECT USING (true);
+CREATE POLICY "schedule_all" ON schedule FOR ALL USING (true);
+
+-- Create bookings table
+DROP TABLE IF EXISTS bookings CASCADE;
+CREATE TABLE bookings (
+    id SERIAL PRIMARY KEY,
+    room VARCHAR(50) NOT NULL,
+    date VARCHAR(20) NOT NULL,
+    start_time VARCHAR(10) NOT NULL,
+    end_time VARCHAR(10) NOT NULL,
+    title VARCHAR(200),
+    teacher VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "bookings_read" ON bookings FOR SELECT USING (true);
+CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
+
+        // Initialize
+        initApp();
+        
+        function initApp() {
+            document.getElementById('setupSQL').textContent = SETUP_SQL;
+            initTabs();
+            initBookingForm();
+            initAutoRefresh();
+            checkConnection();
+        }
+        
+        function initTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab + '-tab').classList.add('active');
+                    if (this.dataset.tab === 'bookings') renderAllBookings();
+                    if (this.dataset.tab === 'info') updateExamRoomsDisplay();
+                });
+            });
+            updateBookingsBadge();
+        }
+        
+        function initAutoRefresh() {
+            const toggle = document.getElementById('autoRefreshToggle');
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    startAutoRefresh();
+                } else {
+                    stopAutoRefresh();
+                }
+            });
+            // Only start auto-refresh if checkbox is already checked
+            if (toggle.checked) {
+                startAutoRefresh();
+            }
+        }
+        
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(loadAllData, 30000); // Check every 30 seconds
+        }
+        
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+        }
+        
+        function updateBookingsBadge() {
+            const badge = document.getElementById('bookingsBadge');
+            const count = allBookingsData.length;
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        // Normalize room name - extract only B### format (letter + 4 numbers)
+        function normalizeRoom(room) {
+            if (!room) return room;
+            
+            // Check alias first
+            if (ROOM_ALIASES[room]) return ROOM_ALIASES[room];
+            
+            // Extract room code: match letter followed by 4 digits (e.g., B2036, B1011)
+            const match = room.match(/([A-Z]\d{4})/);
+            if (match) return match[1];
+            
+            return room;
+        }
+        
+        // Check if room is blocked
+        function isRoomBlocked(room) {
+            const normalized = normalizeRoom(room);
+            return BLOCKED_ROOMS.includes(normalized);
+        }
+        
+        // Student schedule loading removed - using database only
+        async function loadStudentSchedule() {
+            // Exam data is now populated in loadAllData() from database
+            // No action needed here
+        }
+        
+        // Check if a date has an exam in a specific room
+        function hasExamOnDate(room, date) {
+            const normalized = normalizeRoom(room);
+            return examDates.has(normalized) && examDates.get(normalized).has(date);
+        }
+        
+        // Get the day before exam dates
+        function getProtectedDates() {
+            const protectedDates = new Set();
+            
+            for (const [room, dates] of examDates) {
+                for (const dateStr of dates) {
+                    // Add exam date
+                    protectedDates.add(dateStr);
+                    
+                    // Add day before exam
+                    const [year, month, day] = dateStr.split('/').map(Number);
+                    const examDate = new Date(year, month - 1, day);
+                    examDate.setDate(examDate.getDate() - 1);
+                    const prevDate = `${examDate.getFullYear()}/${String(examDate.getMonth() + 1).padStart(2, '0')}/${String(examDate.getDate()).padStart(2, '0')}`;
+                    protectedDates.add(prevDate);
+                }
+            }
+            
+            return protectedDates;
+        }
+        
+        // Check if booking is allowed (not during exam protection)
+        function isBookingAllowed(room, date) {
+            const normalized = normalizeRoom(room);
+            const protectedDates = getProtectedDates();
+            return !protectedDates.has(date) || !examDates.has(normalized);
+        }
+        
+        // Get exam protection message
+        function getExamProtectionMessage(room, date) {
+            const normalized = normalizeRoom(room);
+            if (!examDates.has(normalized)) return null;
+            
+            const protectedDates = getProtectedDates();
+            if (!protectedDates.has(date)) return null;
+            
+            // Find which exam dates are protected
+            const roomExamDates = [...examDates.get(normalized)];
+            const [year, month, day] = date.split('/').map(Number);
+            // Use noon local time to avoid timezone issues
+            const checkDate = new Date(year, month - 1, day, 12, 0, 0);
+            
+            for (const examDateStr of roomExamDates) {
+                const [ey, em, ed] = examDateStr.split('/').map(Number);
+                const examDate = new Date(ey, em - 1, ed, 12, 0, 0);
+                const examPrevDate = new Date(ey, em - 1, ed, 12, 0, 0);
+                examPrevDate.setDate(examPrevDate.getDate() - 1);
+                
+                if (checkDate.getTime() === examDate.getTime()) {
+                    return `Exam scheduled on ${formatDate(examDateStr)} - room protected`;
+                }
+                if (checkDate.getTime() === examPrevDate.getTime()) {
+                    return `Day before exam on ${formatDate(examDateStr)} - room protected`;
+                }
+            }
+            
+            return null;
+        }
+        
+        // Get exam details for a room - now uses database data only
+        function getExamDetailsForRoom(room, date) {
+            // Exam details come from database room_sessions table
+            // Check if any session in this room on this date is marked as exam
+            const normalized = normalizeRoom(room);
+            const examSession = allScheduleData.find(s => 
+                normalizeRoom(s.room) === normalized && 
+                normalizeDateFormat(s.date) === date &&
+                s.isExamFromData === true
+            );
+            return examSession || null;
+        }
+        
+        function updateExamRoomsDisplay() {
+            const list = document.getElementById('examRoomsList');
+            if (!list) return;
+            
+            if (examRooms.size === 0) {
+                list.textContent = 'No exam rooms identified yet';
+            } else {
+                const rooms = [...examRooms].sort();
+                list.textContent = rooms.join(', ');
+            }
+        }
+        
+        async function checkConnection() {
+            document.getElementById('statusDot').className = 'status-dot loading';
+            document.getElementById('statusText').textContent = 'Loading data...';
+            
+            // Student schedule loading removed - using database only
+            
+            // Try room_sessions table first
+            let connected = await testTableConnection('room_sessions');
+            
+            // If room_sessions doesn't work, try schedule table
+            if (!connected) {
+                connected = await testTableConnection('schedule');
+            }
+            
+            if (connected) {
+                document.getElementById('statusDot').className = 'status-dot';
+                document.getElementById('statusText').textContent = 'Connected to database';
+                document.getElementById('setupSection').style.display = 'none';
+                loadAllData();
+            } else {
+                document.getElementById('statusDot').className = 'status-dot error';
+                document.getElementById('statusText').textContent = 'Database connection failed';
+                document.getElementById('setupSection').style.display = 'block';
+            }
+        }
+        
+        async function testTableConnection(tableName) {
+            try {
+                const testUrl = SUPABASE_URL + '/rest/v1/' + tableName + '?select=id&limit=1';
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log(tableName + ' table accessible');
+                    return true;
+                }
+                return false;
+            } catch (err) {
+                console.log(tableName + ' connection failed:', err);
+                return false;
+            }
+        }
+        
+        async function loadAllData() {
+                
+            document.getElementById('statusDot').className = 'status-dot loading';
+            document.getElementById('statusText').textContent = 'Loading data...';
+            
+            try {
+                // Load from BOTH tables: room_sessions (lessons) and schedule (exams)
+                let allSchedule = [];
+                let offset = 0;
+                const limit = 1000;
+                
+                // 1. Load room_sessions table (lessons - 1062 records)
+                while (true) {
+                    const response = await fetch(
+                        SUPABASE_URL + '/rest/v1/room_sessions?select=*&offset=' + offset + '&limit=' + limit + '&order=date,room,start_time',
+                        {
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                            }
+                        }
+                    );
+                    
+                    if (!response.ok && response.status !== 404) {
+                        // Try schedule table instead
+                        break;
+                    }
+                    const batch = await response.json();
+                    if (!batch || batch.length === 0) break;
+                    allSchedule.push(...batch);
+                    if (batch.length < limit) break;
+                    offset += limit;
+                }
+                
+                // 2. ALSO load schedule table (exams - 1040 records)
+                offset = 0;
+                while (true) {
+                    const scheduleResponse = await fetch(
+                        SUPABASE_URL + '/rest/v1/schedule?select=*&offset=' + offset + '&limit=' + limit,
+                        {
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                            }
+                        }
+                    );
+                    
+                    if (!scheduleResponse.ok) break;
+                    const batch = await scheduleResponse.json();
+                    if (!batch || batch.length === 0) break;
+                    allSchedule.push(...batch);
+                    if (batch.length < limit) break;
+                    offset += limit;
+                }
+                
+                // Log for debugging
+                console.log('Loaded schedule records:', allSchedule.length);
+                
+                // Load bookings from Supabase
+                const bookingsResponse = await fetch(SUPABASE_URL + '/rest/v1/bookings?select=*', {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+                
+                const bookingsText = await bookingsResponse.text();
+                let bookingsData = [];
+                try {
+                    bookingsData = JSON.parse(bookingsText);
+                    if (!Array.isArray(bookingsData)) bookingsData = [];
+                } catch (e) {
+                    bookingsData = [];
+                }
+                
+                // Process schedule data from Supabase (handles both schedule and room_sessions tables)
+                // schedule table = actual exam schedule (teacher = "EXAM")
+                // room_sessions = regular classes
+                allScheduleData = allSchedule.map(item => {
+                    let component = item.class_name || item.Class || item.title || '';
+                    let isExam = false;
+                    // Check if teacher is EXAM (from schedule table - actual exam data)
+                    const teacherVal = item.teacher || item.Teacher || '';
+                    const isExamFromSchedule = teacherVal.toUpperCase() === 'EXAM';
+                    // Check if this is an EXAM session - "EXAM:" OR "IBDP" prefix in class_name
+                    const hasExamPrefix = component.toUpperCase().startsWith('EXAM:') || component.toUpperCase().startsWith('IBDP');
+                    
+                    if (isExamFromSchedule || hasExamPrefix) {
+                        isExam = true;
+                        if (component.toUpperCase().startsWith('EXAM:')) {
+                            component = component.substring(5).trim();
+                        } else if (component.toUpperCase().startsWith('IBDP')) {
+                            component = component.substring(4).trim();
+                        }
+                    }
+                    return {
+                        date: item.date || item.Date || '',
+                        start: item.start_time || item.start_time || item['Start Time'] || '',
+                        end: item.end_time || item.end_time || item['End Time'] || '',
+                        component: component,
+                        room: normalizeRoom(item.room || item.Room || ''),
+                        teacher: isExamFromSchedule ? '' : teacherVal,
+                        isExam: isExam,
+                        isExamProtection: false  // Will be calculated dynamically
+                    };
+                }).filter(item => item.date && item.room);
+                
+                // Populate examRooms and examDates from loaded data
+                examRooms = new Set();
+                examDates = new Map();
+                // Also track protection dates (day before exam)
+                const protectionDates = new Map(); // room -> Set of protected dates
+                
+                allScheduleData.forEach(s => {
+                    if (s.isExam) {
+                        const room = s.room;
+                        examRooms.add(room);
+                        if (!examDates.has(room)) {
+                            examDates.set(room, new Set());
+                        }
+                        examDates.get(room).add(normalizeDateFormat(s.date));
+                        
+                        // Calculate day before exam - add to protection dates
+                        const [year, month, day] = s.date.split('/').map(Number);
+                        const examDate = new Date(year, month - 1, day);
+                        examDate.setDate(examDate.getDate() - 1);
+                        const prevDate = `${examDate.getFullYear()}/${String(examDate.getMonth() + 1).padStart(2, '0')}/${String(examDate.getDate()).padStart(2, '0')}`;
+                        
+                        if (!protectionDates.has(room)) {
+                            protectionDates.set(room, new Set());
+                        }
+                        protectionDates.get(room).add(prevDate);
+                    }
+                });
+                
+                // Now mark sessions as protection if they fall on a protection date
+                allScheduleData.forEach(s => {
+                    if (protectionDates.has(s.room) && protectionDates.get(s.room).has(normalizeDateFormat(s.date))) {
+                        s.isExamProtection = true;
+                    }
+                });
+                
+                allBookingsData = (bookingsData || []).map(item => ({
+                    id: item.id,
+                    date: item.date || '',
+                    start: item.start_time || '',
+                    end: item.end_time || '',
+                    room: normalizeRoom(item.room || ''),
+                    teacher: item.teacher || '',
+                    title: item.title || ''
+                })).filter(item => item.date && item.room);
+                
+                // Get all rooms
+                allRooms = new Set();
+                allScheduleData.forEach(s => allRooms.add(s.room));
+                allBookingsData.forEach(b => allRooms.add(b.room));
+                
+                populateFilters();
+                updateDashboard();
+                updateBookingsBadge();
+                renderAllBookings();
+                
+                document.getElementById('statusDot').className = 'status-dot';
+                document.getElementById('statusText').textContent = 'Data loaded';
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                console.error('Load error:', error);
+                document.getElementById('statusDot').className = 'status-dot error';
+                document.getElementById('statusText').textContent = 'Failed to load data';
+                document.getElementById('setupSection').style.display = 'block';
+            }
+        }
+        
+        function populateFilters() {
+            const scheduleDate = document.getElementById('scheduleDate');
+            const roomFilter = document.getElementById('roomFilter');
+            const bookingRoom = document.getElementById('bookingRoom');
+            const bookingDate = document.getElementById('bookingDate');
+            
+            // Set default date to today for schedule view (use local date to avoid timezone issues)
+            const now = new Date();
+            const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            scheduleDate.value = today;
+            
+            // Filter B-rooms only for room filter (exclude non-B rooms like boarding)
+            const bRoomsOnly = [...allRooms]
+                .filter(room => room.startsWith('B'))
+                .map(room => ({ room, display: room }))
+                .sort((a, b) => a.room.localeCompare(b.room));
+            
+            // Schedule View: Show B-rooms only, including blocked ones
+            roomFilter.innerHTML = '<option value="">All Rooms</option>' + 
+                bRoomsOnly.map(r => 
+                    `<option value="${r.room}">${r.display}${isRoomBlocked(r.room) ? ' (Blocked)' : ''}</option>`
+                ).join('');
+            
+            // Book a Room: Only show available B-rooms (not blocked)
+            const availableRooms = bRoomsOnly.filter(r => !isRoomBlocked(r.room));
+            bookingRoom.innerHTML = '<option value="">Select a room</option>' + 
+                availableRooms.map(r => 
+                    `<option value="${r.room}">${r.display}</option>`
+                ).join('');
+            
+            // Set booking date to today
+            bookingDate.value = today;
+        }
+        
+        function onScheduleDateChange() {
+            updateDashboard();
+        }
+        
+        function formatDate(dateStr) {
+            // Handle both YYYY/MM/DD and YYYY-MM-DD formats
+            const parts = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
+            const year = parts[0];
+            const month = parts[1];
+            const day = parts[2];
+            // Create date and format as readable string
+            const date = new Date(year, parseInt(month) - 1, parseInt(day));
+            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+        }
+        
+        // Parse date string to YYYY/MM/DD format (for comparison)
+        function normalizeDateFormat(dateStr) {
+            if (dateStr.includes('/')) return dateStr; // Already YYYY/MM/DD
+            if (dateStr.includes('-')) {
+                const parts = dateStr.split('-');
+                return `${parts[0]}/${parts[1]}/${parts[2]}`;
+            }
+            return dateStr;
+        }
+        
+        function parseTime(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+        
+        function detectConflicts(sessions) {
+            const conflicts = [];
+            const roomSessions = {};
+            sessions.forEach(session => {
+                if (!roomSessions[session.room]) roomSessions[session.room] = [];
+                roomSessions[session.room].push(session);
+            });
+            
+            for (const room in roomSessions) {
+                const roomSessionsList = roomSessions[room];
+                
+                // Group sessions by date
+                const sessionsByDate = {};
+                roomSessionsList.forEach(s => {
+                    if (!sessionsByDate[s.date]) sessionsByDate[s.date] = [];
+                    sessionsByDate[s.date].push(s);
+                });
+                
+                // Check for overlaps within each date
+                for (const date in sessionsByDate) {
+                    const daySessions = sessionsByDate[date].sort((a, b) => parseTime(a.start) - parseTime(b.start));
+                    for (let i = 0; i < daySessions.length; i++) {
+                        for (let j = i + 1; j < daySessions.length; j++) {
+                            const s1 = daySessions[i];
+                            const s2 = daySessions[j];
+                            const s1Start = parseTime(s1.start);
+                            const s1End = parseTime(s1.end);
+                            const s2Start = parseTime(s2.start);
+                            const s2End = parseTime(s2.end);
+                            if (s1Start < s2End && s1End > s2Start) {
+                                conflicts.push({ room, sessions: [s1, s2] });
+                            }
+                        }
+                    }
+                }
+            }
+            return conflicts;
+        }
+        
+        // Get selected date in YYYY/MM/DD format (internal use)
+        function getSelectedDate() {
+            const dateInput = document.getElementById('scheduleDate');
+            if (!dateInput || !dateInput.value) return null;
+            // Convert YYYY-MM-DD to YYYY/MM/DD for internal comparison
+            return dateInput.value.replace(/-/g, '/');
+        }
+        
+        function updateExamAlerts() {
+            const selectedDate = getSelectedDate();
+            if (!selectedDate) return;
+            
+            const examSection = document.getElementById('examAlertSection');
+            const examList = document.getElementById('examAlertList');
+            
+            // Find rooms with exams on selected date and rooms with exam protection (day before)
+            // Only include B-rooms
+            const examDayRooms = [];
+            const protectionRooms = [];
+            
+            for (const [room, dates] of examDates) {
+                // Skip non-B rooms
+                if (!room.startsWith('B')) continue;
+                
+                if (dates.has(selectedDate)) {
+                    // This is an exam day - get exam details
+                    const examInfo = getExamDetailsForRoom(room, selectedDate);
+                    examDayRooms.push({ room, examInfo });
+                } else {
+                    // Check if it's the day before an exam (protection)
+                    // Use explicit local time to avoid UTC timezone issues
+                    const [year, month, day] = selectedDate.split('/').map(Number);
+                    // Create date at noon local time to avoid timezone issues
+                    const checkDate = new Date(year, month - 1, day, 12, 0, 0);
+                    checkDate.setDate(checkDate.getDate() + 1);
+                    const nextDay = `${checkDate.getFullYear()}/${String(checkDate.getMonth() + 1).padStart(2, '0')}/${String(checkDate.getDate()).padStart(2, '0')}`;
+                    
+                    if (dates.has(nextDay)) {
+                        // Find the actual exam date for reference
+                        const examInfo = getExamDetailsForRoom(room, nextDay);
+                        protectionRooms.push({ room, examInfo, nextDay });
+                    }
+                }
+            }
+            
+            if (examDayRooms.length > 0 || protectionRooms.length > 0) {
+                examSection.style.display = 'block';
+                let html = '';
+                
+                // Exam day rooms
+                if (examDayRooms.length > 0) {
+                    html += examDayRooms.map(p => {
+                        let details = 'Exam scheduled';
+                        if (p.examInfo) {
+                            details = `Time: ${p.examInfo.time || 'N/A'}${p.examInfo.code ? ' | ' + p.examInfo.code : ''}${p.examInfo.component ? ' | ' + p.examInfo.component : ''}`;
+                        }
+                        return `
+                        <div class="exam-item">
+                            <div class="room">${p.room} <span class="tag tag-exam">Exam</span></div>
+                            <div class="details">${details}</div>
+                        </div>
+                    `}).join('');
+                }
+                
+                // Exam protection rooms (day before exam)
+                if (protectionRooms.length > 0) {
+                    html += protectionRooms.map(p => `
+                        <div class="exam-item">
+                            <div class="room">${p.room} <span class="tag tag-exam">Exam Protection</span></div>
+                            <div class="details">Exam on ${formatDate(p.nextDay)} - room cannot be booked today</div>
+                        </div>
+                    `).join('');
+                }
+                
+                examList.innerHTML = html;
+            } else {
+                examSection.style.display = 'none';
+            }
+        }
+        
+        function updateDashboard() {
+            const selectedDate = getSelectedDate();
+            const selectedRoom = document.getElementById('roomFilter').value;
+            
+            if (!selectedDate) {
+                document.getElementById('roomGrid').innerHTML = '<div class="no-session"><h2>Please select a date</h2></div>';
+                return;
+            }
+            
+            // Combine schedule and bookings
+            let allSessions = [...allScheduleData];
+            allBookingsData.forEach(b => {
+                allSessions.push({
+                    date: b.date,
+                    start: b.start,
+                    end: b.end,
+                    component: b.title,
+                    room: b.room,
+                    teacher: b.teacher
+                });
+            });
+            
+            // Normalize dates for comparison
+            let filteredSessions = allSessions.filter(s => normalizeDateFormat(s.date) === selectedDate);
+            if (selectedRoom) filteredSessions = filteredSessions.filter(s => s.room === selectedRoom);
+            
+            // Exam sessions now come from database room_sessions table only
+            
+            const conflicts = detectConflicts(allSessions);
+            const selectedDateConflicts = conflicts.filter(c => normalizeDateFormat(c.sessions[0].date) === selectedDate);
+            
+            const conflictSection = document.getElementById('conflictSection');
+            if (selectedDateConflicts.length > 0) {
+                conflictSection.style.display = 'block';
+                document.getElementById('conflictList').innerHTML = selectedDateConflicts.map(c => `
+                    <div class="conflict-item">
+                        <div class="room">${c.room} (${c.sessions[0].start}-${c.sessions[0].end})</div>
+                        <div class="details">${c.sessions.map(s => `${s.teacher}: ${s.component}`).join('<br>')}</div>
+                    </div>
+                `).join('');
+            } else {
+                conflictSection.style.display = 'none';
+            }
+            
+            const roomSessions = {};
+            filteredSessions.forEach(s => {
+                if (!roomSessions[s.room]) roomSessions[s.room] = [];
+                roomSessions[s.room].push(s);
+            });
+            
+            // Pure protection rooms logic removed - using database only
+            
+            for (const room in roomSessions) {
+                roomSessions[room].sort((a, b) => parseTime(a.start) - parseTime(b.start));
+            }
+            
+            // Count available rooms (B-rooms only, excluding blocked)
+            const bRooms = [...allRooms].filter(r => r.startsWith('B') && !isRoomBlocked(r)).length;
+            const totalBRooms = [...allRooms].filter(r => r.startsWith('B')).length;
+            const usedBRooms = Object.keys(roomSessions).filter(r => r.startsWith('B')).length;
+            
+            document.getElementById('totalRooms').textContent = usedBRooms;
+            document.getElementById('totalSessions').textContent = filteredSessions.length;
+            document.getElementById('availableRooms').textContent = bRooms - usedBRooms;
+            document.getElementById('conflictCount').textContent = selectedDateConflicts.length;
+            document.getElementById('conflictCount').style.color = selectedDateConflicts.length > 0 ? '#ef4444' : '#667eea';
+            
+            const roomGrid = document.getElementById('roomGrid');
+            // Only show B-rooms in the grid
+            const sortedRooms = Object.keys(roomSessions).filter(r => r.startsWith('B')).sort();
+            
+            if (sortedRooms.length === 0) {
+                roomGrid.innerHTML = '<div class="no-session"><h2>No sessions scheduled for this date</h2></div>';
+            } else {
+                let html = '';
+                
+                // Add rooms with sessions (including exam/booking sessions)
+                if (sortedRooms.length > 0) {
+                    html += sortedRooms.map(room => {
+                        const sessions = roomSessions[room];
+                        const hasExamProtection = sessions.some(s => s.isExamProtection);
+                        const hasExam = sessions.some(s => s.isExam && !s.isExamProtection);
+                        
+                        let headerTag = '';
+                        if (hasExam) {
+                            headerTag = ' <span class="tag tag-exam" style="font-size:11px;">Exam</span>';
+                        } else if (hasExamProtection) {
+                            headerTag = ' <span class="tag tag-protection" style="font-size:11px;">Exam Protection</span>';
+                        }
+                        
+                        return `
+                        <div class="room-card">
+                            <div class="room-card-header">
+                                <h3>${room}${headerTag}</h3>
+                                <span class="session-count">${sessions.length} sessions</span>
+                            </div>
+                            <div class="room-card-body">
+                                ${sessions.map(s => {
+                                    const isExam = s.isExam || false;
+                                    const isExamProtection = s.isExamProtection || false;
+                                    // Determine what tags to show
+                                    let examTag = '';
+                                    if (isExam && !isExamProtection) {
+                                        examTag = '<span class="tag tag-exam">Exam</span>';
+                                    } else if (isExamProtection) {
+                                        examTag = '<span class="tag tag-protection">Exam Protection</span>';
+                                    }
+                                    return `
+                                    <div class="session-item">
+                                        <div class="time">${s.start} - ${s.end} ${examTag}</div>
+                                        <div class="component">${s.component}</div>
+                                        <div class="meta">${s.teacher ? `<span class="tag tag-general">${s.teacher}</span>` : ''}</div>
+                                    </div>
+                                `}).join('')}
+                            </div>
+                        </div>
+                    `}).join('');
+                }
+                
+                // Pure protection rooms HTML removed
+                
+                roomGrid.innerHTML = html;
+            }
+        }
+        
+        function initBookingForm() {
+            document.getElementById('recurringCheck').addEventListener('change', function() {
+                document.getElementById('recurringOptions').classList.toggle('visible', this.checked);
+            });
+            
+            document.querySelectorAll('.weekday-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    const day = parseInt(this.dataset.day);
+                    if (selectedWeekdays.includes(day)) {
+                        selectedWeekdays = selectedWeekdays.filter(d => d !== day);
+                    } else {
+                        selectedWeekdays.push(day);
+                    }
+                });
+            });
+            
+            ['bookingDate', 'bookingStart', 'bookingEnd'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateRoomSuggestions);
+            });
+            
+            document.getElementById('bookingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitBooking();
+            });
+            
+            document.getElementById('roomSuggestions').addEventListener('click', function(e) {
+                if (e.target.classList.contains('room-chip') && !e.target.classList.contains('unavailable') && !e.target.classList.contains('exam-blocked')) {
+                    document.querySelectorAll('.room-chip').forEach(c => c.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                    document.getElementById('bookingRoom').value = e.target.dataset.room;
+                    document.getElementById('bookingRoomError').style.display = 'none';
+                }
+            });
+        }
+        
+        function checkRoomAvailability() {
+            const room = document.getElementById('bookingRoom').value;
+            const date = document.getElementById('bookingDate').value.replace(/-/g, '/');
+            const start = document.getElementById('bookingStart').value;
+            const end = document.getElementById('bookingEnd').value;
+            const errorDiv = document.getElementById('bookingRoomError');
+            
+            if (!room || !date || !start || !end) {
+                errorDiv.style.display = 'none';
+                return true;
+            }
+            
+            // Check if room is blocked
+            if (isRoomBlocked(room)) {
+                errorDiv.innerHTML = `<span style="color:#ef4444;">Room ${room} is blocked from booking. Please select another room.</span>`;
+                errorDiv.style.display = 'block';
+                return false;
+            }
+            
+            // Check exam protection
+            const examMsg = getExamProtectionMessage(room, date);
+            if (examMsg) {
+                errorDiv.innerHTML = `<span style="color:#f59e0b;">${examMsg}. Please select another room or date.</span>`;
+                errorDiv.style.display = 'block';
+                return false;
+            }
+            
+            let allSessions = [...allScheduleData];
+            allBookingsData.forEach(b => {
+                allSessions.push({ date: b.date, start: b.start, end: b.end, room: b.room });
+            });
+            
+            const daySessions = allSessions.filter(s => s.date === date && s.room === room);
+            for (const s of daySessions) {
+                if (parseTime(start) < parseTime(s.end) && parseTime(end) > parseTime(s.start)) {
+                    errorDiv.innerHTML = `<span style="color:#ef4444;">Room ${room} is already booked on ${formatDate(date)} from ${s.start}-${s.end}. Please select a different room or time.</span>`;
+                    errorDiv.style.display = 'block';
+                    return false;
+                }
+            }
+            
+            errorDiv.style.display = 'none';
+            return true;
+        }
+        
+        function updateRoomSuggestions() {
+            const date = document.getElementById('bookingDate').value.replace(/-/g, '/');
+            const start = document.getElementById('bookingStart').value;
+            const end = document.getElementById('bookingEnd').value;
+            
+            const suggestions = document.getElementById('roomSuggestions');
+            
+            if (!date || !start || !end) {
+                suggestions.innerHTML = '<span style="color:#94a3b8;">Select date and time to see available rooms</span>';
+                return;
+            }
+            
+            let allSessions = [...allScheduleData];
+            allBookingsData.forEach(b => {
+                allSessions.push({ date: b.date, start: b.start, end: b.end, room: b.room });
+            });
+            
+            const daySessions = allSessions.filter(s => s.date === date);
+            
+            const available = [];
+            const unavailable = [];
+            const examBlocked = [];
+            
+            // Filter out blocked rooms from suggestions
+            const availableForBooking = [...allRooms].filter(room => !isRoomBlocked(room));
+            
+            availableForBooking.sort().forEach(room => {
+                // Check if exam blocked
+                const examMsg = getExamProtectionMessage(room, date);
+                if (examMsg) {
+                    examBlocked.push({ room, reason: examMsg });
+                    return;
+                }
+                
+                const roomDaySessions = daySessions.filter(s => s.room === room);
+                let isAvailable = true;
+                
+                for (const s of roomDaySessions) {
+                    if (parseTime(start) < parseTime(s.end) && parseTime(end) > parseTime(s.start)) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+                
+                if (isAvailable) {
+                    available.push(room);
+                } else {
+                    unavailable.push(room);
+                }
+            });
+            
+            let html = '';
+            
+            if (available.length > 0) {
+                html += available.map(room => `<div class="room-chip" data-room="${room}">${room} ✓</div>`).join('');
+            }
+            
+            if (examBlocked.length > 0) {
+                html += '<br><span style="color:#92400e; font-size:12px; margin-top:10px; display:block;">Exam Protected:</span>';
+                html += examBlocked.map(r => `<div class="room-chip exam-blocked" title="${r.reason}">${r.room} (Exam)</div>`).join('');
+            }
+            
+            if (unavailable.length > 0) {
+                html += `<span style="color:#94a3b8; margin-left:10px;">Occupied: ${unavailable.join(', ')}</span>`;
+            }
+            
+            if (available.length === 0 && unavailable.length === 0 && examBlocked.length === 0) {
+                html = '<span style="color:#94a3b8;">No rooms available for this time</span>';
+            }
+            
+            suggestions.innerHTML = html;
+        }
+        
+        async function submitBooking() {
+            const room = document.getElementById('bookingRoom').value;
+            const date = document.getElementById('bookingDate').value.replace(/-/g, '/');
+            const start = document.getElementById('bookingStart').value;
+            const end = document.getElementById('bookingEnd').value;
+            const title = document.getElementById('bookingTitle').value;
+            const teacher = document.getElementById('bookingTeacher').value;
+            const isRecurring = document.getElementById('recurringCheck').checked;
+            
+            if (!room || !date || !start || !end || !title || !teacher) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (parseTime(start) >= parseTime(end)) {
+                showAlert('End time must be after start time', 'error');
+                return;
+            }
+            
+            // Check if room is blocked
+            if (isRoomBlocked(room)) {
+                showAlert(`Room ${room} is blocked from booking. Please select another room.`, 'error');
+                return;
+            }
+            
+            // Check exam protection
+            const examMsg = getExamProtectionMessage(room, date);
+            if (examMsg) {
+                showAlert(`${examMsg}. Please select another room or date.`, 'warning');
+                return;
+            }
+            
+            // Check for conflicts in database
+            let allSessions = [...allScheduleData];
+            allBookingsData.forEach(b => {
+                allSessions.push({ date: b.date, start: b.start, end: b.end, room: b.room });
+            });
+            
+            const daySessions = allSessions.filter(s => s.date === date && s.room === room);
+            for (const s of daySessions) {
+                if (parseTime(start) < parseTime(s.end) && parseTime(end) > parseTime(s.start)) {
+                    showAlert(`Room ${room} is already booked at ${s.start}-${s.end}`, 'error');
+                    return;
+                }
+            }
+            
+            pendingBooking = { room, date, start, end, title, teacher, isRecurring, weekdays: [...selectedWeekdays] };
+            
+            let message = `Book ${room} on ${formatDate(date)} from ${start} to ${end}`;
+            if (isRecurring) {
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const days = selectedWeekdays.map(d => dayNames[d]).join(', ');
+                message += `<br><br>This will be a recurring booking on: ${days || 'No days selected'}`;
+            }
+            
+            document.getElementById('modalBody').innerHTML = message;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+        
+        async function confirmBooking() {
+            if (!pendingBooking) return;
+            
+            const { room, date, start, end, title, teacher, isRecurring, weekdays } = pendingBooking;
+            let bookingCount = 0;
+            
+            try {
+                if (isRecurring && weekdays.length > 0) {
+                    // Generate recurring bookings
+                    const endDateInput = document.getElementById('recurringEnd').value;
+                    let currentDate = new Date(date.replace(/\//g, '-'));
+                    const lastDate = endDateInput ? new Date(endDateInput) : new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+                    
+                    const bookings = [];
+                    while (currentDate <= lastDate) {
+                        if (weekdays.includes(currentDate.getDay())) {
+                            const bookingDate = `${currentDate.getFullYear()}/${String(currentDate.getMonth()+1).padStart(2,'0')}/${String(currentDate.getDate()).padStart(2,'0')}`;
+                            
+                            // Check exam protection for each recurring date
+                            if (!isRoomBlocked(room) && !getExamProtectionMessage(room, bookingDate)) {
+                                bookings.push({
+                                    room, 
+                                    date: bookingDate,
+                                    start_time: start, 
+                                    end_time: end, 
+                                    title, 
+                                    teacher
+                                });
+                            }
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                    
+                    if (bookings.length === 0) {
+                        showAlert('No bookings could be created - all dates are protected or blocked', 'warning');
+                        closeModal();
+                        return;
+                    }
+                    
+                    for (const b of bookings) {
+                        await createBookingToDb(b);
+                        bookingCount++;
+                    }
+                } else {
+                    // Single booking
+                    await createBookingToDb({
+                        room, date, start_time: start, end_time: end, title, teacher
+                    });
+                    bookingCount = 1;
+                }
+                
+                closeModal();
+                document.getElementById('bookingForm').reset();
+                selectedWeekdays = [];
+                document.querySelectorAll('.weekday-chip').forEach(c => c.classList.remove('selected'));
+                
+                // Reload data and update bookings list
+                await loadAllData();
+                renderAllBookings();
+                
+                // Show success modal
+                const successMsg = bookingCount > 1 
+                    ? `${bookingCount} recurring bookings have been confirmed for room ${room}.`
+                    : `Room ${room} has been successfully booked for ${formatDate(date)} from ${start} to ${end}.`;
+                document.getElementById('successMessage').innerHTML = successMsg;
+                document.getElementById('successModal').classList.add('show');
+                
+            } catch (error) {
+                showAlert('Booking failed: ' + error.message, 'error');
+            }
+        }
+        
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('show');
+            // Switch to All Bookings tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[data-tab="bookings"]').classList.add('active');
+            document.getElementById('bookings-tab').classList.add('active');
+        }
+        
+        async function createBookingToDb(booking) {
+            const response = await fetch(SUPABASE_URL + '/rest/v1/bookings', {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify(booking)
+            });
+            
+            const responseText = await response.text();
+            
+            if (!response.ok) {
+                let errorMsg = 'Failed to create booking';
+                try {
+                    const err = JSON.parse(responseText);
+                    errorMsg = err.message || err.details || JSON.stringify(err);
+                } catch (e) {
+                    // Use raw text if not JSON
+                    if (responseText) errorMsg = responseText;
+                }
+                throw new Error(errorMsg);
+            }
+            
+            // Try to parse successful response
+            try {
+                return JSON.parse(responseText);
+            } catch (e) {
+                return responseText;
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            pendingBooking = null;
+        }
+        
+        async function deleteBooking(id) {
+            if (confirm('Are you sure you want to delete this booking?')) {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/bookings?id=eq.' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+                
+                if (!response.ok) {
+                    showAlert('Failed to delete', 'error');
+                    return;
+                }
+                
+                showAlert('Booking deleted', 'success');
+                loadAllData();
+                renderAllBookings();
+            }
+        }
+        
+        async function renderAllBookings() {
+            const list = document.getElementById('bookingsList');
+            
+            if (allBookingsData.length === 0) {
+                list.innerHTML = '<p style="color:#64748b;">No bookings yet. Go to "Book a Room" tab to make a booking.</p>';
+                return;
+            }
+            
+            list.innerHTML = allBookingsData
+                .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start))
+                .map(b => {
+                    const displayRoom = b.room;
+                    return `
+                    <div class="booking-entry">
+                        <div class="header">
+                            <span class="room">${displayRoom}</span>
+                            <div class="actions">
+                                <button class="delete-btn" onclick="deleteBooking(${b.id})">Delete</button>
+                            </div>
+                        </div>
+                        <div class="details">
+                            ${b.title}<br>
+                            ${formatDate(b.date)} | ${b.start} - ${b.end}<br>
+                            Booked by: ${b.teacher}
+                        </div>
+                    </div>
+                `}).join('');
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('bookingAlert');
+            alert.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alert.innerHTML = '', 5000);
+        }
+        
+        function exportBookings() {
+            if (allBookingsData.length === 0) {
+                showAlert('No bookings to export', 'error');
+                return;
+            }
+            const data = JSON.stringify(allBookingsData, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `room_bookings_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('Bookings exported successfully!', 'success');
+        }
+        
+        function importBookings(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!Array.isArray(imported)) throw new Error('Invalid format');
+                    
+                    // Transform and insert
+                    const validBookings = imported.filter(b => b.room && b.date && b.start && b.end);
+                    if (validBookings.length === 0) {
+                        showAlert('No valid bookings found in file', 'error');
+                        return;
+                    }
+                    
+                    const records = validBookings.map(b => ({
+                        room: normalizeRoom(b.room),
+                        date: b.date,
+                        start_time: b.start,
+                        end_time: b.end,
+                        title: b.title || 'Imported',
+                        teacher: b.teacher || 'Unknown'
+                    }));
+                    
+                    for (const record of records) {
+                        await createBookingToDb(record);
+                    }
+                    
+                    showAlert(`Imported ${validBookings.length} booking(s)!`, 'success');
+                    loadAllData();
+                } catch (err) {
+                    showAlert('Failed to import: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        // Room filter listener
+        document.getElementById('roomFilter').addEventListener('change', updateDashboard);
+    </script>
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.inland-security-footer {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 0;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.trigger-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.minimax-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 300;
+  color: #adadad;
+  text-decoration: none;
+}
+
+.minimax-link:visited {
+  color: #adadad;
+}
+
+.minimax-link:hover {
+  color: #666666;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
+  font-size: 12px;
+  line-height: 17px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #171717;
+}
+
+/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: flex;
+}
+
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.beian-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #171717;
+}
+
+.beian-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+.underline-text {
+  color: #171717;
+  text-decoration: underline;
+}
+
+.underline-text:hover {
+  color: #000000;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .trigger-content {
+    background-color: transparent;
+  }
+
+  .minimax-link,
+  .minimax-link:visited {
+    color: #666666;
+  }
+
+  .minimax-link:hover {
+    color: #adadad;
+  }
+
+  .tooltip-content {
+    background-color: #262626;
+    color: #ededed;
+  }
+
+  .beian-link,
+  .underline-text {
+    color: #ededed;
+  }
+
+  .underline-text:hover {
+    color: #ffffff;
+  }
+}
+
+</style>
+<div class="inland-security-footer">
+  <div class="tooltip-container">
+    <div class="trigger-content">
+      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
+        <span>© 2026 MiniMax</span>
+      </a>
+    </div>
+    <div class="tooltip-content">
+      <section class="info-section">
+        <span>上海稀宇科技有限公司</span>
+      </section>
+
+      <section class="info-section">
+        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
+          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
+          <span class="underline-text">沪公网安备31010402010179号</span>
+        </a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
+          沪ICP备2023003282号-38
+        </a>
+      </section>
+
+      <section class="info-section">
+        <span>模型名称：MiniMax</span>
+        <span>备案号：Shanghai-MiniMax-202505230046</span>
+      </section>
+
+      <section class="info-section">
+        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
+          用户协议
+        </a>
+        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
+          隐私政策
+        </a>
+      </section>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+<style>
+#minimax-floating-ball {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 12px;
+  background: #222222;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  color: #F8F8F8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#minimax-floating-ball:hover {
+  transform: translateY(-2px);
+  background: #383838;
+}
+.minimax-ball-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.minimax-logo-wave {
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg%20preserveAspectRatio%3D%27none%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20overflow%3D%27visible%27%20style%3D%27display%3A%20block%3B%27%20viewBox%3D%270%200%20170.136%20138.225%27%20fill%3D%27none%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cg%20id%3D%27Frame%202116748449%27%3E%3Cpath%20id%3D%27Subtract%27%20d%3D%27M170%20101.783C170%20105.144%20168.49%20108.327%20165.886%20110.453L134.963%20135.702C132.964%20137.334%20130.463%20138.225%20127.883%20138.225H10.4938C4.69824%20138.225%200%20133.527%200%20127.732V39.2289C0%2035.8597%201.51758%2032.6698%204.13162%2030.5442L38.5402%202.56547C40.536%200.942662%2043.0298%200.0567377%2045.602%200.0567377H159.506C165.302%200.0567377%20170%204.75498%20170%2010.5506V101.783Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Subtract_2%27%20d%3D%27M149.011%2094.4632C149.011%2096.1471%20148.253%2097.7415%20146.946%2098.8043L125.893%20115.936C124.895%20116.748%20123.648%20117.191%20122.361%20117.191H24.6479C22.716%20117.191%2021.15%20115.625%2021.15%20113.693V46.1166C21.15%2044.4267%2021.9135%2042.8274%2023.2274%2041.7648L47.367%2022.2437C48.3638%2021.4376%2049.607%2020.9982%2050.8888%2020.9988L145.514%2021.0427C147.446%2021.0436%20149.011%2022.6094%20149.011%2024.5406V94.4632Z%27%20fill%3D%27white%27%20style%3D%27fill%3Awhite%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Rectangle%20111142564%27%20d%3D%27M42.111%2080.8025C42.111%2077.7115%2044.6167%2075.2057%2047.7077%2075.2057H60.9999C64.0908%2075.2057%2066.5966%2077.7115%2066.5966%2080.8025V121.029H42.111V80.8025Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Rectangle%20111142567%27%20d%3D%27M79.1894%2080.8025C79.1894%2077.7115%2081.6952%2075.2057%2084.7861%2075.2057H98.0783C101.169%2075.2057%20103.675%2077.7115%20103.675%2080.8025V121.029H79.1894V80.8025Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 11px;
+  background-color: #8FD1FF;
+  border-radius: 4px;
+}
+
+.minimax-ball-text {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.minimax-close-icon {
+  margin-left: 8px;
+  font-size: 16px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.minimax-close-icon:hover {
+  opacity: 1;
+}
+</style>
+<div id="minimax-floating-ball">
+  <div class="minimax-ball-content">
+    <div class="minimax-logo-wave"></div>
+    <span class="minimax-ball-text">Created by MiniMax Agent</span>
+  </div>
+  <div class="minimax-close-icon">×</div>
+</div>
+<script>
+// Initialize floating ball functionality
+function initFloatingBall() {
+  const ball = document.getElementById('minimax-floating-ball');
+  if (!ball) return;
+
+  // Initial animation
+  ball.style.opacity = '0';
+  ball.style.transform = 'translateY(20px)';
+
+  setTimeout(() => {
+    ball.style.opacity = '1';
+    ball.style.transform = 'translateY(0)';
+  }, 500);
+
+  // Handle logo click
+  const ballContent = ball.querySelector('.minimax-ball-content');
+  ballContent.addEventListener('click', function (e) {
+    e.stopPropagation();
+    window.open('https://agent.minimaxi.com/', '_blank');
+    ball.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      ball.style.transform = 'scale(1)';
+    }, 100);
+  });
+
+  // Handle close button click
+  const closeIcon = ball.querySelector('.minimax-close-icon');
+  closeIcon.addEventListener('click', function (e) {
+    e.stopPropagation();
+    ball.style.opacity = '0';
+    ball.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+      ball.style.display = 'none';
+    }, 300);
+  });
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initFloatingBall); 
+</script>
+</body>
+</html>

@@ -1,0 +1,2486 @@
+[
+  {
+    "id": 1374,
+    "date": "2026/05/06",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B2044",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9696/12 - Core Physical Geography 12",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3029",
+      "B3041",
+      "B3042"
+    ]
+  },
+  {
+    "id": 1375,
+    "date": "2026/05/06",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2044",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9696/12 - Core Physical Geography 12",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3029",
+      "B3041",
+      "B3042"
+    ]
+  },
+  {
+    "id": 1380,
+    "date": "2026/05/06",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0511/12 - INTENSIVE: Reading and Writing 12",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B2043",
+      "B3002",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1381,
+    "date": "2026/05/06",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0511/12 - INTENSIVE: Reading and Writing 12",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B2043",
+      "B3002",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1369,
+    "date": "2026/05/06",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "9708/24 - INTENSIVE: AS Level Data Response and Es",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3002",
+      "B3004",
+      "B3005",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1376,
+    "date": "2026/05/06",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9696/22 - Core Human Geography 22",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3002",
+      "B3004",
+      "B3005",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1371,
+    "date": "2026/05/06",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "0511/12 - INTENSIVE: Reading and Writing 12",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3002",
+      "B3004",
+      "B3005",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1382,
+    "date": "2026/05/06",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B3039",
+    "class_name": "G9.5 AS Maths",
+    "teacher": "Mr S Liu",
+    "conflicts": [
+      {
+        "room": "B3039",
+        "class": "9709/55 - Probability & Statistics 1 (55)",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2040"
+    ]
+  },
+  {
+    "id": 1383,
+    "date": "2026/05/06",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B3039",
+    "class_name": "G9.5 AS Maths",
+    "teacher": "Mr S Liu",
+    "conflicts": [
+      {
+        "room": "B3039",
+        "class": "9709/55 - Probability & Statistics 1 (55)",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2040"
+    ]
+  },
+  {
+    "id": 1548,
+    "date": "2026/05/07",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B3009",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B3009",
+        "class": "9868/12 - Reading (Multiple Choice) 12",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B2042"
+    ]
+  },
+  {
+    "id": 1525,
+    "date": "2026/05/07",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 1",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9700/24 - AS Level Structured Questions 24",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B2042"
+    ]
+  },
+  {
+    "id": 1526,
+    "date": "2026/05/07",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 1",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9700/24 - AS Level Structured Questions 24",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B2042"
+    ]
+  },
+  {
+    "id": 1549,
+    "date": "2026/05/07",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B3009",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B3009",
+        "class": "9868/12 - Reading (Multiple Choice) 12",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B2042"
+    ]
+  },
+  {
+    "id": 1529,
+    "date": "2026/05/07",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9701/14 - Multiple Choice 14",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2038",
+      "B3009",
+      "B3012",
+      "B3040"
+    ]
+  },
+  {
+    "id": 1550,
+    "date": "2026/05/07",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0606/12 - Paper 12 Non-calculator",
+        "time": "13:00-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2039",
+      "B2040",
+      "B2041",
+      "B2042"
+    ]
+  },
+  {
+    "id": 1551,
+    "date": "2026/05/07",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0606/12 - Paper 12 Non-calculator",
+        "time": "13:00-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2039",
+      "B2040",
+      "B2041",
+      "B2042"
+    ]
+  },
+  {
+    "id": 1546,
+    "date": "2026/05/07",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 3",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1536,
+    "date": "2026/05/07",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 7",
+    "teacher": "Mr M Irby",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1541,
+    "date": "2026/05/07",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9609/23 - Business Concepts 2 Paper 23",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1527,
+    "date": "2026/05/07",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9708/34 - A Level Multiple Choice 34",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1519,
+    "date": "2026/05/07",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "9618/13 - INTENSIVE: Theory Fundamentals 13",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1528,
+    "date": "2026/05/07",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9708/34 - A Level Multiple Choice 34",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1537,
+    "date": "2026/05/07",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 7",
+    "teacher": "Mr M Irby",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1547,
+    "date": "2026/05/07",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 3",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1542,
+    "date": "2026/05/07",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9609/23 - Business Concepts 2 Paper 23",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1520,
+    "date": "2026/05/07",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "9618/13 - INTENSIVE: Theory Fundamentals 13",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3041",
+      "B4004",
+      "B4009"
+    ]
+  },
+  {
+    "id": 1781,
+    "date": "2026/05/08",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B2040",
+    "class_name": "G9UC-Group5",
+    "teacher": "Ms V Shan",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B3002",
+      "B3004",
+      "B3005",
+      "B3007"
+    ]
+  },
+  {
+    "id": 1804,
+    "date": "2026/05/08",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B4002",
+    "class_name": "G9.5 Summit Physics",
+    "teacher": "Mr L Zhang",
+    "conflicts": [
+      {
+        "room": "B4002",
+        "class": "0625/42 - INTENSIVE: Theory (Extended) 42",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2042",
+      "B2043",
+      "B2044"
+    ]
+  },
+  {
+    "id": 1798,
+    "date": "2026/05/08",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "9709/55 - Probability & Statistics 1 (55)",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2042",
+      "B2043",
+      "B2044"
+    ]
+  },
+  {
+    "id": 1788,
+    "date": "2026/05/08",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1791,
+    "date": "2026/05/08",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B2044",
+    "class_name": "G9 IG Geography",
+    "teacher": "Mr K Seeley",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1782,
+    "date": "2026/05/08",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9868/NE - G11 Chinese",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1792,
+    "date": "2026/05/08",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B2044",
+    "class_name": "G9 IG Geography",
+    "teacher": "Mr K Seeley",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1789,
+    "date": "2026/05/08",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1783,
+    "date": "2026/05/08",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9868/NE - G11 Chinese",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1087,
+    "date": "2026/05/11",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B4002",
+    "class_name": "G9.5 Summit Physics",
+    "teacher": "Mr L Zhang",
+    "conflicts": [
+      {
+        "room": "B4002",
+        "class": "9702/44 - INTENSIVE: A Level Structured Questions ",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2041"
+    ]
+  },
+  {
+    "id": 1064,
+    "date": "2026/05/11",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "0450/12 - INTENSIVE: Short Answer/Data Response 12",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2041"
+    ]
+  },
+  {
+    "id": 1068,
+    "date": "2026/05/11",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9702/38 - Advanced Practical Skills 38",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2041"
+    ]
+  },
+  {
+    "id": 1085,
+    "date": "2026/05/11",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B3039",
+    "class_name": "G9.5 AS Maths",
+    "teacher": "Mr S Liu",
+    "conflicts": [
+      {
+        "room": "B3039",
+        "class": "0472/12 - Listening (Multiple Choice) 12",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3029",
+      "B3041"
+    ]
+  },
+  {
+    "id": 1086,
+    "date": "2026/05/11",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B3039",
+    "class_name": "G9.5 AS Maths",
+    "teacher": "Mr S Liu",
+    "conflicts": [
+      {
+        "room": "B3039",
+        "class": "0472/12 - Listening (Multiple Choice) 12",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3029",
+      "B3041"
+    ]
+  },
+  {
+    "id": 1082,
+    "date": "2026/05/11",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0606/12 - Paper 12 Non-calculator",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3029",
+      "B3041"
+    ]
+  },
+  {
+    "id": 1069,
+    "date": "2026/05/11",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 1",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9700/54 - Planning, Analysis and Evaluation 54",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2042",
+      "B2044"
+    ]
+  },
+  {
+    "id": 1070,
+    "date": "2026/05/11",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 1",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9700/54 - Planning, Analysis and Evaluation 54",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2042",
+      "B2044"
+    ]
+  },
+  {
+    "id": 1243,
+    "date": "2026/05/12",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B4004",
+    "class_name": "G9 AP Chemistry-G",
+    "teacher": "Mr A Furze",
+    "conflicts": [
+      {
+        "room": "B4004",
+        "class": "9702/NE - G11 ElevateU Physics",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2042",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1244,
+    "date": "2026/05/12",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B4004",
+    "class_name": "G9 AP Chemistry-G",
+    "teacher": "Mr A Furze",
+    "conflicts": [
+      {
+        "room": "B4004",
+        "class": "9702/NE - G11 ElevateU Physics",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2042",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1225,
+    "date": "2026/05/12",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9701/14 - Multiple Choice 14",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1227,
+    "date": "2026/05/12",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9231/24 - Further Pure Mathematics 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B3004",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1236,
+    "date": "2026/05/12",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B3009",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B3009",
+        "class": "9868/12 - Reading (Multiple Choice) 12",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2040"
+    ]
+  },
+  {
+    "id": 1237,
+    "date": "2026/05/12",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B3009",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B3009",
+        "class": "9868/12 - Reading (Multiple Choice) 12",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2040"
+    ]
+  },
+  {
+    "id": 1405,
+    "date": "2026/05/13",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0511/NE - G10 General English",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3029",
+      "B3043",
+      "B3044"
+    ]
+  },
+  {
+    "id": 1406,
+    "date": "2026/05/13",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0511/NE - G10 General English",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3029",
+      "B3043",
+      "B3044"
+    ]
+  },
+  {
+    "id": 1402,
+    "date": "2026/05/13",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 3",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "0472/12 - Listening (Multiple Choice) 12",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3043",
+      "B3044",
+      "B4005"
+    ]
+  },
+  {
+    "id": 1398,
+    "date": "2026/05/13",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 7",
+    "teacher": "Mr M Irby",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "0530/23 - Reading 23",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3043",
+      "B3044",
+      "B4005"
+    ]
+  },
+  {
+    "id": 1401,
+    "date": "2026/05/13",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3043",
+      "B3044",
+      "B4005"
+    ]
+  },
+  {
+    "id": 1394,
+    "date": "2026/05/13",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "0478/12 - INTENSIVE: Paper 12 Computer Systems",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3043",
+      "B3044",
+      "B4005"
+    ]
+  },
+  {
+    "id": 1396,
+    "date": "2026/05/13",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9700/54 - INTENSIVE: Planning, Analysis and Evalua",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3029",
+      "B3043",
+      "B3044",
+      "B4005"
+    ]
+  },
+  {
+    "id": 1598,
+    "date": "2026/05/14",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B3009",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B3009",
+        "class": "9868/12 - Reading (Multiple Choice) 12",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3010",
+      "B3011"
+    ]
+  },
+  {
+    "id": 1583,
+    "date": "2026/05/14",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 2",
+    "teacher": "Mr M Irby",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "0625/62 - Alternative to Practical 62",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3010",
+      "B3011"
+    ]
+  },
+  {
+    "id": 1575,
+    "date": "2026/05/14",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 1",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "0625/62 - Alternative to Practical 62",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3010",
+      "B3011"
+    ]
+  },
+  {
+    "id": 1599,
+    "date": "2026/05/14",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B3009",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B3009",
+        "class": "9868/12 - Reading (Multiple Choice) 12",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3010",
+      "B3011"
+    ]
+  },
+  {
+    "id": 1584,
+    "date": "2026/05/14",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 2",
+    "teacher": "Mr M Irby",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "0625/62 - Alternative to Practical 62",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3010",
+      "B3011"
+    ]
+  },
+  {
+    "id": 1576,
+    "date": "2026/05/14",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 1",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "0625/62 - Alternative to Practical 62",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3010",
+      "B3011"
+    ]
+  },
+  {
+    "id": 1608,
+    "date": "2026/05/14",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B4005",
+    "class_name": "G9 pre-IG Chemistry-F",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B4005",
+        "class": "9702/38 - INTENSIVE: Advanced Practical Skills 38",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2042",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1610,
+    "date": "2026/05/14",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B4007",
+    "class_name": "G9 AP Chemistry-G",
+    "teacher": "Mr A Furze",
+    "conflicts": [
+      {
+        "room": "B4007",
+        "class": "9702/38 - INTENSIVE: Advanced Practical Skills 38",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2042",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1609,
+    "date": "2026/05/14",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B4005",
+    "class_name": "G9 pre-IG Chemistry-F",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B4005",
+        "class": "9702/38 - INTENSIVE: Advanced Practical Skills 38",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2042",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1611,
+    "date": "2026/05/14",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B4007",
+    "class_name": "G9 AP Chemistry-G",
+    "teacher": "Mr A Furze",
+    "conflicts": [
+      {
+        "room": "B4007",
+        "class": "9702/38 - INTENSIVE: Advanced Practical Skills 38",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2042",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1579,
+    "date": "2026/05/14",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "0455/22 - Structured Questions 22",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2038",
+      "B3002",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1585,
+    "date": "2026/05/14",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9868/NE - G11 Chinese",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2038",
+      "B3002",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1577,
+    "date": "2026/05/14",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2041",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1569,
+    "date": "2026/05/14",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2041",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1570,
+    "date": "2026/05/14",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2041",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1578,
+    "date": "2026/05/14",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2041",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1824,
+    "date": "2026/05/15",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B2040",
+    "class_name": "G9UC-Group5",
+    "teacher": "Ms V Shan",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "0455/22 - Structured Questions 22",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2038",
+      "B3002",
+      "B3004",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1830,
+    "date": "2026/05/15",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B2043",
+    "class_name": "G9UC-Group2",
+    "teacher": "Ms A Ge,Ms J Ni",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "0455/22 - Structured Questions 22",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2038",
+      "B3002",
+      "B3004",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1833,
+    "date": "2026/05/15",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B2044",
+    "class_name": "G9UC-Group7",
+    "teacher": "Ms B Wan",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "4HI101R - INTENSIVE: Paper 1R: Depth Studies",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2038",
+      "B3002",
+      "B3004",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1847,
+    "date": "2026/05/15",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B4002",
+    "class_name": "G9.5 Summit Physics",
+    "teacher": "Mr L Zhang",
+    "conflicts": [
+      {
+        "room": "B4002",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2038",
+      "B2042",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1831,
+    "date": "2026/05/15",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9701/24 - AS Level Structured Questions 24",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1842,
+    "date": "2026/05/15",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1838,
+    "date": "2026/05/15",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 2",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "0625/22 - Multiple Choice (Extended) 22",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1825,
+    "date": "2026/05/15",
+    "start": "13:00",
+    "end": "13:40",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9868/NE - G11 Chinese",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1826,
+    "date": "2026/05/15",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9868/NE - G11 Chinese",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1843,
+    "date": "2026/05/15",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1839,
+    "date": "2026/05/15",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 2",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "0625/22 - Multiple Choice (Extended) 22",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1832,
+    "date": "2026/05/15",
+    "start": "13:45",
+    "end": "14:25",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9701/24 - AS Level Structured Questions 24",
+        "time": "13:00-14:25"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B1034",
+      "B2026",
+      "B2038",
+      "B3002"
+    ]
+  },
+  {
+    "id": 1836,
+    "date": "2026/05/15",
+    "start": "14:35",
+    "end": "15:15",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "0460/43 - Alternative to Coursework 43",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2042",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1837,
+    "date": "2026/05/15",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "0460/43 - Alternative to Coursework 43",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2042",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1846,
+    "date": "2026/05/15",
+    "start": "15:20",
+    "end": "16:00",
+    "current_room": "B3039",
+    "class_name": "G9.5 AS Maths",
+    "teacher": "Mr S Liu",
+    "conflicts": [
+      {
+        "room": "B3039",
+        "class": "0472/12 - Listening (Multiple Choice) 12",
+        "time": "14:35-16:00"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2038",
+      "B2039",
+      "B2042",
+      "B3004"
+    ]
+  },
+  {
+    "id": 1119,
+    "date": "2026/05/18",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B4002",
+    "class_name": "G9.5 Summit Physics",
+    "teacher": "Mr L Zhang",
+    "conflicts": [
+      {
+        "room": "B4002",
+        "class": "9231/44 - Further Probability & Statistics 44",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3004",
+      "B3009",
+      "B3010"
+    ]
+  },
+  {
+    "id": 1109,
+    "date": "2026/05/18",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "0460/43 - Alternative to Coursework 43",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3004",
+      "B3009",
+      "B3010",
+      "B3029"
+    ]
+  },
+  {
+    "id": 1106,
+    "date": "2026/05/18",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 7",
+    "teacher": "Mr M Irby",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "0530/43 - Writing 43",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3004",
+      "B3009",
+      "B3010",
+      "B3029"
+    ]
+  },
+  {
+    "id": 1100,
+    "date": "2026/05/18",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9701/24 - INTENSIVE: AS Level Structured Questions",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3004",
+      "B3009",
+      "B3010",
+      "B3029"
+    ]
+  },
+  {
+    "id": 1096,
+    "date": "2026/05/18",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "9701/24 - INTENSIVE: AS Level Structured Questions",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3004",
+      "B3009",
+      "B3010",
+      "B3029"
+    ]
+  },
+  {
+    "id": 1112,
+    "date": "2026/05/18",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 3",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3004",
+      "B3009",
+      "B3010",
+      "B3029"
+    ]
+  },
+  {
+    "id": 1114,
+    "date": "2026/05/18",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0606/12 - INTENSIVE: Paper 12 Non-calculator",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2036",
+      "B2042",
+      "B3002",
+      "B3005"
+    ]
+  },
+  {
+    "id": 1272,
+    "date": "2026/05/19",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B4004",
+    "class_name": "G9 AP Chemistry-G",
+    "teacher": "Mr A Furze",
+    "conflicts": [
+      {
+        "room": "B4004",
+        "class": "0625/62 - INTENSIVE: Alternative to Practical 62",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3011",
+      "B3012",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1257,
+    "date": "2026/05/19",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3011",
+      "B3012",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1258,
+    "date": "2026/05/19",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B2044",
+    "class_name": "G9 IG Regular Maths - F",
+    "teacher": "Mr S Yang",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3011",
+      "B3012",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1273,
+    "date": "2026/05/19",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B4004",
+    "class_name": "G9 AP Chemistry-G",
+    "teacher": "Mr A Furze",
+    "conflicts": [
+      {
+        "room": "B4004",
+        "class": "0625/62 - INTENSIVE: Alternative to Practical 62",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B3011",
+      "B3012",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1256,
+    "date": "2026/05/19",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2043",
+    "class_name": "G9 IG Economics 3",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B2043",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3011",
+      "B3012",
+      "B3027",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1254,
+    "date": "2026/05/19",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2041",
+    "class_name": "G9 IG Economics 4",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2041",
+        "class": "9868/NE - G11 Chinese",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3011",
+      "B3012",
+      "B3027",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1264,
+    "date": "2026/05/19",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B3007",
+    "class_name": "G9 IG Biology 2",
+    "teacher": "Ms A Biju",
+    "conflicts": [
+      {
+        "room": "B3007",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3011",
+      "B3012",
+      "B3027",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1259,
+    "date": "2026/05/19",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2044",
+    "class_name": "G9 IG Geography",
+    "teacher": "Mr K Seeley",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9702/24 - AS Level Structured Questions 24",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B3011",
+      "B3012",
+      "B3027",
+      "B3039"
+    ]
+  },
+  {
+    "id": 1424,
+    "date": "2026/05/20",
+    "start": "08:20",
+    "end": "09:00",
+    "current_room": "B2044",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B2043",
+      "B3010",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1425,
+    "date": "2026/05/20",
+    "start": "09:05",
+    "end": "09:45",
+    "current_room": "B2044",
+    "class_name": "G9 pre-IG Economics",
+    "teacher": "Ms k Ding",
+    "conflicts": [
+      {
+        "room": "B2044",
+        "class": "9701/38 - Advanced Practical Skills 38",
+        "time": "08:20-09:45"
+      }
+    ],
+    "suggested_swap": [
+      "B2026",
+      "B2042",
+      "B2043",
+      "B3010",
+      "B3027"
+    ]
+  },
+  {
+    "id": 1430,
+    "date": "2026/05/20",
+    "start": "10:00",
+    "end": "10:40",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0606/22 - Paper 22 Calculator",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2039"
+    ]
+  },
+  {
+    "id": 1431,
+    "date": "2026/05/20",
+    "start": "10:45",
+    "end": "11:25",
+    "current_room": "B3012",
+    "class_name": "G9 pre-IG English",
+    "teacher": "Mr T TT19 EXT,Ms T TT24 Aurora",
+    "conflicts": [
+      {
+        "room": "B3012",
+        "class": "0606/22 - Paper 22 Calculator",
+        "time": "10:00-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2039"
+    ]
+  },
+  {
+    "id": 1419,
+    "date": "2026/05/20",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B1034",
+    "class_name": "G9 IG Economics 5",
+    "teacher": "Mr H Le Roux",
+    "conflicts": [
+      {
+        "room": "B1034",
+        "class": "0478/22 - INTENSIVE: Paper 22 Algorithms, Programm",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2039"
+    ]
+  },
+  {
+    "id": 1421,
+    "date": "2026/05/20",
+    "start": "11:30",
+    "end": "12:10",
+    "current_room": "B2040",
+    "class_name": "G9 IG Economics 6",
+    "teacher": "Ms J Zhou",
+    "conflicts": [
+      {
+        "room": "B2040",
+        "class": "9702/54 - INTENSIVE: Planning, Analysis and Evalua",
+        "time": "08:20-12:10"
+      }
+    ],
+    "suggested_swap": [
+      "B1029",
+      "B2026",
+      "B2036",
+      "B2038",
+      "B2039"
+    ]
+  }
+]
