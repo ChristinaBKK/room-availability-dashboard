@@ -30,6 +30,22 @@
         label { font-size: 14px; font-weight: 500; color: #64748b; }
         select, input { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; background: white; cursor: pointer; }
         select:focus, input:focus { outline: none; border-color: #667eea; }
+
+        /* Room multi-select chip panel */
+        .room-filter-wrap { position: relative; }
+        .room-filter-btn { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; background: white; cursor: pointer; white-space: nowrap; min-width: 130px; }
+        .room-filter-btn:hover, .room-filter-btn.open { border-color: #667eea; }
+        .room-filter-btn .arrow { margin-left: auto; transition: transform 0.2s; }
+        .room-filter-btn.open .arrow { transform: rotate(180deg); }
+        .room-filter-panel { display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 200; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); padding: 12px; min-width: 320px; max-width: 480px; }
+        .room-filter-panel.open { display: block; }
+        .room-chip-group { margin-bottom: 10px; }
+        .room-chip-group-label { font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
+        .room-chip-row { display: flex; flex-wrap: wrap; gap: 5px; }
+        .room-chip { padding: 4px 10px; border-radius: 16px; border: 1.5px solid #cbd5e0; background: white; color: #4a5568; font-size: 12px; cursor: pointer; transition: all 0.12s; white-space: nowrap; }
+        .room-chip:hover { border-color: #667eea; color: #667eea; }
+        .room-chip.active { background: #667eea; color: white; border-color: #667eea; }
+        .room-chip.all-chip { font-weight: 600; }
         
         /* Alert Styles */
         .conflict-alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px 30px; margin: 20px 30px; }
@@ -216,8 +232,14 @@
                 <input type="date" id="scheduleDate" onchange="onScheduleDateChange()">
             </div>
             <div class="control-group">
-                <label for="roomFilter">Room:</label>
-                <select id="roomFilter"><option value="">All Rooms</option></select>
+                <label>Room:</label>
+                <div class="room-filter-wrap" id="roomFilterWrap">
+                    <button class="room-filter-btn" id="roomFilterBtn" type="button">
+                        <span id="roomFilterLabel">All Rooms</span>
+                        <svg class="arrow" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </button>
+                    <div class="room-filter-panel" id="roomFilterPanel"></div>
+                </div>
             </div>
             <button class="refresh-btn" onclick="loadAllData()">Refresh Now</button>
         </div>
@@ -913,7 +935,6 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
         
         function populateFilters() {
             const scheduleDate = document.getElementById('scheduleDate');
-            const roomFilter = document.getElementById('roomFilter');
             const bookingRoom = document.getElementById('bookingRoom');
             const bookingDate = document.getElementById('bookingDate');
             
@@ -928,11 +949,30 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 .map(room => ({ room, display: room }))
                 .sort((a, b) => a.room.localeCompare(b.room));
             
-            // Schedule View: Show B-rooms only, including blocked ones
-            roomFilter.innerHTML = '<option value="">All Rooms</option>' + 
-                bRoomsOnly.map(r => 
-                    `<option value="${r.room}">${r.display}${isRoomBlocked(r.room) ? ' (Blocked)' : ''}</option>`
-                ).join('');
+            // Schedule View: Build chip multi-select grouped by floor
+            selectedRooms = new Set();
+            const groups = {
+                'Seminar': bRoomsOnly.filter(r => r.room.includes('Seminar')),
+                'Floor 1': bRoomsOnly.filter(r => /^B1/.test(r.room)),
+                'Floor 2': bRoomsOnly.filter(r => /^B2/.test(r.room)),
+                'Floor 3': bRoomsOnly.filter(r => /^B3/.test(r.room)),
+                'Floor 4': bRoomsOnly.filter(r => /^B4/.test(r.room)),
+            };
+            const panel = document.getElementById('roomFilterPanel');
+            let html = '<div class="room-chip-group"><div class="room-chip-row">';
+            html += '<button class="room-chip all-chip active" data-room="" type="button">All Rooms</button>';
+            html += '</div></div>';
+            for (const [groupName, rooms] of Object.entries(groups)) {
+                if (!rooms.length) continue;
+                html += `<div class="room-chip-group"><div class="room-chip-group-label">${groupName}</div><div class="room-chip-row">`;
+                rooms.forEach(r => {
+                    const label = r.display + (isRoomBlocked(r.room) ? ' ✕' : '');
+                    html += `<button class="room-chip" data-room="${r.room}" type="button">${label}</button>`;
+                });
+                html += '</div></div>';
+            }
+            panel.innerHTML = html;
+            panel.querySelectorAll('.room-chip').forEach(chip => chip.addEventListener('click', onRoomChipClick));
             
             // Book a Room: Only show available B-rooms (not blocked)
             const availableRooms = bRoomsOnly.filter(r => !isRoomBlocked(r.room));
@@ -1109,7 +1149,7 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
         
         function updateDashboard() {
             const selectedDate = getSelectedDate();
-            const selectedRoom = document.getElementById('roomFilter').value;
+            const selectedRoom = selectedRooms.size > 0 ? [...selectedRooms] : null;
             
             if (!selectedDate) {
                 document.getElementById('roomGrid').innerHTML = '<div class="no-session"><h2>Please select a date</h2></div>';
@@ -1131,7 +1171,7 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
             
             // Normalize dates for comparison
             let filteredSessions = allSessions.filter(s => normalizeDateFormat(s.date) === selectedDate);
-            if (selectedRoom) filteredSessions = filteredSessions.filter(s => s.room === selectedRoom);
+            if (selectedRoom) filteredSessions = filteredSessions.filter(s => selectedRoom.includes(s.room));
             
             // Exam sessions now come from database room_sessions table only
             
@@ -1706,8 +1746,56 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
             event.target.value = '';
         }
         
-        // Room filter listener
-        document.getElementById('roomFilter').addEventListener('change', updateDashboard);
+        // Room filter chip panel toggle
+        let selectedRooms = new Set();
+
+        function onRoomChipClick(e) {
+            const chip = e.currentTarget;
+            const room = chip.dataset.room;
+            const panel = document.getElementById('roomFilterPanel');
+            if (room === '') {
+                // All Rooms
+                selectedRooms.clear();
+                panel.querySelectorAll('.room-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            } else {
+                // Toggle this room
+                panel.querySelector('.all-chip').classList.remove('active');
+                if (selectedRooms.has(room)) {
+                    selectedRooms.delete(room);
+                    chip.classList.remove('active');
+                } else {
+                    selectedRooms.add(room);
+                    chip.classList.add('active');
+                }
+                if (selectedRooms.size === 0) {
+                    panel.querySelector('.all-chip').classList.add('active');
+                }
+            }
+            // Update button label
+            const label = document.getElementById('roomFilterLabel');
+            label.textContent = selectedRooms.size === 0 ? 'All Rooms' :
+                selectedRooms.size === 1 ? [...selectedRooms][0] :
+                `${selectedRooms.size} rooms selected`;
+            updateDashboard();
+        }
+
+        document.getElementById('roomFilterBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const btn = this;
+            const panel = document.getElementById('roomFilterPanel');
+            const isOpen = panel.classList.contains('open');
+            panel.classList.toggle('open', !isOpen);
+            btn.classList.toggle('open', !isOpen);
+        });
+
+        document.addEventListener('click', function(e) {
+            const wrap = document.getElementById('roomFilterWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('roomFilterPanel').classList.remove('open');
+                document.getElementById('roomFilterBtn').classList.remove('open');
+            }
+        });
     </script>
 
 <style>
