@@ -34,21 +34,22 @@
         /* Alert Styles */
         .conflict-alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px 30px; margin: 20px 30px; }
         .conflict-alert h3 { color: #dc2626; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .conflict-item { background: white; border-radius: 6px; padding: 12px 15px; margin-bottom: 8px; border-left: 4px solid #ef4444; }
-        .conflict-item:last-child { margin-bottom: 0; }
+        .conflict-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .conflict-item { background: white; border-radius: 6px; padding: 10px 14px; border-left: 4px solid #ef4444; flex: 1 1 280px; min-width: 220px; }
         .conflict-item .room { font-weight: 600; color: #dc2626; }
         .conflict-item .details { font-size: 13px; color: #64748b; margin-top: 4px; }
         
         .exam-alert { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 15px 30px; margin: 20px 30px; }
         .exam-alert h3 { color: #b45309; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .exam-item { background: white; border-radius: 6px; padding: 12px 15px; margin-bottom: 8px; border-left: 4px solid #f59e0b; }
-        .exam-item:last-child { margin-bottom: 0; }
+        .notice-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .exam-item { background: white; border-radius: 6px; padding: 10px 14px; border-left: 4px solid #f59e0b; flex: 1 1 280px; min-width: 220px; }
         .exam-item .room { font-weight: 600; color: #b45309; }
         .exam-item .details { font-size: 13px; color: #64748b; margin-top: 4px; }
         
         .content { padding: 20px 30px; }
         .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .tag-protection { background: #fef3c7; color: #92400e; }
+        .exam-protection-banner { padding: 10px 15px; border-top: 1px solid #fde68a; background: #fffbeb; }
         .room-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
         .room-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
         .room-card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
@@ -231,7 +232,20 @@
                     </svg>
                     Room Booking Conflicts Detected
                 </h3>
-                <div id="conflictList"></div>
+                <div class="conflict-list" id="conflictList"></div>
+            </div>
+        </div>
+        <div id="noticeSection" style="display: none;">
+            <div class="exam-alert">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Special Attention
+                </h3>
+                <div class="notice-list" id="noticeList"></div>
             </div>
         </div>
         
@@ -800,15 +814,12 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                     // Check if teacher is EXAM (from schedule table - actual exam data)
                     const teacherVal = item.teacher || item.Teacher || '';
                     const isExamFromSchedule = teacherVal.toUpperCase() === 'EXAM';
-                    // Check if this is an EXAM session - "EXAM:" OR "IBDP" prefix in class_name
-                    const hasExamPrefix = component.toUpperCase().startsWith('EXAM:') || component.toUpperCase().startsWith('IBDP');
-                    
-                    if (isExamFromSchedule || hasExamPrefix) {
+                    // Exam detection: rely on teacher === 'EXAM' from the schedule table
+                    if (isExamFromSchedule) {
                         isExam = true;
+                        // Strip literal "EXAM:" prefix from class_name if present
                         if (component.toUpperCase().startsWith('EXAM:')) {
                             component = component.substring(5).trim();
-                        } else if (component.toUpperCase().startsWith('IBDP')) {
-                            component = component.substring(4).trim();
                         }
                     }
                     return {
@@ -852,10 +863,20 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 });
                 
                 // Now mark sessions as protection if they fall on a protection date
+                // Only mark non-exam sessions — real exam sessions should show as "Exam", not "Exam Protection"
                 allScheduleData.forEach(s => {
-                    if (protectionDates.has(s.room) && protectionDates.get(s.room).has(normalizeDateFormat(s.date))) {
+                    if (!s.isExam && protectionDates.has(s.room) && protectionDates.get(s.room).has(normalizeDateFormat(s.date))) {
                         s.isExamProtection = true;
                     }
+                });
+
+                // Deduplicate: remove sessions with identical room+date+start+end+component (from overlapping tables)
+                const seen = new Set();
+                allScheduleData = allScheduleData.filter(s => {
+                    const key = `${s.room}|${normalizeDateFormat(s.date)}|${s.start}|${s.end}|${s.component}`;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
                 });
                 
                 allBookingsData = (bookingsData || []).map(item => ({
@@ -954,8 +975,13 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
             return hours * 60 + minutes;
         }
         
+        function isIBDPExam(s) {
+            return s.isExam && (s.component || '').toUpperCase().startsWith('IBDP');
+        }
+
         function detectConflicts(sessions) {
             const conflicts = [];
+            const notices = [];
             const roomSessions = {};
             sessions.forEach(session => {
                 if (!roomSessions[session.room]) roomSessions[session.room] = [];
@@ -984,13 +1010,21 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                             const s2Start = parseTime(s2.start);
                             const s2End = parseTime(s2.end);
                             if (s1Start < s2End && s1End > s2Start) {
-                                conflicts.push({ room, sessions: [s1, s2] });
+                                // Multiple IBDP exams in same room: fine, skip entirely
+                                if (isIBDPExam(s1) && isIBDPExam(s2)) continue;
+                                // Same teacher: note as special attention, not a conflict
+                                const sameTeacher = s1.teacher && s2.teacher && s1.teacher === s2.teacher;
+                                if (sameTeacher) {
+                                    notices.push({ room, sessions: [s1, s2] });
+                                } else {
+                                    conflicts.push({ room, sessions: [s1, s2] });
+                                }
                             }
                         }
                     }
                 }
             }
-            return conflicts;
+            return { conflicts, notices };
         }
         
         // Get selected date in YYYY/MM/DD format (internal use)
@@ -1101,20 +1135,34 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
             
             // Exam sessions now come from database room_sessions table only
             
-            const conflicts = detectConflicts(allSessions);
+            const { conflicts, notices } = detectConflicts(allSessions);
             const selectedDateConflicts = conflicts.filter(c => normalizeDateFormat(c.sessions[0].date) === selectedDate);
-            
+            const selectedDateNotices = notices.filter(n => normalizeDateFormat(n.sessions[0].date) === selectedDate);
+
             const conflictSection = document.getElementById('conflictSection');
             if (selectedDateConflicts.length > 0) {
                 conflictSection.style.display = 'block';
                 document.getElementById('conflictList').innerHTML = selectedDateConflicts.map(c => `
                     <div class="conflict-item">
                         <div class="room">${c.room} (${c.sessions[0].start}-${c.sessions[0].end})</div>
-                        <div class="details">${c.sessions.map(s => `${s.teacher}: ${s.component}`).join('<br>')}</div>
+                        <div class="details">${c.sessions.map(s => s.teacher ? `${s.teacher}: ${s.component}` : s.component).join('<br>')}</div>
                     </div>
                 `).join('');
             } else {
                 conflictSection.style.display = 'none';
+            }
+
+            const noticeSection = document.getElementById('noticeSection');
+            if (selectedDateNotices.length > 0) {
+                noticeSection.style.display = 'block';
+                document.getElementById('noticeList').innerHTML = selectedDateNotices.map(n => `
+                    <div class="exam-item">
+                        <div class="room">${n.room} (${n.sessions[0].start}-${n.sessions[0].end})</div>
+                        <div class="details">${n.sessions.map(s => s.teacher ? `${s.teacher}: ${s.component}` : s.component).join('<br>')}</div>
+                    </div>
+                `).join('');
+            } else {
+                noticeSection.style.display = 'none';
             }
             
             const roomSessions = {};
@@ -1139,6 +1187,9 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
             document.getElementById('availableRooms').textContent = bRooms - usedBRooms;
             document.getElementById('conflictCount').textContent = selectedDateConflicts.length;
             document.getElementById('conflictCount').style.color = selectedDateConflicts.length > 0 ? '#ef4444' : '#667eea';
+            // Update notices badge if it exists
+            const noticesBadge = document.getElementById('noticesCount');
+            if (noticesBadge) { noticesBadge.textContent = selectedDateNotices.length; noticesBadge.style.color = selectedDateNotices.length > 0 ? '#f59e0b' : '#667eea'; }
             
             const roomGrid = document.getElementById('roomGrid');
             // Only show B-rooms in the grid
@@ -1172,13 +1223,9 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                             <div class="room-card-body">
                                 ${sessions.map(s => {
                                     const isExam = s.isExam || false;
-                                    const isExamProtection = s.isExamProtection || false;
-                                    // Determine what tags to show
                                     let examTag = '';
-                                    if (isExam && !isExamProtection) {
+                                    if (isExam && !(s.isExamProtection || false)) {
                                         examTag = '<span class="tag tag-exam">Exam</span>';
-                                    } else if (isExamProtection) {
-                                        examTag = '<span class="tag tag-protection">Exam Protection</span>';
                                     }
                                     return `
                                     <div class="session-item">
@@ -1187,6 +1234,22 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                                         <div class="meta">${s.teacher ? `<span class="tag tag-general">${s.teacher}</span>` : ''}</div>
                                     </div>
                                 `}).join('')}
+                                ${hasExamProtection ? (() => {
+                                    const [yr, mo, dy] = selectedDate.split('/').map(Number);
+                                    const tomorrow = new Date(yr, mo - 1, dy);
+                                    tomorrow.setDate(tomorrow.getDate() + 1);
+                                    const tomorrowStr = `${tomorrow.getFullYear()}/${String(tomorrow.getMonth() + 1).padStart(2, '0')}/${String(tomorrow.getDate()).padStart(2, '0')}`;
+                                    const examSession = allScheduleData.find(es =>
+                                        normalizeRoom(es.room) === normalizeRoom(room) &&
+                                        normalizeDateFormat(es.date) === tomorrowStr &&
+                                        es.isExam
+                                    );
+                                    if (examSession) {
+                                        const examTime = examSession.start && examSession.end ? ` (${examSession.start}–${examSession.end})` : '';
+                                        return `<div class="exam-protection-banner"><span class="tag tag-protection">Exam tomorrow: ${examSession.component}${examTime}</span></div>`;
+                                    }
+                                    return `<div class="exam-protection-banner"><span class="tag tag-protection">Exam tomorrow</span></div>`;
+                                })() : ''}
                             </div>
                         </div>
                     `}).join('');
@@ -1649,16 +1712,6 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
 
 <style>
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
 .inland-security-footer {
   position: fixed;
   z-index: 10;
@@ -1794,44 +1847,7 @@ body {
 }
 
 </style>
-<div class="inland-security-footer">
-  <div class="tooltip-container">
-    <div class="trigger-content">
-      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
-        <span>© 2026 MiniMax</span>
-      </a>
-    </div>
-    <div class="tooltip-content">
-      <section class="info-section">
-        <span>上海稀宇科技有限公司</span>
-      </section>
 
-      <section class="info-section">
-        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
-          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
-          <span class="underline-text">沪公网安备31010402010179号</span>
-        </a>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
-          沪ICP备2023003282号-38
-        </a>
-      </section>
-
-      <section class="info-section">
-        <span>模型名称：MiniMax</span>
-        <span>备案号：Shanghai-MiniMax-202505230046</span>
-      </section>
-
-      <section class="info-section">
-        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
-          用户协议
-        </a>
-        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
-          隐私政策
-        </a>
-      </section>
-    </div>
-  </div>
-</div>
 
 
 <script>
@@ -2311,20 +2327,7 @@ body {
 </script>
 <style>
 #minimax-floating-ball {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 12px;
-  background: #222222;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  color: #F8F8F8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  z-index: 9999;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  cursor: pointer;
+  display: none !important;
 }
 
 #minimax-floating-ball:hover {
