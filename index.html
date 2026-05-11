@@ -163,6 +163,8 @@
         .btn-export:hover { background: #059669; }
         .btn-import { background: #6366f1; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
         .btn-import:hover { background: #4f46e5; }
+        .btn-template { background: white; color: #6366f1; border: 1.5px solid #6366f1; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-template:hover { background: #eff6ff; }
         .file-input { display: none; }
         .storage-note { font-size: 12px; color: #94a3b8; margin-top: 10px; }
         
@@ -182,6 +184,8 @@
         .info-text strong { display: block; color: #334155; }
         .info-text span { font-size: 12px; color: #64748b; }
     </style>
+    <!-- SheetJS for Excel/CSV import -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="header">
@@ -356,11 +360,12 @@
             <div class="bookings-list" id="bookingsList"></div>
             <div class="booking-section" style="margin-top: 20px;">
                 <h2>Backup & Restore</h2>
-                <p class="storage-note">Export or import bookings for backup. Data is also saved to the shared database.</p>
+                <p class="storage-note">Export or import bookings for backup. Data is also saved to the shared database.<br>Supported import formats: <strong>.json</strong>, <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong> — see <em>bookings_import_template.csv</em> for the expected column layout.</p>
                 <div class="backup-section">
                     <button class="btn-export" onclick="exportBookings()">Export Bookings (.json)</button>
                     <button class="btn-import" onclick="document.getElementById('importFile').click()">Import Bookings</button>
-                    <input type="file" id="importFile" class="file-input" accept=".json" onchange="importBookings(event)">
+                    <a class="btn-template" href="bookings_import_template.csv" download>&#8659; Download Template</a>
+                    <input type="file" id="importFile" class="file-input" accept=".json,.xlsx,.xls,.csv" onchange="importBookings(event)">
                 </div>
             </div>
         </div>
@@ -424,6 +429,20 @@
         </div>
     </div>
     
+    <!-- Import Report Modal -->
+    <div class="modal" id="importReportModal">
+        <div class="modal-content" style="max-width:640px;width:94%;">
+            <div class="modal-header">
+                <h3>Import Report</h3>
+                <button class="modal-close" onclick="document.getElementById('importReportModal').classList.remove('show')">&times;</button>
+            </div>
+            <div class="modal-body" id="importReportBody" style="max-height:420px;overflow-y:auto;"></div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="document.getElementById('importReportModal').classList.remove('show')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirmation Modal -->
     <div class="modal" id="confirmModal">
         <div class="modal-content">
@@ -1709,41 +1728,234 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
         function importBookings(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (!Array.isArray(imported)) throw new Error('Invalid format');
-                    
-                    // Transform and insert
-                    const validBookings = imported.filter(b => b.room && b.date && b.start && b.end);
-                    if (validBookings.length === 0) {
-                        showAlert('No valid bookings found in file', 'error');
-                        return;
-                    }
-                    
-                    const records = validBookings.map(b => ({
-                        room: normalizeRoom(b.room),
-                        date: b.date,
-                        start_time: b.start,
-                        end_time: b.end,
-                        title: b.title || 'Imported',
-                        teacher: b.teacher || 'Unknown'
-                    }));
-                    
-                    for (const record of records) {
-                        await createBookingToDb(record);
-                    }
-                    
-                    showAlert(`Imported ${validBookings.length} booking(s)!`, 'success');
-                    loadAllData();
-                } catch (err) {
-                    showAlert('Failed to import: ' + err.message, 'error');
-                }
-            };
-            reader.readAsText(file);
+
+            const ext = file.name.split('.').pop().toLowerCase();
             event.target.value = '';
+
+            if (ext === 'json') {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (!Array.isArray(imported)) throw new Error('Invalid format - file must contain a JSON array');
+                        await processImportedBookings(imported);
+                    } catch (err) {
+                        showAlert('Failed to import: ' + err.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+
+            } else if (ext === 'xlsx' || ext === 'xls' || ext === 'csv') {
+                if (typeof XLSX === 'undefined') {
+                    showAlert('Excel parser not loaded yet - please wait a moment and try again', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+                        const imported = rows.map(row => {
+                            // Normalise keys: lowercase, trim, collapse spaces → underscore
+                            const norm = {};
+                            for (const k of Object.keys(row)) {
+                                norm[k.toLowerCase().trim().replace(/\s+/g, '_')] = row[k];
+                            }
+
+                            // Date: Excel Date object or string → YYYY/MM/DD
+                            let date = norm['date'] || '';
+                            if (date instanceof Date) {
+                                date = `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`;
+                            } else {
+                                date = String(date).trim().replace(/-/g, '/');
+                            }
+
+                            // Time: Excel Date object or string → HH:MM
+                            const toTime = v => {
+                                if (v instanceof Date) return `${String(v.getHours()).padStart(2,'0')}:${String(v.getMinutes()).padStart(2,'0')}`;
+                                return String(v || '').trim();
+                            };
+
+                            return {
+                                room:    String(norm['room'] || '').trim(),
+                                date,
+                                start:   toTime(norm['start'] || norm['start_time'] || ''),
+                                end:     toTime(norm['end']   || norm['end_time']   || ''),
+                                title:   String(norm['title'] || norm['booking_title'] || '').trim(),
+                                teacher: String(norm['teacher'] || norm['your_name'] || norm['name'] || '').trim()
+                            };
+                        });
+
+                        await processImportedBookings(imported);
+                    } catch (err) {
+                        showAlert('Failed to import: ' + err.message, 'error');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+
+            } else {
+                showAlert('Unsupported file type. Please use .json, .xlsx, .xls, or .csv', 'error');
+            }
+        }
+
+        async function processImportedBookings(imported) {
+            if (!Array.isArray(imported) || imported.length === 0) {
+                showAlert('No rows found in file.', 'error');
+                return;
+            }
+
+            const succeeded = [];
+            const failed    = [];
+
+            // Build a session pool from existing DB data so we can detect conflicts.
+            // We also grow this pool with each successfully imported row in this batch.
+            const sessionPool = [
+                ...allScheduleData.map(s => ({ room: s.room, date: normalizeDateFormat(s.date), start: s.start, end: s.end })),
+                ...allBookingsData.map(b => ({ room: b.room, date: normalizeDateFormat(b.date), start: b.start, end: b.end }))
+            ];
+
+            for (let i = 0; i < imported.length; i++) {
+                const b   = imported[i];
+                const row = i + 2; // row 1 = header, so data starts at row 2
+
+                // ── Validation ────────────────────────────────────────────
+                const reasons = [];
+
+                if (!b.room || !String(b.room).trim())
+                    reasons.push('missing <strong>room</strong>');
+                if (!b.date || !String(b.date).trim())
+                    reasons.push('missing <strong>date</strong>');
+                if (!b.start || !String(b.start).trim())
+                    reasons.push('missing <strong>start</strong> time');
+                if (!b.end || !String(b.end).trim())
+                    reasons.push('missing <strong>end</strong> time');
+                if (!b.title || !String(b.title).trim())
+                    reasons.push('missing <strong>title</strong>');
+                if (!b.teacher || !String(b.teacher).trim())
+                    reasons.push('missing <strong>teacher</strong>');
+
+                const normalised = normalizeRoom(b.room || '');
+                if (b.room && isRoomBlocked(normalised))
+                    reasons.push(`room <strong>${normalised}</strong> is blocked from booking`);
+
+                if (b.start && b.end && b.start >= b.end)
+                    reasons.push('start time is not before end time');
+
+                // ── Conflict check against existing + already-imported rows ──
+                if (reasons.length === 0 && b.room && b.date && b.start && b.end) {
+                    const bDate  = normalizeDateFormat(String(b.date));
+                    const bStart = parseTime(String(b.start));
+                    const bEnd   = parseTime(String(b.end));
+                    const clash  = sessionPool.find(s =>
+                        s.room === normalised &&
+                        normalizeDateFormat(s.date) === bDate &&
+                        bStart < parseTime(s.end) &&
+                        bEnd   > parseTime(s.start)
+                    );
+                    if (clash) {
+                        reasons.push(`room <strong>${normalised}</strong> already has a booking or class on ${bDate} at ${clash.start}–${clash.end}`);
+                    }
+                }
+
+                if (reasons.length > 0) {
+                    failed.push({ row, data: b, reasons });
+                    continue;
+                }
+
+                // ── Insert ────────────────────────────────────────────────
+                const record = {
+                    room:       normalised,
+                    date:       b.date,
+                    start_time: b.start,
+                    end_time:   b.end,
+                    title:      String(b.title).trim(),
+                    teacher:    String(b.teacher).trim()
+                };
+
+                try {
+                    await createBookingToDb(record);
+                    succeeded.push({ row, record });
+                    // Add to pool so later rows in this batch detect the conflict too
+                    sessionPool.push({ room: normalised, date: normalizeDateFormat(b.date), start: b.start, end: b.end });
+                } catch (err) {
+                    failed.push({ row, data: b, reasons: [err.message || 'Database error'] });
+                }
+            }
+
+            // ── Reload live data ──────────────────────────────────────────
+            if (succeeded.length > 0) loadAllData();
+
+            // ── Build & show report modal ─────────────────────────────────
+            let html = '';
+
+            // Summary bar
+            const total = imported.length;
+            const okCol  = succeeded.length > 0 ? '#16a34a' : '#64748b';
+            const failCol = failed.length   > 0 ? '#dc2626' : '#64748b';
+            html += `<div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;text-align:center;">
+                    <div style="font-size:28px;font-weight:700;color:${okCol};">${succeeded.length}</div>
+                    <div style="font-size:12px;color:#475569;">Imported successfully</div>
+                </div>
+                <div style="flex:1;min-width:120px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;text-align:center;">
+                    <div style="font-size:28px;font-weight:700;color:${failCol};">${failed.length}</div>
+                    <div style="font-size:12px;color:#475569;">Failed / skipped</div>
+                </div>
+                <div style="flex:1;min-width:120px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;text-align:center;">
+                    <div style="font-size:28px;font-weight:700;color:#334155;">${total}</div>
+                    <div style="font-size:12px;color:#475569;">Total rows</div>
+                </div>
+            </div>`;
+
+            // Failed rows detail
+            if (failed.length > 0) {
+                html += `<div style="font-weight:600;color:#dc2626;margin-bottom:8px;">&#9888; Failed rows</div>`;
+                html += `<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+                    <thead><tr>
+                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;width:55px;">Row</th>
+                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;width:90px;">Room</th>
+                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;width:100px;">Date</th>
+                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;">Reason(s)</th>
+                    </tr></thead><tbody>`;
+                failed.forEach(f => {
+                    html += `<tr>
+                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;color:#64748b;">${f.row}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;">${f.data.room || '<em style="color:#94a3b8">—</em>'}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;">${f.data.date || '<em style="color:#94a3b8">—</em>'}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;color:#dc2626;">${f.reasons.join('; ')}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+            }
+
+            // Succeeded rows summary
+            if (succeeded.length > 0) {
+                html += `<div style="font-weight:600;color:#16a34a;margin-bottom:8px;">&#10003; Successfully imported</div>`;
+                html += `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+                    <thead><tr>
+                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;width:55px;">Row</th>
+                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;width:80px;">Room</th>
+                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;width:100px;">Date</th>
+                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;">Title</th>
+                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;">Time</th>
+                    </tr></thead><tbody>`;
+                succeeded.forEach(s => {
+                    html += `<tr>
+                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;color:#64748b;">${s.row}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.room}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.date}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.title}</td>
+                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.start_time}–${s.record.end_time}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+            }
+
+            document.getElementById('importReportBody').innerHTML = html;
+            document.getElementById('importReportModal').classList.add('show');
         }
         
         // Room filter chip panel toggle

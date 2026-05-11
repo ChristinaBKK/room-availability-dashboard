@@ -127,13 +127,48 @@
 
   <!-- TAB 3: ALL BOOKINGS -->
   <h2><span class="icon" style="background:#fdf4ff;">📋</span> Tab 3 — All Bookings</h2>
-  <p>A full list of every ad-hoc booking in the system (not regular lessons or exams). Use this to review or delete bookings.</p>
+  <p>A full list of every ad-hoc booking in the system (not regular lessons or exams). Use this to review, delete, or bulk-import bookings.</p>
   <div class="card">
     <ul>
       <li>Bookings are listed in chronological order.</li>
       <li>Click the <strong>Delete</strong> button next to any booking to remove it. This is immediate and cannot be undone.</li>
     </ul>
   </div>
+
+  <h3>Backup &amp; Restore</h3>
+  <div class="card">
+    <table>
+      <tr><th style="width:160px">Button</th><th>What it does</th></tr>
+      <tr><td><strong>Export Bookings</strong></td><td>Downloads all current bookings as a <code>.json</code> file — useful as a backup or to share a snapshot.</td></tr>
+      <tr><td><strong>Import Bookings</strong></td><td>Uploads bookings in bulk from a file. Supported formats: <code>.json</code>, <code>.xlsx</code>, <code>.xls</code>, <code>.csv</code>. Each row is inserted into the live database and becomes visible to everyone immediately.</td></tr>
+    </table>
+  </div>
+
+  <h3>How to import bookings in bulk</h3>
+  <div class="card">
+    <div class="step"><div class="step-num">1</div><div class="step-body">Download the template: <a href="bookings_import_template.csv" download style="color:#667eea;font-weight:600;">bookings_import_template.csv</a> — then open it in Excel or Google Sheets.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body">Fill in one row per booking. The six columns are described in the table below.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body">Save the file — keep it as <code>.csv</code>, or save as <code>.xlsx</code> if you prefer Excel format.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body">In the dashboard, go to the <strong>All Bookings</strong> tab and click <strong>Import Bookings</strong>.</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-body">Select your file. The dashboard will import every valid row and display an <strong>Import Report</strong> showing how many rows succeeded, which rows failed, and why.</div></div>
+    <div class="note">If a row is missing <em>room</em>, <em>date</em>, <em>start</em>, or <em>end</em> it is rejected with a reason shown in the report. All other valid rows are still imported.</div>
+  </div>
+
+  <h3>Import file columns</h3>
+  <div class="card">
+    <table>
+      <tr><th style="width:110px">Column</th><th style="width:120px">Required?</th><th>Format &amp; notes</th></tr>
+      <tr><td><code>room</code></td><td><span class="badge badge-red">Required</span></td><td>Room code, e.g. <code>B2036</code>. Must be a bookable room (not blocked).</td></tr>
+      <tr><td><code>date</code></td><td><span class="badge badge-red">Required</span></td><td><code>YYYY/MM/DD</code> or <code>YYYY-MM-DD</code>, e.g. <code>2026/05/15</code>. Excel Date cells are also accepted.</td></tr>
+      <tr><td><code>start</code></td><td><span class="badge badge-red">Required</span></td><td>24-hour time, e.g. <code>09:00</code>. Excel Time cells are also accepted.</td></tr>
+      <tr><td><code>end</code></td><td><span class="badge badge-red">Required</span></td><td>24-hour time, e.g. <code>10:30</code>. Must be after <em>start</em>.</td></tr>
+      <tr><td><code>title</code></td><td><span class="badge badge-red">Required</span></td><td>Description of the booking, e.g. <em>Math Revision</em>.</td></tr>
+      <tr><td><code>teacher</code></td><td><span class="badge badge-red">Required</span></td><td>Name of the person making the booking.</td></tr>
+    </table>
+    <div class="note" style="margin-top:12px">Column header names are case-insensitive and spaces are ignored, so <code>Start Time</code>, <code>start_time</code>, and <code>start</code> are all treated the same.</div>
+  </div>
+
+  <div class="warn">Bulk import checks for room conflicts. If a row's room, date, and time overlap with an existing lesson, exam, booking, or another row earlier in the same file, that row is <strong>rejected</strong> and appears in the Failed section of the Import Report with the conflicting time slot shown. Fix the conflict and re-import only the failed rows.</div>
 
   <hr class="divider">
 
@@ -169,6 +204,8 @@
       <tr><td>Cancel a booking I made</td><td><strong>All Bookings</strong> tab → Delete.</td></tr>
       <tr><td>See which rooms have exams tomorrow</td><td>Schedule View → rooms with a yellow <em>Exam Protection</em> banner.</td></tr>
       <tr><td>Get the latest data</td><td>Click <strong>Refresh Now</strong> or enable <strong>Auto-refresh</strong>.</td></tr>
+      <tr><td>Import many bookings at once</td><td><strong>All Bookings</strong> tab → Import Bookings → select a <code>.xlsx</code>, <code>.csv</code>, or <code>.json</code> file. Use <em>bookings_import_template.csv</em> as your starting point.</td></tr>
+      <tr><td>Back up all current bookings</td><td><strong>All Bookings</strong> tab → Export Bookings.</td></tr>
     </table>
   </div>
 
