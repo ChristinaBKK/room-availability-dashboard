@@ -129,12 +129,59 @@
         /* Bookings List */
         .bookings-list { margin-top: 30px; }
         .bookings-list h3 { font-size: 18px; margin-bottom: 15px; }
-        .booking-entry { background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #10b981; }
-        .booking-entry .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .booking-entry .room { font-weight: 600; color: #10b981; }
-        .booking-entry .actions { display: flex; gap: 10px; }
+        .booking-date-group { margin-bottom: 22px; }
+        .booking-date-heading { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 14px; border-radius: 999px; background: #e0f2fe; color: #0f172a; font-size: 14px; font-weight: 700; }
+        .booking-date-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+        .booking-entry { background: white; border-radius: 10px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #10b981; min-width: 0; }
+        .booking-entry-header { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+        .booking-entry .room { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 999px; background: #dcfce7; color: #14532d; font-weight: 700; letter-spacing: 0.01em; }
+        .booking-entry .title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+        .booking-entry .time { font-size: 12px; color: #334155; font-weight: 600; }
+        .booking-entry .actions { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
         .booking-entry .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .booking-entry .details { font-size: 13px; color: #64748b; }
+        .booking-entry .details { font-size: 12px; color: #64748b; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+        .booking-entry .detail-item { white-space: normal; overflow-wrap: anywhere; }
+
+        .scroll-top-btn {
+            position: fixed;
+            right: 24px;
+            bottom: 110px;
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%);
+            color: white;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.24);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 999;
+        }
+        .scroll-top-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .scroll-top-btn:hover {
+            transform: translateY(-2px);
+        }
+        .scroll-top-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        @media (max-width: 768px) {
+            .booking-date-items { grid-template-columns: 1fr; }
+            .booking-entry-header { flex-direction: column; }
+            .booking-entry .details { flex-direction: column; gap: 6px; }
+            .scroll-top-btn { right: 16px; bottom: 100px; }
+        }
         
         /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
@@ -370,6 +417,13 @@
             </div>
         </div>
     </div>
+
+    <button class="scroll-top-btn" id="scrollTopBtn" type="button" aria-label="Go to top" title="Go to top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 19V5"></path>
+            <path d="m5 12 7-7 7 7"></path>
+        </svg>
+    </button>
     
     <!-- Info Tab -->
     <div id="info-tab" class="tab-content">
@@ -495,7 +549,7 @@
         let autoRefreshInterval = null;
         
         // Rooms blocked from booking (not regular rooms for user booking)
-        const BLOCKED_ROOMS = ['TEST', 'E1011', 'B1011', 'B2003', 'B2004', 'B2005', 'B2026', 'B2014', 'B2022', 'B1037', 'B4043', 'B4042', 'B4041', 'B4040', 'B4038', 'B4039'];
+        const BLOCKED_ROOMS = ['TEST', 'E1011', 'B1011', 'B2003', 'B2004', 'B2005', 'B2026', 'B2014', 'B2022', 'B1037', 'B2038', 'B4043', 'B4042', 'B4041', 'B4040', 'B4038', 'B4039'];
         
         // Room aliases (same room different names - convert all to B### format)
         const ROOM_ALIASES = {
@@ -540,7 +594,113 @@ CREATE TABLE bookings (
 -- Enable RLS
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "bookings_read" ON bookings FOR SELECT USING (true);
-CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
+CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);
+
+-- Normalize room aliases so the trigger treats the same physical room identically
+CREATE OR REPLACE FUNCTION normalize_booking_room(input_room TEXT)
+RETURNS TEXT
+LANGUAGE SQL
+IMMUTABLE
+AS $$
+    SELECT CASE UPPER(BTRIM(input_room))
+        WHEN 'MEETING ROOM' THEN 'B2036'
+        WHEN 'TOEFL TESTING ICT LAB' THEN 'B1037'
+        ELSE UPPER(BTRIM(input_room))
+    END;
+$$;
+
+-- Reject any booking that overlaps an existing booking, class, or exam in the same room
+CREATE OR REPLACE FUNCTION prevent_booking_overlap()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    new_room TEXT;
+    new_date DATE;
+    new_start TIME;
+    new_end TIME;
+    conflict_record RECORD;
+BEGIN
+    new_room := normalize_booking_room(NEW.room);
+    new_date := REPLACE(BTRIM(NEW.date), '/', '-')::DATE;
+    new_start := BTRIM(NEW.start_time)::TIME;
+    new_end := BTRIM(NEW.end_time)::TIME;
+
+    -- Serialize competing writes for the same physical room and date.
+    PERFORM pg_advisory_xact_lock(hashtextextended(new_room || '|' || new_date::TEXT, 0));
+
+    IF new_start >= new_end THEN
+        RAISE EXCEPTION 'Booking end_time must be after start_time';
+    END IF;
+
+    SELECT src, room, date, start_time, end_time
+    INTO conflict_record
+    FROM (
+        SELECT
+            'bookings'::TEXT AS src,
+            b.room,
+            b.date,
+            b.start_time,
+            b.end_time
+        FROM bookings b
+        WHERE b.id IS DISTINCT FROM NEW.id
+          AND normalize_booking_room(b.room) = new_room
+          AND REPLACE(BTRIM(b.date), '/', '-')::DATE = new_date
+          AND BTRIM(b.start_time)::TIME < new_end
+          AND BTRIM(b.end_time)::TIME > new_start
+
+        UNION ALL
+
+        SELECT
+            'room_sessions'::TEXT AS src,
+            rs.room,
+            rs.date,
+            rs.start_time,
+            rs.end_time
+        FROM room_sessions rs
+        WHERE normalize_booking_room(rs.room) = new_room
+          AND REPLACE(BTRIM(rs.date), '/', '-')::DATE = new_date
+          AND BTRIM(rs.start_time)::TIME < new_end
+          AND BTRIM(rs.end_time)::TIME > new_start
+
+        UNION ALL
+
+        SELECT
+            'schedule'::TEXT AS src,
+            s.room,
+            s.date,
+            s.start_time,
+            s.end_time
+        FROM schedule s
+        WHERE normalize_booking_room(s.room) = new_room
+          AND REPLACE(BTRIM(s.date), '/', '-')::DATE = new_date
+          AND BTRIM(s.start_time)::TIME < new_end
+          AND BTRIM(s.end_time)::TIME > new_start
+    ) conflicts
+    LIMIT 1;
+
+    IF FOUND THEN
+        RAISE EXCEPTION 'Booking overlaps existing % entry for room % on % at %-%',
+            conflict_record.src,
+            new_room,
+            TO_CHAR(new_date, 'YYYY-MM-DD'),
+            conflict_record.start_time,
+            conflict_record.end_time;
+    END IF;
+
+    NEW.room := new_room;
+    NEW.date := TO_CHAR(new_date, 'YYYY/MM/DD');
+    NEW.start_time := TO_CHAR(new_start, 'HH24:MI');
+    NEW.end_time := TO_CHAR(new_end, 'HH24:MI');
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS bookings_prevent_overlap ON bookings;
+CREATE TRIGGER bookings_prevent_overlap
+BEFORE INSERT OR UPDATE ON bookings
+FOR EACH ROW
+EXECUTE FUNCTION prevent_booking_overlap();`;
 
         // Initialize
         initApp();
@@ -1019,19 +1179,57 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
             return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
         }
         
-        // Parse date string to YYYY/MM/DD format (for comparison)
+        // Parse date string to stable YYYY/MM/DD format (for comparison)
         function normalizeDateFormat(dateStr) {
-            if (dateStr.includes('/')) return dateStr; // Already YYYY/MM/DD
-            if (dateStr.includes('-')) {
-                const parts = dateStr.split('-');
-                return `${parts[0]}/${parts[1]}/${parts[2]}`;
-            }
-            return dateStr;
+            if (!dateStr) return '';
+            const raw = String(dateStr).trim();
+            if (!raw) return '';
+
+            const parts = raw.includes('/') ? raw.split('/') : raw.includes('-') ? raw.split('-') : null;
+            if (!parts || parts.length !== 3) return raw;
+
+            const [y, m, d] = parts;
+            return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+        }
+
+        function getDateVariants(dateStr) {
+            const raw = String(dateStr || '').trim();
+            const normalized = normalizeDateFormat(dateStr);
+            if (!normalized && !raw) return [];
+            const variants = new Set([
+                normalized,
+                normalized ? normalized.replace(/\//g, '-') : '',
+                raw,
+                raw ? raw.replace(/\//g, '-') : '',
+                raw ? raw.replace(/-/g, '/') : ''
+            ].filter(Boolean));
+            return [...variants];
         }
         
         function parseTime(time) {
             const [hours, minutes] = time.split(':').map(Number);
             return hours * 60 + minutes;
+        }
+
+        function hasRoomTimeConflict(room, date, start, end, extraSessions = []) {
+            const normalizedRoom = normalizeRoom(room || '');
+            const normalizedDate = normalizeDateFormat(date || '');
+            if (!normalizedRoom || !normalizedDate || !start || !end) return false;
+
+            const candidateStart = parseTime(start);
+            const candidateEnd = parseTime(end);
+            const allSessions = [
+                ...allScheduleData,
+                ...allBookingsData.map(b => ({ date: b.date, start: b.start, end: b.end, room: b.room })),
+                ...extraSessions
+            ];
+
+            return allSessions.some(s =>
+                normalizeRoom(s.room || '') === normalizedRoom &&
+                normalizeDateFormat(s.date || '') === normalizedDate &&
+                candidateStart < parseTime(s.end) &&
+                candidateEnd > parseTime(s.start)
+            );
         }
         
         function isIBDPExam(s) {
@@ -1383,18 +1581,10 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 return false;
             }
             
-            let allSessions = [...allScheduleData];
-            allBookingsData.forEach(b => {
-                allSessions.push({ date: b.date, start: b.start, end: b.end, room: b.room });
-            });
-            
-            const daySessions = allSessions.filter(s => s.date === date && s.room === room);
-            for (const s of daySessions) {
-                if (parseTime(start) < parseTime(s.end) && parseTime(end) > parseTime(s.start)) {
-                    errorDiv.innerHTML = `<span style="color:#ef4444;">Room ${room} is already booked on ${formatDate(date)} from ${s.start}-${s.end}. Please select a different room or time.</span>`;
-                    errorDiv.style.display = 'block';
-                    return false;
-                }
+            if (hasRoomTimeConflict(room, date, start, end)) {
+                errorDiv.innerHTML = `<span style="color:#ef4444;">Room ${room} is already booked on ${formatDate(date)} for an overlapping time. Please select a different room or time.</span>`;
+                errorDiv.style.display = 'block';
+                return false;
             }
             
             errorDiv.style.display = 'none';
@@ -1413,12 +1603,10 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 return;
             }
             
-            let allSessions = [...allScheduleData];
-            allBookingsData.forEach(b => {
-                allSessions.push({ date: b.date, start: b.start, end: b.end, room: b.room });
-            });
-            
-            const daySessions = allSessions.filter(s => s.date === date);
+            const daySessions = [
+                ...allScheduleData,
+                ...allBookingsData.map(b => ({ date: b.date, start: b.start, end: b.end, room: b.room }))
+            ].filter(s => normalizeDateFormat(s.date) === normalizeDateFormat(date));
             
             const available = [];
             const unavailable = [];
@@ -1435,7 +1623,7 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                     return;
                 }
                 
-                const roomDaySessions = daySessions.filter(s => s.room === room);
+                const roomDaySessions = daySessions.filter(s => normalizeRoom(s.room) === normalizeRoom(room));
                 let isAvailable = true;
                 
                 for (const s of roomDaySessions) {
@@ -1506,18 +1694,10 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 return;
             }
             
-            // Check for conflicts in database
-            let allSessions = [...allScheduleData];
-            allBookingsData.forEach(b => {
-                allSessions.push({ date: b.date, start: b.start, end: b.end, room: b.room });
-            });
-            
-            const daySessions = allSessions.filter(s => s.date === date && s.room === room);
-            for (const s of daySessions) {
-                if (parseTime(start) < parseTime(s.end) && parseTime(end) > parseTime(s.start)) {
-                    showAlert(`Room ${room} is already booked at ${s.start}-${s.end}`, 'error');
-                    return;
-                }
+            // Check for conflicts against loaded data before confirmation
+            if (hasRoomTimeConflict(room, date, start, end)) {
+                showAlert(`Room ${room} already has an overlapping session in this time window`, 'error');
+                return;
             }
             
             pendingBooking = { room, date, start, end, title, teacher, isRecurring, weekdays: [...selectedWeekdays] };
@@ -1547,12 +1727,13 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                     const lastDate = endDateInput ? new Date(endDateInput) : new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
                     
                     const bookings = [];
+                    const pendingSessions = [];
                     while (currentDate <= lastDate) {
                         if (weekdays.includes(currentDate.getDay())) {
                             const bookingDate = `${currentDate.getFullYear()}/${String(currentDate.getMonth()+1).padStart(2,'0')}/${String(currentDate.getDate()).padStart(2,'0')}`;
                             
                             // Check exam protection for each recurring date
-                            if (!isRoomBlocked(room) && !getExamProtectionMessage(room, bookingDate)) {
+                            if (!isRoomBlocked(room) && !getExamProtectionMessage(room, bookingDate) && !hasRoomTimeConflict(room, bookingDate, start, end, pendingSessions)) {
                                 bookings.push({
                                     room, 
                                     date: bookingDate,
@@ -1561,6 +1742,7 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                                     title, 
                                     teacher
                                 });
+                                pendingSessions.push({ room, date: bookingDate, start, end });
                             }
                         }
                         currentDate.setDate(currentDate.getDate() + 1);
@@ -1577,6 +1759,9 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                         bookingCount++;
                     }
                 } else {
+                    if (hasRoomTimeConflict(room, date, start, end)) {
+                        throw new Error(`Room ${room} already has an overlapping session at this time`);
+                    }
                     // Single booking
                     await createBookingToDb({
                         room, date, start_time: start, end_time: end, title, teacher
@@ -1615,6 +1800,70 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
         }
         
         async function createBookingToDb(booking) {
+            const bookingDate = normalizeDateFormat(booking.date || '');
+            const bookingRoom = normalizeRoom(booking.room || '');
+            const bookingStart = booking.start_time;
+            const bookingEnd = booking.end_time;
+
+            if (!bookingRoom || !bookingDate || !bookingStart || !bookingEnd) {
+                throw new Error('Booking data is incomplete');
+            }
+
+            const dateVariants = getDateVariants(bookingDate);
+            const orFilter = dateVariants.map(d => `date.eq.${d}`).join(',');
+
+            const [roomSessionsResp, scheduleResp, bookingsResp] = await Promise.all([
+                fetch(
+                    SUPABASE_URL + '/rest/v1/room_sessions?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    }
+                ),
+                fetch(
+                    SUPABASE_URL + '/rest/v1/schedule?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    }
+                ),
+                fetch(
+                    SUPABASE_URL + '/rest/v1/bookings?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    }
+                )
+            ]);
+
+            const roomSessionRows = roomSessionsResp.ok ? await roomSessionsResp.json() : [];
+            const scheduleRows = scheduleResp.ok ? await scheduleResp.json() : [];
+            const bookingRows = bookingsResp.ok ? await bookingsResp.json() : [];
+            const pool = [
+                ...(Array.isArray(roomSessionRows) ? roomSessionRows : []).map(r => ({ date: r.date, start: r.start_time, end: r.end_time, room: r.room })),
+                ...(Array.isArray(scheduleRows) ? scheduleRows : []).map(r => ({ date: r.date, start: r.start_time, end: r.end_time, room: r.room })),
+                ...(Array.isArray(bookingRows) ? bookingRows : []).map(r => ({ date: r.date, start: r.start_time, end: r.end_time, room: r.room }))
+            ];
+
+            const bStart = parseTime(bookingStart);
+            const bEnd = parseTime(bookingEnd);
+            const clash = pool.find(s =>
+                normalizeRoom(s.room || '') === bookingRoom &&
+                normalizeDateFormat(s.date || '') === bookingDate &&
+                bStart < parseTime(s.end) &&
+                bEnd > parseTime(s.start)
+            );
+
+            if (clash) {
+                throw new Error(`Room ${bookingRoom} is already booked at ${clash.start}-${clash.end}`);
+            }
+
             const response = await fetch(SUPABASE_URL + '/rest/v1/bookings', {
                 method: 'POST',
                 headers: {
@@ -1681,26 +1930,64 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 list.innerHTML = '<p style="color:#64748b;">No bookings yet. Go to "Book a Room" tab to make a booking.</p>';
                 return;
             }
-            
-            list.innerHTML = allBookingsData
-                .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start))
-                .map(b => {
-                    const displayRoom = b.room;
-                    return `
-                    <div class="booking-entry">
-                        <div class="header">
-                            <span class="room">${displayRoom}</span>
-                            <div class="actions">
-                                <button class="delete-btn" onclick="deleteBooking(${b.id})">Delete</button>
-                            </div>
+
+            const groupedBookings = allBookingsData
+                .slice()
+                .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start) || a.room.localeCompare(b.room))
+                .reduce((groups, booking) => {
+                    if (!groups[booking.date]) {
+                        groups[booking.date] = [];
+                    }
+                    groups[booking.date].push(booking);
+                    return groups;
+                }, {});
+
+            list.innerHTML = Object.entries(groupedBookings)
+                .map(([date, bookings]) => `
+                    <section class="booking-date-group">
+                        <div class="booking-date-heading">${formatDate(date)} <span>(${bookings.length})</span></div>
+                        <div class="booking-date-items">
+                            ${bookings.map(b => {
+                                const displayRoom = b.room;
+                                return `
+                                    <article class="booking-entry">
+                                        <div class="booking-entry-header">
+                                            <div>
+                                                <div class="title">${b.title}</div>
+                                                <div class="time">${b.start} - ${b.end}</div>
+                                            </div>
+                                            <div class="actions">
+                                                <span class="room">${displayRoom}</span>
+                                                <button class="delete-btn" onclick="deleteBooking(${b.id})">Delete</button>
+                                            </div>
+                                        </div>
+                                        <div class="details">
+                                            <span class="detail-item">Booked by: ${b.teacher}</span>
+                                        </div>
+                                    </article>
+                                `;
+                            }).join('')}
                         </div>
-                        <div class="details">
-                            ${b.title}<br>
-                            ${formatDate(b.date)} | ${b.start} - ${b.end}<br>
-                            Booked by: ${b.teacher}
-                        </div>
-                    </div>
-                `}).join('');
+                    </section>
+                `).join('');
+        }
+
+        function toggleScrollTopButton() {
+            const button = document.getElementById('scrollTopBtn');
+            if (!button) return;
+            button.classList.toggle('visible', window.scrollY > 320);
+        }
+
+        function initScrollTopButton() {
+            const button = document.getElementById('scrollTopBtn');
+            if (!button) return;
+
+            button.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            window.addEventListener('scroll', toggleScrollTopButton, { passive: true });
+            toggleScrollTopButton();
         }
         
         function showAlert(message, type) {
@@ -1841,7 +2128,7 @@ CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);`;
                 if (b.room && isRoomBlocked(normalised))
                     reasons.push(`room <strong>${normalised}</strong> is blocked from booking`);
 
-                if (b.start && b.end && b.start >= b.end)
+                if (b.start && b.end && parseTime(String(b.start)) >= parseTime(String(b.end)))
                     reasons.push('start time is not before end time');
 
                 // ── Conflict check against existing + already-imported rows ──
@@ -2723,6 +3010,7 @@ function initFloatingBall() {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', initFloatingBall); 
+document.addEventListener('DOMContentLoaded', initScrollTopButton);
 </script>
 </body>
 </html>
