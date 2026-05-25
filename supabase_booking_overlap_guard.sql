@@ -6,6 +6,8 @@ AS $$
     SELECT CASE UPPER(BTRIM(input_room))
         WHEN 'MEETING ROOM' THEN 'B2036'
         WHEN 'TOEFL TESTING ICT LAB' THEN 'B1037'
+        WHEN 'B-SEMINAR ROOM A' THEN 'B-Seminar Room A'
+        WHEN 'B SEMINAR ROOM A' THEN 'B-Seminar Room A'
         ELSE UPPER(BTRIM(input_room))
     END;
 $$;
