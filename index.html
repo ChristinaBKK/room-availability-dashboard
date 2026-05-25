@@ -550,13 +550,19 @@
         
         // Rooms blocked from booking (not regular rooms for user booking)
         const BLOCKED_ROOMS = ['TEST', 'E1011', 'B1011', 'B2003', 'B2004', 'B2005', 'B2026', 'B2014', 'B2022', 'B1037', 'B2038', 'B4043', 'B4042', 'B4041', 'B4040', 'B4038', 'B4039'];
+        const KNOWN_B_ROOMS = [
+            'B1011', 'B1034', 'B1037', 'B2003', 'B2004', 'B2005', 'B2012', 'B2014', 'B2022', 'B2026',
+            'B2036', 'B2038', 'B2040', 'B2041', 'B2042', 'B2043', 'B2044', 'B3005', 'B3007', 'B3009',
+            'B3010', 'B3011', 'B3012', 'B3021', 'B3029', 'B3039', 'B4002', 'B4004', 'B4005', 'B4007',
+            'B4010', 'B4011', 'B4038', 'B4039', 'B4040', 'B4041', 'B4042', 'B4043'
+        ];
         
         // Room aliases (same room different names - convert all to B### format)
         const ROOM_ALIASES = {
             'B2036': 'B2036',
-            'Meeting Room': 'B2036',
+            'MEETING ROOM': 'B2036',
             'B1037': 'B1037',
-            'TOEFL Testing ICT Lab': 'B1037'
+            'TOEFL TESTING ICT LAB': 'B1037'
         };
         
         // SQL to create tables
@@ -768,15 +774,31 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
         // Normalize room name - extract only B### format (letter + 4 numbers)
         function normalizeRoom(room) {
             if (!room) return room;
+            const rawRoom = String(room).trim().toUpperCase();
             
             // Check alias first
-            if (ROOM_ALIASES[room]) return ROOM_ALIASES[room];
+            if (ROOM_ALIASES[rawRoom]) return ROOM_ALIASES[rawRoom];
             
             // Extract room code: match letter followed by 4 digits (e.g., B2036, B1011)
-            const match = room.match(/([A-Z]\d{4})/);
+            const match = rawRoom.match(/([A-Z]\d{4})/);
             if (match) return match[1];
             
-            return room;
+            return rawRoom;
+        }
+
+        function isBRoom(room) {
+            return /^B\d{4}$/.test(normalizeRoom(room));
+        }
+
+        function getBRoomInventory() {
+            const rooms = new Set(KNOWN_B_ROOMS);
+            BLOCKED_ROOMS.forEach(room => {
+                if (isBRoom(room)) rooms.add(normalizeRoom(room));
+            });
+            allRooms.forEach(room => {
+                if (isBRoom(room)) rooms.add(normalizeRoom(room));
+            });
+            return [...rooms].sort((a, b) => a.localeCompare(b));
         }
         
         // Check if room is blocked
@@ -1123,8 +1145,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
             scheduleDate.value = today;
             
             // Filter B-rooms only for room filter (exclude non-B rooms like boarding)
-            const bRoomsOnly = [...allRooms]
-                .filter(room => room.startsWith('B'))
+            const bRoomsOnly = getBRoomInventory()
                 .map(room => ({ room, display: room }))
                 .sort((a, b) => a.room.localeCompare(b.room));
             
@@ -1435,8 +1456,9 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
             }
             
             // Count available rooms (B-rooms only, excluding blocked)
-            const bRooms = [...allRooms].filter(r => r.startsWith('B') && !isRoomBlocked(r)).length;
-            const totalBRooms = [...allRooms].filter(r => r.startsWith('B')).length;
+            const bRoomInventory = getBRoomInventory();
+            const bRooms = bRoomInventory.filter(r => !isRoomBlocked(r)).length;
+            const totalBRooms = bRoomInventory.length;
             const usedBRooms = Object.keys(roomSessions).filter(r => r.startsWith('B')).length;
             
             document.getElementById('totalRooms').textContent = usedBRooms;
@@ -1613,7 +1635,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
             const examBlocked = [];
             
             // Filter out blocked rooms from suggestions
-            const availableForBooking = [...allRooms].filter(room => !isRoomBlocked(room));
+            const availableForBooking = getBRoomInventory().filter(room => !isRoomBlocked(room));
             
             availableForBooking.sort().forEach(room => {
                 // Check if exam blocked
