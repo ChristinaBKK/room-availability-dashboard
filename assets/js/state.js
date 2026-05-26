@@ -1,0 +1,21 @@
+// Shared mutable application state.
+var allScheduleData = [];
+var allBookingsData = [];
+var allBookingsListData = [];
+var allExamSessions = [];
+var studentScheduleData = [];
+var examRooms = new Set();
+var examDates = new Map();
+var allRooms = new Set();
+var pendingBooking = null;
+var selectedWeekdays = [];
+var lastFileModified = null;
+var autoRefreshInterval = null;
+var bookingCount = 0;
+var dayDataCache = new Map();
+var filtersInitialized = false;
+var activeTab = 'schedule';
+var bookingsListLoaded = false;
+var selectedBookingDates = new Set();
+var bookingsAddMode = false;
+var selectedRooms = new Set();

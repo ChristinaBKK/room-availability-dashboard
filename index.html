@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Availability & Booking Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -141,6 +142,38 @@
         .booking-entry .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .booking-entry .details { font-size: 12px; color: #64748b; display: flex; flex-wrap: wrap; gap: 6px 12px; }
         .booking-entry .detail-item { white-space: normal; overflow-wrap: anywhere; }
+        .bookings-filter-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .bookings-filter-controls input[type="date"] { min-width: 170px; }
+        .bookings-filter-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .bookings-filter-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e3a8a; border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 600; }
+        .bookings-filter-chip button { border: none; background: transparent; color: #1d4ed8; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
+        .bookings-filter-empty { color: #94a3b8; font-size: 12px; }
+        #bookingsDateAddBtn,
+        #bookingsDateTodayBtn,
+        #bookingsDateClearBtn {
+            transition: background 0.2s;
+        }
+        #bookingsDateAddBtn {
+            background: #667eea;
+            border: 1px solid #667eea;
+            color: #ffffff;
+        }
+        #bookingsDateAddBtn:hover {
+            background: #5a67d8;
+        }
+        #bookingsDateAddBtn.is-armed {
+            background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+            border-color: #5a67d8;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.24);
+        }
+        #bookingsDateTodayBtn {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            color: #4338ca;
+        }
+        #bookingsDateTodayBtn:hover {
+            background: #e0e7ff;
+        }
 
         .scroll-top-btn {
             position: fixed;
@@ -404,6 +437,17 @@
     <!-- All Bookings Tab -->
     <div id="bookings-tab" class="tab-content">
         <div class="content">
+            <div class="booking-section" style="padding: 18px; margin-bottom: 14px;">
+                <h2 style="margin-bottom: 10px;">Filter Bookings by Date</h2>
+                <div class="bookings-filter-controls">
+                    <input type="date" id="bookingsDatePicker" onchange="onBookingsDatePick()">
+                    <button class="btn-secondary" type="button" id="bookingsDateAddBtn" onclick="onBookingsDateAdd()">Add Another Date</button>
+                    <button class="btn-secondary" type="button" id="bookingsDateTodayBtn" onclick="onBookingsDateTodayOnly()">Today Only</button>
+                    <button class="btn-secondary" type="button" id="bookingsDateClearBtn" onclick="onBookingsDateClear()">Clear</button>
+                </div>
+                <div id="bookingsDateChips" class="bookings-filter-chip-row"></div>
+                <p class="storage-note" style="margin-top: 8px;">Tip: picking a date shows only that date. Click "Add Another Date" first when you want the next picked date to be added. Default is today.</p>
+            </div>
             <div class="bookings-list" id="bookingsList"></div>
             <div class="booking-section" style="margin-top: 20px;">
                 <h2>Backup & Restore</h2>
@@ -528,1802 +572,20 @@
         </div>
     </div>
     
-    <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://fgewwriulwdodmlbsotp.supabase.co';
-        // Use service key for room_sessions (has RLS that blocks anon access)
-        const SUPABASE_ANON_KEY = 'sb_publishable_yvdyY62yUu7HgPw7wjy9XQ_jmcje9te';
-        
-        // Data state
-        let allScheduleData = [];
-        let allBookingsData = [];
-        let studentScheduleData = [];
-        // Exam data now comes from database only
-        // Exam data now comes from database only
-        let examRooms = new Set();
-        let examDates = new Map(); // room -> [dates with exams]
-        let allRooms = new Set();
-        let pendingBooking = null;
-        let selectedWeekdays = [];
-        let lastFileModified = null;
-        let autoRefreshInterval = null;
-        
-        // Rooms blocked from booking (not regular rooms for user booking)
-        const BLOCKED_ROOMS = ['TEST', 'E1011', 'B1011', 'B2003', 'B2004', 'B2005', 'B2026', 'B2014', 'B2022', 'B1037', 'B2038', 'B4043', 'B4042', 'B4041', 'B4040', 'B4038', 'B4039'];
-        const KNOWN_B_ROOMS = [
-            'B-Seminar Room A',
-            'B1011', 'B1034', 'B1037', 'B2003', 'B2004', 'B2005', 'B2012', 'B2014', 'B2022', 'B2026',
-            'B2036', 'B2038', 'B2040', 'B2041', 'B2042', 'B2043', 'B2044', 'B3005', 'B3007', 'B3009',
-            'B3010', 'B3011', 'B3012', 'B3021', 'B3029', 'B3039', 'B4002', 'B4004', 'B4005', 'B4007',
-            'B4010', 'B4011', 'B4038', 'B4039', 'B4040', 'B4041', 'B4042', 'B4043'
-        ];
-        
-        // Room aliases (same room different names - convert all to B### format)
-        const ROOM_ALIASES = {
-            'B2036': 'B2036',
-            'MEETING ROOM': 'B2036',
-            'B1037': 'B1037',
-            'TOEFL TESTING ICT LAB': 'B1037',
-            'B-SEMINAR ROOM A': 'B-Seminar Room A',
-            'B SEMINAR ROOM A': 'B-Seminar Room A'
-        };
-        
-        // SQL to create tables
-        const SETUP_SQL = `-- Create schedule table
-DROP TABLE IF EXISTS schedule CASCADE;
-CREATE TABLE schedule (
-    id SERIAL PRIMARY KEY,
-    date VARCHAR(20) NOT NULL,
-    start_time VARCHAR(10) NOT NULL,
-    end_time VARCHAR(10) NOT NULL,
-    class_name VARCHAR(200),
-    room VARCHAR(50) NOT NULL,
-    teacher VARCHAR(100),
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE schedule ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "schedule_read" ON schedule FOR SELECT USING (true);
-CREATE POLICY "schedule_all" ON schedule FOR ALL USING (true);
-
--- Create bookings table
-DROP TABLE IF EXISTS bookings CASCADE;
-CREATE TABLE bookings (
-    id SERIAL PRIMARY KEY,
-    room VARCHAR(50) NOT NULL,
-    date VARCHAR(20) NOT NULL,
-    start_time VARCHAR(10) NOT NULL,
-    end_time VARCHAR(10) NOT NULL,
-    title VARCHAR(200),
-    teacher VARCHAR(100),
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "bookings_read" ON bookings FOR SELECT USING (true);
-CREATE POLICY "bookings_all" ON bookings FOR ALL USING (true);
-
--- Normalize room aliases so the trigger treats the same physical room identically
-CREATE OR REPLACE FUNCTION normalize_booking_room(input_room TEXT)
-RETURNS TEXT
-LANGUAGE SQL
-IMMUTABLE
-AS $$
-    SELECT CASE UPPER(BTRIM(input_room))
-        WHEN 'MEETING ROOM' THEN 'B2036'
-        WHEN 'TOEFL TESTING ICT LAB' THEN 'B1037'
-        WHEN 'B-SEMINAR ROOM A' THEN 'B-Seminar Room A'
-        WHEN 'B SEMINAR ROOM A' THEN 'B-Seminar Room A'
-        ELSE UPPER(BTRIM(input_room))
-    END;
-$$;
-
--- Reject any booking that overlaps an existing booking, class, or exam in the same room
-CREATE OR REPLACE FUNCTION prevent_booking_overlap()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    new_room TEXT;
-    new_date DATE;
-    new_start TIME;
-    new_end TIME;
-    conflict_record RECORD;
-BEGIN
-    new_room := normalize_booking_room(NEW.room);
-    new_date := REPLACE(BTRIM(NEW.date), '/', '-')::DATE;
-    new_start := BTRIM(NEW.start_time)::TIME;
-    new_end := BTRIM(NEW.end_time)::TIME;
-
-    -- Serialize competing writes for the same physical room and date.
-    PERFORM pg_advisory_xact_lock(hashtextextended(new_room || '|' || new_date::TEXT, 0));
-
-    IF new_start >= new_end THEN
-        RAISE EXCEPTION 'Booking end_time must be after start_time';
-    END IF;
-
-    SELECT src, room, date, start_time, end_time
-    INTO conflict_record
-    FROM (
-        SELECT
-            'bookings'::TEXT AS src,
-            b.room,
-            b.date,
-            b.start_time,
-            b.end_time
-        FROM bookings b
-        WHERE b.id IS DISTINCT FROM NEW.id
-          AND normalize_booking_room(b.room) = new_room
-          AND REPLACE(BTRIM(b.date), '/', '-')::DATE = new_date
-          AND BTRIM(b.start_time)::TIME < new_end
-          AND BTRIM(b.end_time)::TIME > new_start
-
-        UNION ALL
-
-        SELECT
-            'room_sessions'::TEXT AS src,
-            rs.room,
-            rs.date,
-            rs.start_time,
-            rs.end_time
-        FROM room_sessions rs
-        WHERE normalize_booking_room(rs.room) = new_room
-          AND REPLACE(BTRIM(rs.date), '/', '-')::DATE = new_date
-          AND BTRIM(rs.start_time)::TIME < new_end
-          AND BTRIM(rs.end_time)::TIME > new_start
-
-        UNION ALL
-
-        SELECT
-            'schedule'::TEXT AS src,
-            s.room,
-            s.date,
-            s.start_time,
-            s.end_time
-        FROM schedule s
-        WHERE normalize_booking_room(s.room) = new_room
-          AND REPLACE(BTRIM(s.date), '/', '-')::DATE = new_date
-          AND BTRIM(s.start_time)::TIME < new_end
-          AND BTRIM(s.end_time)::TIME > new_start
-    ) conflicts
-    LIMIT 1;
-
-    IF FOUND THEN
-        RAISE EXCEPTION 'Booking overlaps existing % entry for room % on % at %-%',
-            conflict_record.src,
-            new_room,
-            TO_CHAR(new_date, 'YYYY-MM-DD'),
-            conflict_record.start_time,
-            conflict_record.end_time;
-    END IF;
-
-    NEW.room := new_room;
-    NEW.date := TO_CHAR(new_date, 'YYYY/MM/DD');
-    NEW.start_time := TO_CHAR(new_start, 'HH24:MI');
-    NEW.end_time := TO_CHAR(new_end, 'HH24:MI');
-    RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS bookings_prevent_overlap ON bookings;
-CREATE TRIGGER bookings_prevent_overlap
-BEFORE INSERT OR UPDATE ON bookings
-FOR EACH ROW
-EXECUTE FUNCTION prevent_booking_overlap();`;
-
-        // Initialize
-        initApp();
-        
-        function initApp() {
-            document.getElementById('setupSQL').textContent = SETUP_SQL;
-            initTabs();
-            initBookingForm();
-            initAutoRefresh();
-            checkConnection();
-        }
-        
-        function initTabs() {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                    document.getElementById(this.dataset.tab + '-tab').classList.add('active');
-                    if (this.dataset.tab === 'bookings') renderAllBookings();
-                    if (this.dataset.tab === 'info') updateExamRoomsDisplay();
-                });
-            });
-            updateBookingsBadge();
-        }
-        
-        function initAutoRefresh() {
-            const toggle = document.getElementById('autoRefreshToggle');
-            toggle.addEventListener('change', function() {
-                if (this.checked) {
-                    startAutoRefresh();
-                } else {
-                    stopAutoRefresh();
-                }
-            });
-            // Only start auto-refresh if checkbox is already checked
-            if (toggle.checked) {
-                startAutoRefresh();
-            }
-        }
-        
-        function startAutoRefresh() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            autoRefreshInterval = setInterval(loadAllData, 30000); // Check every 30 seconds
-        }
-        
-        function stopAutoRefresh() {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-                autoRefreshInterval = null;
-            }
-        }
-        
-        function updateBookingsBadge() {
-            const badge = document.getElementById('bookingsBadge');
-            const count = allBookingsData.length;
-            if (count > 0) {
-                badge.textContent = count;
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-        
-        // Normalize room name - extract only B### format (letter + 4 numbers)
-        function normalizeRoom(room) {
-            if (!room) return room;
-            const rawRoom = String(room).trim().toUpperCase();
-            
-            // Check alias first
-            if (ROOM_ALIASES[rawRoom]) return ROOM_ALIASES[rawRoom];
-            
-            // Extract room code: match letter followed by 4 digits (e.g., B2036, B1011)
-            const match = rawRoom.match(/([A-Z]\d{4})/);
-            if (match) return match[1];
-            
-            return rawRoom;
-        }
-
-        function isBRoom(room) {
-            const normalized = normalizeRoom(room);
-            return /^B\d{4}$/.test(normalized) || normalized.startsWith('B-Seminar Room');
-        }
-
-        function getBRoomInventory() {
-            const rooms = new Set(KNOWN_B_ROOMS);
-            BLOCKED_ROOMS.forEach(room => {
-                if (isBRoom(room)) rooms.add(normalizeRoom(room));
-            });
-            allRooms.forEach(room => {
-                if (isBRoom(room)) rooms.add(normalizeRoom(room));
-            });
-            return [...rooms].sort((a, b) => a.localeCompare(b));
-        }
-        
-        // Check if room is blocked
-        function isRoomBlocked(room) {
-            const normalized = normalizeRoom(room);
-            return BLOCKED_ROOMS.includes(normalized);
-        }
-        
-        // Student schedule loading removed - using database only
-        async function loadStudentSchedule() {
-            // Exam data is now populated in loadAllData() from database
-            // No action needed here
-        }
-        
-        // Check if a date has an exam in a specific room
-        function hasExamOnDate(room, date) {
-            const normalized = normalizeRoom(room);
-            return examDates.has(normalized) && examDates.get(normalized).has(date);
-        }
-        
-        // Get the day before exam dates
-        function getProtectedDates() {
-            const protectedDates = new Set();
-            
-            for (const [room, dates] of examDates) {
-                for (const dateStr of dates) {
-                    // Add exam date
-                    protectedDates.add(dateStr);
-                    
-                    // Add day before exam
-                    const [year, month, day] = dateStr.split('/').map(Number);
-                    const examDate = new Date(year, month - 1, day);
-                    examDate.setDate(examDate.getDate() - 1);
-                    const prevDate = `${examDate.getFullYear()}/${String(examDate.getMonth() + 1).padStart(2, '0')}/${String(examDate.getDate()).padStart(2, '0')}`;
-                    protectedDates.add(prevDate);
-                }
-            }
-            
-            return protectedDates;
-        }
-        
-        // Check if booking is allowed (not during exam protection)
-        function isBookingAllowed(room, date) {
-            const normalized = normalizeRoom(room);
-            const protectedDates = getProtectedDates();
-            return !protectedDates.has(date) || !examDates.has(normalized);
-        }
-        
-        // Get exam protection message
-        function getExamProtectionMessage(room, date) {
-            const normalized = normalizeRoom(room);
-            if (!examDates.has(normalized)) return null;
-            
-            const protectedDates = getProtectedDates();
-            if (!protectedDates.has(date)) return null;
-            
-            // Find which exam dates are protected
-            const roomExamDates = [...examDates.get(normalized)];
-            const [year, month, day] = date.split('/').map(Number);
-            // Use noon local time to avoid timezone issues
-            const checkDate = new Date(year, month - 1, day, 12, 0, 0);
-            
-            for (const examDateStr of roomExamDates) {
-                const [ey, em, ed] = examDateStr.split('/').map(Number);
-                const examDate = new Date(ey, em - 1, ed, 12, 0, 0);
-                const examPrevDate = new Date(ey, em - 1, ed, 12, 0, 0);
-                examPrevDate.setDate(examPrevDate.getDate() - 1);
-                
-                if (checkDate.getTime() === examDate.getTime()) {
-                    return `Exam scheduled on ${formatDate(examDateStr)} - room protected`;
-                }
-                if (checkDate.getTime() === examPrevDate.getTime()) {
-                    return `Day before exam on ${formatDate(examDateStr)} - room protected`;
-                }
-            }
-            
-            return null;
-        }
-        
-        // Get exam details for a room - now uses database data only
-        function getExamDetailsForRoom(room, date) {
-            // Exam details come from database room_sessions table
-            // Check if any session in this room on this date is marked as exam
-            const normalized = normalizeRoom(room);
-            const examSession = allScheduleData.find(s => 
-                normalizeRoom(s.room) === normalized && 
-                normalizeDateFormat(s.date) === date &&
-                s.isExamFromData === true
-            );
-            return examSession || null;
-        }
-        
-        function updateExamRoomsDisplay() {
-            const list = document.getElementById('examRoomsList');
-            if (!list) return;
-            
-            if (examRooms.size === 0) {
-                list.textContent = 'No exam rooms identified yet';
-            } else {
-                const rooms = [...examRooms].sort();
-                list.textContent = rooms.join(', ');
-            }
-        }
-        
-        async function checkConnection() {
-            document.getElementById('statusDot').className = 'status-dot loading';
-            document.getElementById('statusText').textContent = 'Loading data...';
-            
-            // Student schedule loading removed - using database only
-            
-            // Try room_sessions table first
-            let connected = await testTableConnection('room_sessions');
-            
-            // If room_sessions doesn't work, try schedule table
-            if (!connected) {
-                connected = await testTableConnection('schedule');
-            }
-            
-            if (connected) {
-                document.getElementById('statusDot').className = 'status-dot';
-                document.getElementById('statusText').textContent = 'Connected to database';
-                document.getElementById('setupSection').style.display = 'none';
-                loadAllData();
-            } else {
-                document.getElementById('statusDot').className = 'status-dot error';
-                document.getElementById('statusText').textContent = 'Database connection failed';
-                document.getElementById('setupSection').style.display = 'block';
-            }
-        }
-        
-        async function testTableConnection(tableName) {
-            try {
-                const testUrl = SUPABASE_URL + '/rest/v1/' + tableName + '?select=id&limit=1';
-                const response = await fetch(testUrl, {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    console.log(tableName + ' table accessible');
-                    return true;
-                }
-                return false;
-            } catch (err) {
-                console.log(tableName + ' connection failed:', err);
-                return false;
-            }
-        }
-        
-        async function loadAllData() {
-                
-            document.getElementById('statusDot').className = 'status-dot loading';
-            document.getElementById('statusText').textContent = 'Loading data...';
-            
-            try {
-                // Load from BOTH tables: room_sessions (lessons) and schedule (exams)
-                let allSchedule = [];
-                let offset = 0;
-                const limit = 1000;
-                
-                // 1. Load room_sessions table (lessons - 1062 records)
-                while (true) {
-                    const response = await fetch(
-                        SUPABASE_URL + '/rest/v1/room_sessions?select=*&offset=' + offset + '&limit=' + limit + '&order=date,room,start_time',
-                        {
-                            headers: {
-                                'apikey': SUPABASE_ANON_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                            }
-                        }
-                    );
-                    
-                    if (!response.ok && response.status !== 404) {
-                        // Try schedule table instead
-                        break;
-                    }
-                    const batch = await response.json();
-                    if (!batch || batch.length === 0) break;
-                    allSchedule.push(...batch);
-                    if (batch.length < limit) break;
-                    offset += limit;
-                }
-                
-                // 2. ALSO load schedule table (exams - 1040 records)
-                offset = 0;
-                while (true) {
-                    const scheduleResponse = await fetch(
-                        SUPABASE_URL + '/rest/v1/schedule?select=*&offset=' + offset + '&limit=' + limit,
-                        {
-                            headers: {
-                                'apikey': SUPABASE_ANON_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                            }
-                        }
-                    );
-                    
-                    if (!scheduleResponse.ok) break;
-                    const batch = await scheduleResponse.json();
-                    if (!batch || batch.length === 0) break;
-                    allSchedule.push(...batch);
-                    if (batch.length < limit) break;
-                    offset += limit;
-                }
-                
-                // Log for debugging
-                console.log('Loaded schedule records:', allSchedule.length);
-                
-                // Load bookings from Supabase
-                const bookingsResponse = await fetch(SUPABASE_URL + '/rest/v1/bookings?select=*', {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                    }
-                });
-                
-                const bookingsText = await bookingsResponse.text();
-                let bookingsData = [];
-                try {
-                    bookingsData = JSON.parse(bookingsText);
-                    if (!Array.isArray(bookingsData)) bookingsData = [];
-                } catch (e) {
-                    bookingsData = [];
-                }
-                
-                // Process schedule data from Supabase (handles both schedule and room_sessions tables)
-                // schedule table = actual exam schedule (teacher = "EXAM")
-                // room_sessions = regular classes
-                allScheduleData = allSchedule.map(item => {
-                    let component = item.class_name || item.Class || item.title || '';
-                    let isExam = false;
-                    // Check if teacher is EXAM (from schedule table - actual exam data)
-                    const teacherVal = item.teacher || item.Teacher || '';
-                    const isExamFromSchedule = teacherVal.toUpperCase() === 'EXAM';
-                    // Exam detection: rely on teacher === 'EXAM' from the schedule table
-                    if (isExamFromSchedule) {
-                        isExam = true;
-                        // Strip literal "EXAM:" prefix from class_name if present
-                        if (component.toUpperCase().startsWith('EXAM:')) {
-                            component = component.substring(5).trim();
-                        }
-                    }
-                    return {
-                        date: item.date || item.Date || '',
-                        start: item.start_time || item.start_time || item['Start Time'] || '',
-                        end: item.end_time || item.end_time || item['End Time'] || '',
-                        component: component,
-                        room: normalizeRoom(item.room || item.Room || ''),
-                        teacher: isExamFromSchedule ? '' : teacherVal,
-                        isExam: isExam,
-                        isExamProtection: false  // Will be calculated dynamically
-                    };
-                }).filter(item => item.date && item.room);
-                
-                // Populate examRooms and examDates from loaded data
-                examRooms = new Set();
-                examDates = new Map();
-                // Also track protection dates (day before exam)
-                const protectionDates = new Map(); // room -> Set of protected dates
-                
-                allScheduleData.forEach(s => {
-                    if (s.isExam) {
-                        const room = s.room;
-                        examRooms.add(room);
-                        if (!examDates.has(room)) {
-                            examDates.set(room, new Set());
-                        }
-                        examDates.get(room).add(normalizeDateFormat(s.date));
-                        
-                        // Calculate day before exam - add to protection dates
-                        const [year, month, day] = s.date.split('/').map(Number);
-                        const examDate = new Date(year, month - 1, day);
-                        examDate.setDate(examDate.getDate() - 1);
-                        const prevDate = `${examDate.getFullYear()}/${String(examDate.getMonth() + 1).padStart(2, '0')}/${String(examDate.getDate()).padStart(2, '0')}`;
-                        
-                        if (!protectionDates.has(room)) {
-                            protectionDates.set(room, new Set());
-                        }
-                        protectionDates.get(room).add(prevDate);
-                    }
-                });
-                
-                // Now mark sessions as protection if they fall on a protection date
-                // Only mark non-exam sessions — real exam sessions should show as "Exam", not "Exam Protection"
-                allScheduleData.forEach(s => {
-                    if (!s.isExam && protectionDates.has(s.room) && protectionDates.get(s.room).has(normalizeDateFormat(s.date))) {
-                        s.isExamProtection = true;
-                    }
-                });
-
-                // Deduplicate: remove sessions with identical room+date+start+end+component (from overlapping tables)
-                const seen = new Set();
-                allScheduleData = allScheduleData.filter(s => {
-                    const key = `${s.room}|${normalizeDateFormat(s.date)}|${s.start}|${s.end}|${s.component}`;
-                    if (seen.has(key)) return false;
-                    seen.add(key);
-                    return true;
-                });
-                
-                allBookingsData = (bookingsData || []).map(item => ({
-                    id: item.id,
-                    date: item.date || '',
-                    start: item.start_time || '',
-                    end: item.end_time || '',
-                    room: normalizeRoom(item.room || ''),
-                    teacher: item.teacher || '',
-                    title: item.title || ''
-                })).filter(item => item.date && item.room);
-                
-                // Get all rooms
-                allRooms = new Set();
-                allScheduleData.forEach(s => allRooms.add(s.room));
-                allBookingsData.forEach(b => allRooms.add(b.room));
-                
-                populateFilters();
-                updateDashboard();
-                updateBookingsBadge();
-                renderAllBookings();
-                
-                document.getElementById('statusDot').className = 'status-dot';
-                document.getElementById('statusText').textContent = 'Data loaded';
-                document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
-                
-            } catch (error) {
-                console.error('Load error:', error);
-                document.getElementById('statusDot').className = 'status-dot error';
-                document.getElementById('statusText').textContent = 'Failed to load data';
-                document.getElementById('setupSection').style.display = 'block';
-            }
-        }
-        
-        function populateFilters() {
-            const scheduleDate = document.getElementById('scheduleDate');
-            const bookingRoom = document.getElementById('bookingRoom');
-            const bookingDate = document.getElementById('bookingDate');
-            
-            // Set default date to today for schedule view (use local date to avoid timezone issues)
-            const now = new Date();
-            const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-            scheduleDate.value = today;
-            
-            // Filter B-rooms only for room filter (exclude non-B rooms like boarding)
-            const bRoomsOnly = getBRoomInventory()
-                .map(room => ({ room, display: room }))
-                .sort((a, b) => a.room.localeCompare(b.room));
-            
-            // Schedule View: Build chip multi-select grouped by floor
-            selectedRooms = new Set();
-            const groups = {
-                'Seminar': bRoomsOnly.filter(r => r.room.includes('Seminar')),
-                'Floor 1': bRoomsOnly.filter(r => /^B1/.test(r.room)),
-                'Floor 2': bRoomsOnly.filter(r => /^B2/.test(r.room)),
-                'Floor 3': bRoomsOnly.filter(r => /^B3/.test(r.room)),
-                'Floor 4': bRoomsOnly.filter(r => /^B4/.test(r.room)),
-            };
-            const panel = document.getElementById('roomFilterPanel');
-            let html = '<div class="room-chip-group"><div class="room-chip-row">';
-            html += '<button class="room-chip all-chip active" data-room="" type="button">All Rooms</button>';
-            html += '</div></div>';
-            for (const [groupName, rooms] of Object.entries(groups)) {
-                if (!rooms.length) continue;
-                html += `<div class="room-chip-group"><div class="room-chip-group-label">${groupName}</div><div class="room-chip-row">`;
-                rooms.forEach(r => {
-                    const label = r.display + (isRoomBlocked(r.room) ? ' ✕' : '');
-                    html += `<button class="room-chip" data-room="${r.room}" type="button">${label}</button>`;
-                });
-                html += '</div></div>';
-            }
-            panel.innerHTML = html;
-            panel.querySelectorAll('.room-chip').forEach(chip => chip.addEventListener('click', onRoomChipClick));
-            
-            // Book a Room: Only show available B-rooms (not blocked)
-            const availableRooms = bRoomsOnly.filter(r => !isRoomBlocked(r.room));
-            bookingRoom.innerHTML = '<option value="">Select a room</option>' + 
-                availableRooms.map(r => 
-                    `<option value="${r.room}">${r.display}</option>`
-                ).join('');
-            
-            // Set booking date to today
-            bookingDate.value = today;
-        }
-        
-        function onScheduleDateChange() {
-            updateDashboard();
-        }
-        
-        function formatDate(dateStr) {
-            // Handle both YYYY/MM/DD and YYYY-MM-DD formats
-            const parts = dateStr.includes('/') ? dateStr.split('/') : dateStr.split('-');
-            const year = parts[0];
-            const month = parts[1];
-            const day = parts[2];
-            // Create date and format as readable string
-            const date = new Date(year, parseInt(month) - 1, parseInt(day));
-            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-        }
-        
-        // Parse date string to stable YYYY/MM/DD format (for comparison)
-        function normalizeDateFormat(dateStr) {
-            if (!dateStr) return '';
-            const raw = String(dateStr).trim();
-            if (!raw) return '';
-
-            const parts = raw.includes('/') ? raw.split('/') : raw.includes('-') ? raw.split('-') : null;
-            if (!parts || parts.length !== 3) return raw;
-
-            const [y, m, d] = parts;
-            return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
-        }
-
-        function getDateVariants(dateStr) {
-            const raw = String(dateStr || '').trim();
-            const normalized = normalizeDateFormat(dateStr);
-            if (!normalized && !raw) return [];
-            const variants = new Set([
-                normalized,
-                normalized ? normalized.replace(/\//g, '-') : '',
-                raw,
-                raw ? raw.replace(/\//g, '-') : '',
-                raw ? raw.replace(/-/g, '/') : ''
-            ].filter(Boolean));
-            return [...variants];
-        }
-        
-        function parseTime(time) {
-            const [hours, minutes] = time.split(':').map(Number);
-            return hours * 60 + minutes;
-        }
-
-        function hasRoomTimeConflict(room, date, start, end, extraSessions = []) {
-            const normalizedRoom = normalizeRoom(room || '');
-            const normalizedDate = normalizeDateFormat(date || '');
-            if (!normalizedRoom || !normalizedDate || !start || !end) return false;
-
-            const candidateStart = parseTime(start);
-            const candidateEnd = parseTime(end);
-            const allSessions = [
-                ...allScheduleData,
-                ...allBookingsData.map(b => ({ date: b.date, start: b.start, end: b.end, room: b.room })),
-                ...extraSessions
-            ];
-
-            return allSessions.some(s =>
-                normalizeRoom(s.room || '') === normalizedRoom &&
-                normalizeDateFormat(s.date || '') === normalizedDate &&
-                candidateStart < parseTime(s.end) &&
-                candidateEnd > parseTime(s.start)
-            );
-        }
-        
-        function isIBDPExam(s) {
-            return s.isExam && (s.component || '').toUpperCase().startsWith('IBDP');
-        }
-
-        function detectConflicts(sessions) {
-            const conflicts = [];
-            const notices = [];
-            const roomSessions = {};
-            sessions.forEach(session => {
-                if (!roomSessions[session.room]) roomSessions[session.room] = [];
-                roomSessions[session.room].push(session);
-            });
-            
-            for (const room in roomSessions) {
-                const roomSessionsList = roomSessions[room];
-                
-                // Group sessions by date
-                const sessionsByDate = {};
-                roomSessionsList.forEach(s => {
-                    if (!sessionsByDate[s.date]) sessionsByDate[s.date] = [];
-                    sessionsByDate[s.date].push(s);
-                });
-                
-                // Check for overlaps within each date
-                for (const date in sessionsByDate) {
-                    const daySessions = sessionsByDate[date].sort((a, b) => parseTime(a.start) - parseTime(b.start));
-                    for (let i = 0; i < daySessions.length; i++) {
-                        for (let j = i + 1; j < daySessions.length; j++) {
-                            const s1 = daySessions[i];
-                            const s2 = daySessions[j];
-                            const s1Start = parseTime(s1.start);
-                            const s1End = parseTime(s1.end);
-                            const s2Start = parseTime(s2.start);
-                            const s2End = parseTime(s2.end);
-                            if (s1Start < s2End && s1End > s2Start) {
-                                // Multiple IBDP exams in same room: fine, skip entirely
-                                if (isIBDPExam(s1) && isIBDPExam(s2)) continue;
-                                // Same teacher: note as special attention, not a conflict
-                                const sameTeacher = s1.teacher && s2.teacher && s1.teacher === s2.teacher;
-                                if (sameTeacher) {
-                                    notices.push({ room, sessions: [s1, s2] });
-                                } else {
-                                    conflicts.push({ room, sessions: [s1, s2] });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return { conflicts, notices };
-        }
-        
-        // Get selected date in YYYY/MM/DD format (internal use)
-        function getSelectedDate() {
-            const dateInput = document.getElementById('scheduleDate');
-            if (!dateInput || !dateInput.value) return null;
-            // Convert YYYY-MM-DD to YYYY/MM/DD for internal comparison
-            return dateInput.value.replace(/-/g, '/');
-        }
-        
-        function updateExamAlerts() {
-            const selectedDate = getSelectedDate();
-            if (!selectedDate) return;
-            
-            const examSection = document.getElementById('examAlertSection');
-            const examList = document.getElementById('examAlertList');
-            
-            // Find rooms with exams on selected date and rooms with exam protection (day before)
-            // Only include B-rooms
-            const examDayRooms = [];
-            const protectionRooms = [];
-            
-            for (const [room, dates] of examDates) {
-                // Skip non-B rooms
-                if (!room.startsWith('B')) continue;
-                
-                if (dates.has(selectedDate)) {
-                    // This is an exam day - get exam details
-                    const examInfo = getExamDetailsForRoom(room, selectedDate);
-                    examDayRooms.push({ room, examInfo });
-                } else {
-                    // Check if it's the day before an exam (protection)
-                    // Use explicit local time to avoid UTC timezone issues
-                    const [year, month, day] = selectedDate.split('/').map(Number);
-                    // Create date at noon local time to avoid timezone issues
-                    const checkDate = new Date(year, month - 1, day, 12, 0, 0);
-                    checkDate.setDate(checkDate.getDate() + 1);
-                    const nextDay = `${checkDate.getFullYear()}/${String(checkDate.getMonth() + 1).padStart(2, '0')}/${String(checkDate.getDate()).padStart(2, '0')}`;
-                    
-                    if (dates.has(nextDay)) {
-                        // Find the actual exam date for reference
-                        const examInfo = getExamDetailsForRoom(room, nextDay);
-                        protectionRooms.push({ room, examInfo, nextDay });
-                    }
-                }
-            }
-            
-            if (examDayRooms.length > 0 || protectionRooms.length > 0) {
-                examSection.style.display = 'block';
-                let html = '';
-                
-                // Exam day rooms
-                if (examDayRooms.length > 0) {
-                    html += examDayRooms.map(p => {
-                        let details = 'Exam scheduled';
-                        if (p.examInfo) {
-                            details = `Time: ${p.examInfo.time || 'N/A'}${p.examInfo.code ? ' | ' + p.examInfo.code : ''}${p.examInfo.component ? ' | ' + p.examInfo.component : ''}`;
-                        }
-                        return `
-                        <div class="exam-item">
-                            <div class="room">${p.room} <span class="tag tag-exam">Exam</span></div>
-                            <div class="details">${details}</div>
-                        </div>
-                    `}).join('');
-                }
-                
-                // Exam protection rooms (day before exam)
-                if (protectionRooms.length > 0) {
-                    html += protectionRooms.map(p => `
-                        <div class="exam-item">
-                            <div class="room">${p.room} <span class="tag tag-exam">Exam Protection</span></div>
-                            <div class="details">Exam on ${formatDate(p.nextDay)} - room cannot be booked today</div>
-                        </div>
-                    `).join('');
-                }
-                
-                examList.innerHTML = html;
-            } else {
-                examSection.style.display = 'none';
-            }
-        }
-        
-        function updateDashboard() {
-            const selectedDate = getSelectedDate();
-            const selectedRoom = selectedRooms.size > 0 ? [...selectedRooms] : null;
-            
-            if (!selectedDate) {
-                document.getElementById('roomGrid').innerHTML = '<div class="no-session"><h2>Please select a date</h2></div>';
-                return;
-            }
-            
-            // Combine schedule and bookings
-            let allSessions = [...allScheduleData];
-            allBookingsData.forEach(b => {
-                allSessions.push({
-                    date: b.date,
-                    start: b.start,
-                    end: b.end,
-                    component: b.title,
-                    room: b.room,
-                    teacher: b.teacher
-                });
-            });
-            
-            // Normalize dates for comparison
-            let filteredSessions = allSessions.filter(s => normalizeDateFormat(s.date) === selectedDate);
-            if (selectedRoom) filteredSessions = filteredSessions.filter(s => selectedRoom.includes(s.room));
-            
-            // Exam sessions now come from database room_sessions table only
-            
-            const { conflicts, notices } = detectConflicts(allSessions);
-            const selectedDateConflicts = conflicts.filter(c => normalizeDateFormat(c.sessions[0].date) === selectedDate);
-            const selectedDateNotices = notices.filter(n => normalizeDateFormat(n.sessions[0].date) === selectedDate);
-
-            const conflictSection = document.getElementById('conflictSection');
-            if (selectedDateConflicts.length > 0) {
-                conflictSection.style.display = 'block';
-                document.getElementById('conflictList').innerHTML = selectedDateConflicts.map(c => `
-                    <div class="conflict-item">
-                        <div class="room">${c.room} (${c.sessions[0].start}-${c.sessions[0].end})</div>
-                        <div class="details">${c.sessions.map(s => s.teacher ? `${s.teacher}: ${s.component}` : s.component).join('<br>')}</div>
-                    </div>
-                `).join('');
-            } else {
-                conflictSection.style.display = 'none';
-            }
-
-            const noticeSection = document.getElementById('noticeSection');
-            if (selectedDateNotices.length > 0) {
-                noticeSection.style.display = 'block';
-                document.getElementById('noticeList').innerHTML = selectedDateNotices.map(n => `
-                    <div class="exam-item">
-                        <div class="room">${n.room} (${n.sessions[0].start}-${n.sessions[0].end})</div>
-                        <div class="details">${n.sessions.map(s => s.teacher ? `${s.teacher}: ${s.component}` : s.component).join('<br>')}</div>
-                    </div>
-                `).join('');
-            } else {
-                noticeSection.style.display = 'none';
-            }
-            
-            const roomSessions = {};
-            filteredSessions.forEach(s => {
-                if (!roomSessions[s.room]) roomSessions[s.room] = [];
-                roomSessions[s.room].push(s);
-            });
-            
-            // Pure protection rooms logic removed - using database only
-            
-            for (const room in roomSessions) {
-                roomSessions[room].sort((a, b) => parseTime(a.start) - parseTime(b.start));
-            }
-            
-            // Count available rooms (B-rooms only, excluding blocked)
-            const bRoomInventory = getBRoomInventory();
-            const bRooms = bRoomInventory.filter(r => !isRoomBlocked(r)).length;
-            const totalBRooms = bRoomInventory.length;
-            const usedBRooms = Object.keys(roomSessions).filter(r => r.startsWith('B')).length;
-            
-            document.getElementById('totalRooms').textContent = usedBRooms;
-            document.getElementById('totalSessions').textContent = filteredSessions.length;
-            document.getElementById('availableRooms').textContent = bRooms - usedBRooms;
-            document.getElementById('conflictCount').textContent = selectedDateConflicts.length;
-            document.getElementById('conflictCount').style.color = selectedDateConflicts.length > 0 ? '#ef4444' : '#667eea';
-            // Update notices badge if it exists
-            const noticesBadge = document.getElementById('noticesCount');
-            if (noticesBadge) { noticesBadge.textContent = selectedDateNotices.length; noticesBadge.style.color = selectedDateNotices.length > 0 ? '#f59e0b' : '#667eea'; }
-            
-            const roomGrid = document.getElementById('roomGrid');
-            // Only show B-rooms in the grid
-            const sortedRooms = Object.keys(roomSessions).filter(r => r.startsWith('B')).sort();
-            
-            if (sortedRooms.length === 0) {
-                roomGrid.innerHTML = '<div class="no-session"><h2>No sessions scheduled for this date</h2></div>';
-            } else {
-                let html = '';
-                
-                // Add rooms with sessions (including exam/booking sessions)
-                if (sortedRooms.length > 0) {
-                    html += sortedRooms.map(room => {
-                        const sessions = roomSessions[room];
-                        const hasExamProtection = sessions.some(s => s.isExamProtection);
-                        const hasExam = sessions.some(s => s.isExam && !s.isExamProtection);
-                        
-                        let headerTag = '';
-                        if (hasExam) {
-                            headerTag = ' <span class="tag tag-exam" style="font-size:11px;">Exam</span>';
-                        } else if (hasExamProtection) {
-                            headerTag = ' <span class="tag tag-protection" style="font-size:11px;">Exam Protection</span>';
-                        }
-                        
-                        return `
-                        <div class="room-card">
-                            <div class="room-card-header">
-                                <h3>${room}${headerTag}</h3>
-                                <span class="session-count">${sessions.length} sessions</span>
-                            </div>
-                            <div class="room-card-body">
-                                ${sessions.map(s => {
-                                    const isExam = s.isExam || false;
-                                    let examTag = '';
-                                    if (isExam && !(s.isExamProtection || false)) {
-                                        examTag = '<span class="tag tag-exam">Exam</span>';
-                                    }
-                                    return `
-                                    <div class="session-item">
-                                        <div class="time">${s.start} - ${s.end} ${examTag}</div>
-                                        <div class="component">${s.component}</div>
-                                        <div class="meta">${s.teacher ? `<span class="tag tag-general">${s.teacher}</span>` : ''}</div>
-                                    </div>
-                                `}).join('')}
-                                ${hasExamProtection ? (() => {
-                                    const [yr, mo, dy] = selectedDate.split('/').map(Number);
-                                    const tomorrow = new Date(yr, mo - 1, dy);
-                                    tomorrow.setDate(tomorrow.getDate() + 1);
-                                    const tomorrowStr = `${tomorrow.getFullYear()}/${String(tomorrow.getMonth() + 1).padStart(2, '0')}/${String(tomorrow.getDate()).padStart(2, '0')}`;
-                                    const examSession = allScheduleData.find(es =>
-                                        normalizeRoom(es.room) === normalizeRoom(room) &&
-                                        normalizeDateFormat(es.date) === tomorrowStr &&
-                                        es.isExam
-                                    );
-                                    if (examSession) {
-                                        const examTime = examSession.start && examSession.end ? ` (${examSession.start}–${examSession.end})` : '';
-                                        return `<div class="exam-protection-banner"><span class="tag tag-protection">Exam tomorrow: ${examSession.component}${examTime}</span></div>`;
-                                    }
-                                    return `<div class="exam-protection-banner"><span class="tag tag-protection">Exam tomorrow</span></div>`;
-                                })() : ''}
-                            </div>
-                        </div>
-                    `}).join('');
-                }
-                
-                // Pure protection rooms HTML removed
-                
-                roomGrid.innerHTML = html;
-            }
-        }
-        
-        function initBookingForm() {
-            document.getElementById('recurringCheck').addEventListener('change', function() {
-                document.getElementById('recurringOptions').classList.toggle('visible', this.checked);
-            });
-            
-            document.querySelectorAll('.weekday-chip').forEach(chip => {
-                chip.addEventListener('click', function() {
-                    this.classList.toggle('selected');
-                    const day = parseInt(this.dataset.day);
-                    if (selectedWeekdays.includes(day)) {
-                        selectedWeekdays = selectedWeekdays.filter(d => d !== day);
-                    } else {
-                        selectedWeekdays.push(day);
-                    }
-                });
-            });
-            
-            ['bookingDate', 'bookingStart', 'bookingEnd'].forEach(id => {
-                document.getElementById(id).addEventListener('change', updateRoomSuggestions);
-            });
-            
-            document.getElementById('bookingForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                submitBooking();
-            });
-            
-            document.getElementById('roomSuggestions').addEventListener('click', function(e) {
-                if (e.target.classList.contains('room-chip') && !e.target.classList.contains('unavailable') && !e.target.classList.contains('exam-blocked')) {
-                    document.querySelectorAll('.room-chip').forEach(c => c.classList.remove('selected'));
-                    e.target.classList.add('selected');
-                    document.getElementById('bookingRoom').value = e.target.dataset.room;
-                    document.getElementById('bookingRoomError').style.display = 'none';
-                }
-            });
-        }
-        
-        function checkRoomAvailability() {
-            const room = document.getElementById('bookingRoom').value;
-            const date = document.getElementById('bookingDate').value.replace(/-/g, '/');
-            const start = document.getElementById('bookingStart').value;
-            const end = document.getElementById('bookingEnd').value;
-            const errorDiv = document.getElementById('bookingRoomError');
-            
-            if (!room || !date || !start || !end) {
-                errorDiv.style.display = 'none';
-                return true;
-            }
-            
-            // Check if room is blocked
-            if (isRoomBlocked(room)) {
-                errorDiv.innerHTML = `<span style="color:#ef4444;">Room ${room} is blocked from booking. Please select another room.</span>`;
-                errorDiv.style.display = 'block';
-                return false;
-            }
-            
-            // Check exam protection
-            const examMsg = getExamProtectionMessage(room, date);
-            if (examMsg) {
-                errorDiv.innerHTML = `<span style="color:#f59e0b;">${examMsg}. Please select another room or date.</span>`;
-                errorDiv.style.display = 'block';
-                return false;
-            }
-            
-            if (hasRoomTimeConflict(room, date, start, end)) {
-                errorDiv.innerHTML = `<span style="color:#ef4444;">Room ${room} is already booked on ${formatDate(date)} for an overlapping time. Please select a different room or time.</span>`;
-                errorDiv.style.display = 'block';
-                return false;
-            }
-            
-            errorDiv.style.display = 'none';
-            return true;
-        }
-        
-        function updateRoomSuggestions() {
-            const date = document.getElementById('bookingDate').value.replace(/-/g, '/');
-            const start = document.getElementById('bookingStart').value;
-            const end = document.getElementById('bookingEnd').value;
-            
-            const suggestions = document.getElementById('roomSuggestions');
-            
-            if (!date || !start || !end) {
-                suggestions.innerHTML = '<span style="color:#94a3b8;">Select date and time to see available rooms</span>';
-                return;
-            }
-            
-            const daySessions = [
-                ...allScheduleData,
-                ...allBookingsData.map(b => ({ date: b.date, start: b.start, end: b.end, room: b.room }))
-            ].filter(s => normalizeDateFormat(s.date) === normalizeDateFormat(date));
-            
-            const available = [];
-            const unavailable = [];
-            const examBlocked = [];
-            
-            // Filter out blocked rooms from suggestions
-            const availableForBooking = getBRoomInventory().filter(room => !isRoomBlocked(room));
-            
-            availableForBooking.sort().forEach(room => {
-                // Check if exam blocked
-                const examMsg = getExamProtectionMessage(room, date);
-                if (examMsg) {
-                    examBlocked.push({ room, reason: examMsg });
-                    return;
-                }
-                
-                const roomDaySessions = daySessions.filter(s => normalizeRoom(s.room) === normalizeRoom(room));
-                let isAvailable = true;
-                
-                for (const s of roomDaySessions) {
-                    if (parseTime(start) < parseTime(s.end) && parseTime(end) > parseTime(s.start)) {
-                        isAvailable = false;
-                        break;
-                    }
-                }
-                
-                if (isAvailable) {
-                    available.push(room);
-                } else {
-                    unavailable.push(room);
-                }
-            });
-            
-            let html = '';
-            
-            if (available.length > 0) {
-                html += available.map(room => `<div class="room-chip" data-room="${room}">${room} ✓</div>`).join('');
-            }
-            
-            if (examBlocked.length > 0) {
-                html += '<br><span style="color:#92400e; font-size:12px; margin-top:10px; display:block;">Exam Protected:</span>';
-                html += examBlocked.map(r => `<div class="room-chip exam-blocked" title="${r.reason}">${r.room} (Exam)</div>`).join('');
-            }
-            
-            if (unavailable.length > 0) {
-                html += `<span style="color:#94a3b8; margin-left:10px;">Occupied: ${unavailable.join(', ')}</span>`;
-            }
-            
-            if (available.length === 0 && unavailable.length === 0 && examBlocked.length === 0) {
-                html = '<span style="color:#94a3b8;">No rooms available for this time</span>';
-            }
-            
-            suggestions.innerHTML = html;
-        }
-        
-        async function submitBooking() {
-            const room = document.getElementById('bookingRoom').value;
-            const date = document.getElementById('bookingDate').value.replace(/-/g, '/');
-            const start = document.getElementById('bookingStart').value;
-            const end = document.getElementById('bookingEnd').value;
-            const title = document.getElementById('bookingTitle').value;
-            const teacher = document.getElementById('bookingTeacher').value;
-            const isRecurring = document.getElementById('recurringCheck').checked;
-            
-            if (!room || !date || !start || !end || !title || !teacher) {
-                showAlert('Please fill in all required fields', 'error');
-                return;
-            }
-            
-            if (parseTime(start) >= parseTime(end)) {
-                showAlert('End time must be after start time', 'error');
-                return;
-            }
-            
-            // Check if room is blocked
-            if (isRoomBlocked(room)) {
-                showAlert(`Room ${room} is blocked from booking. Please select another room.`, 'error');
-                return;
-            }
-            
-            // Check exam protection
-            const examMsg = getExamProtectionMessage(room, date);
-            if (examMsg) {
-                showAlert(`${examMsg}. Please select another room or date.`, 'warning');
-                return;
-            }
-            
-            // Check for conflicts against loaded data before confirmation
-            if (hasRoomTimeConflict(room, date, start, end)) {
-                showAlert(`Room ${room} already has an overlapping session in this time window`, 'error');
-                return;
-            }
-            
-            pendingBooking = { room, date, start, end, title, teacher, isRecurring, weekdays: [...selectedWeekdays] };
-            
-            let message = `Book ${room} on ${formatDate(date)} from ${start} to ${end}`;
-            if (isRecurring) {
-                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const days = selectedWeekdays.map(d => dayNames[d]).join(', ');
-                message += `<br><br>This will be a recurring booking on: ${days || 'No days selected'}`;
-            }
-            
-            document.getElementById('modalBody').innerHTML = message;
-            document.getElementById('confirmModal').classList.add('show');
-        }
-        
-        async function confirmBooking() {
-            if (!pendingBooking) return;
-            
-            const { room, date, start, end, title, teacher, isRecurring, weekdays } = pendingBooking;
-            let bookingCount = 0;
-            
-            try {
-                if (isRecurring && weekdays.length > 0) {
-                    // Generate recurring bookings
-                    const endDateInput = document.getElementById('recurringEnd').value;
-                    let currentDate = new Date(date.replace(/\//g, '-'));
-                    const lastDate = endDateInput ? new Date(endDateInput) : new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
-                    
-                    const bookings = [];
-                    const pendingSessions = [];
-                    while (currentDate <= lastDate) {
-                        if (weekdays.includes(currentDate.getDay())) {
-                            const bookingDate = `${currentDate.getFullYear()}/${String(currentDate.getMonth()+1).padStart(2,'0')}/${String(currentDate.getDate()).padStart(2,'0')}`;
-                            
-                            // Check exam protection for each recurring date
-                            if (!isRoomBlocked(room) && !getExamProtectionMessage(room, bookingDate) && !hasRoomTimeConflict(room, bookingDate, start, end, pendingSessions)) {
-                                bookings.push({
-                                    room, 
-                                    date: bookingDate,
-                                    start_time: start, 
-                                    end_time: end, 
-                                    title, 
-                                    teacher
-                                });
-                                pendingSessions.push({ room, date: bookingDate, start, end });
-                            }
-                        }
-                        currentDate.setDate(currentDate.getDate() + 1);
-                    }
-                    
-                    if (bookings.length === 0) {
-                        showAlert('No bookings could be created - all dates are protected or blocked', 'warning');
-                        closeModal();
-                        return;
-                    }
-                    
-                    for (const b of bookings) {
-                        await createBookingToDb(b);
-                        bookingCount++;
-                    }
-                } else {
-                    if (hasRoomTimeConflict(room, date, start, end)) {
-                        throw new Error(`Room ${room} already has an overlapping session at this time`);
-                    }
-                    // Single booking
-                    await createBookingToDb({
-                        room, date, start_time: start, end_time: end, title, teacher
-                    });
-                    bookingCount = 1;
-                }
-                
-                closeModal();
-                document.getElementById('bookingForm').reset();
-                selectedWeekdays = [];
-                document.querySelectorAll('.weekday-chip').forEach(c => c.classList.remove('selected'));
-                
-                // Reload data and update bookings list
-                await loadAllData();
-                renderAllBookings();
-                
-                // Show success modal
-                const successMsg = bookingCount > 1 
-                    ? `${bookingCount} recurring bookings have been confirmed for room ${room}.`
-                    : `Room ${room} has been successfully booked for ${formatDate(date)} from ${start} to ${end}.`;
-                document.getElementById('successMessage').innerHTML = successMsg;
-                document.getElementById('successModal').classList.add('show');
-                
-            } catch (error) {
-                showAlert('Booking failed: ' + error.message, 'error');
-            }
-        }
-        
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.remove('show');
-            // Switch to All Bookings tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelector('.tab[data-tab="bookings"]').classList.add('active');
-            document.getElementById('bookings-tab').classList.add('active');
-        }
-        
-        async function createBookingToDb(booking) {
-            const bookingDate = normalizeDateFormat(booking.date || '');
-            const bookingRoom = normalizeRoom(booking.room || '');
-            const bookingStart = booking.start_time;
-            const bookingEnd = booking.end_time;
-
-            if (!bookingRoom || !bookingDate || !bookingStart || !bookingEnd) {
-                throw new Error('Booking data is incomplete');
-            }
-
-            const dateVariants = getDateVariants(bookingDate);
-            const orFilter = dateVariants.map(d => `date.eq.${d}`).join(',');
-
-            const [roomSessionsResp, scheduleResp, bookingsResp] = await Promise.all([
-                fetch(
-                    SUPABASE_URL + '/rest/v1/room_sessions?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
-                    {
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                        }
-                    }
-                ),
-                fetch(
-                    SUPABASE_URL + '/rest/v1/schedule?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
-                    {
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                        }
-                    }
-                ),
-                fetch(
-                    SUPABASE_URL + '/rest/v1/bookings?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
-                    {
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                        }
-                    }
-                )
-            ]);
-
-            const roomSessionRows = roomSessionsResp.ok ? await roomSessionsResp.json() : [];
-            const scheduleRows = scheduleResp.ok ? await scheduleResp.json() : [];
-            const bookingRows = bookingsResp.ok ? await bookingsResp.json() : [];
-            const pool = [
-                ...(Array.isArray(roomSessionRows) ? roomSessionRows : []).map(r => ({ date: r.date, start: r.start_time, end: r.end_time, room: r.room })),
-                ...(Array.isArray(scheduleRows) ? scheduleRows : []).map(r => ({ date: r.date, start: r.start_time, end: r.end_time, room: r.room })),
-                ...(Array.isArray(bookingRows) ? bookingRows : []).map(r => ({ date: r.date, start: r.start_time, end: r.end_time, room: r.room }))
-            ];
-
-            const bStart = parseTime(bookingStart);
-            const bEnd = parseTime(bookingEnd);
-            const clash = pool.find(s =>
-                normalizeRoom(s.room || '') === bookingRoom &&
-                normalizeDateFormat(s.date || '') === bookingDate &&
-                bStart < parseTime(s.end) &&
-                bEnd > parseTime(s.start)
-            );
-
-            if (clash) {
-                throw new Error(`Room ${bookingRoom} is already booked at ${clash.start}-${clash.end}`);
-            }
-
-            const response = await fetch(SUPABASE_URL + '/rest/v1/bookings', {
-                method: 'POST',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=representation'
-                },
-                body: JSON.stringify(booking)
-            });
-            
-            const responseText = await response.text();
-            
-            if (!response.ok) {
-                let errorMsg = 'Failed to create booking';
-                try {
-                    const err = JSON.parse(responseText);
-                    errorMsg = err.message || err.details || JSON.stringify(err);
-                } catch (e) {
-                    // Use raw text if not JSON
-                    if (responseText) errorMsg = responseText;
-                }
-                throw new Error(errorMsg);
-            }
-            
-            // Try to parse successful response
-            try {
-                return JSON.parse(responseText);
-            } catch (e) {
-                return responseText;
-            }
-        }
-        
-        function closeModal() {
-            document.getElementById('confirmModal').classList.remove('show');
-            pendingBooking = null;
-        }
-        
-        async function deleteBooking(id) {
-            if (confirm('Are you sure you want to delete this booking?')) {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/bookings?id=eq.' + id, {
-                    method: 'DELETE',
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                    }
-                });
-                
-                if (!response.ok) {
-                    showAlert('Failed to delete', 'error');
-                    return;
-                }
-                
-                showAlert('Booking deleted', 'success');
-                loadAllData();
-                renderAllBookings();
-            }
-        }
-        
-        async function renderAllBookings() {
-            const list = document.getElementById('bookingsList');
-            
-            if (allBookingsData.length === 0) {
-                list.innerHTML = '<p style="color:#64748b;">No bookings yet. Go to "Book a Room" tab to make a booking.</p>';
-                return;
-            }
-
-            const groupedBookings = allBookingsData
-                .slice()
-                .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start) || a.room.localeCompare(b.room))
-                .reduce((groups, booking) => {
-                    if (!groups[booking.date]) {
-                        groups[booking.date] = [];
-                    }
-                    groups[booking.date].push(booking);
-                    return groups;
-                }, {});
-
-            list.innerHTML = Object.entries(groupedBookings)
-                .map(([date, bookings]) => `
-                    <section class="booking-date-group">
-                        <div class="booking-date-heading">${formatDate(date)} <span>(${bookings.length})</span></div>
-                        <div class="booking-date-items">
-                            ${bookings.map(b => {
-                                const displayRoom = b.room;
-                                return `
-                                    <article class="booking-entry">
-                                        <div class="booking-entry-header">
-                                            <div>
-                                                <div class="title">${b.title}</div>
-                                                <div class="time">${b.start} - ${b.end}</div>
-                                            </div>
-                                            <div class="actions">
-                                                <span class="room">${displayRoom}</span>
-                                                <button class="delete-btn" onclick="deleteBooking(${b.id})">Delete</button>
-                                            </div>
-                                        </div>
-                                        <div class="details">
-                                            <span class="detail-item">Booked by: ${b.teacher}</span>
-                                        </div>
-                                    </article>
-                                `;
-                            }).join('')}
-                        </div>
-                    </section>
-                `).join('');
-        }
-
-        function toggleScrollTopButton() {
-            const button = document.getElementById('scrollTopBtn');
-            if (!button) return;
-            button.classList.toggle('visible', window.scrollY > 320);
-        }
-
-        function initScrollTopButton() {
-            const button = document.getElementById('scrollTopBtn');
-            if (!button) return;
-
-            button.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-
-            window.addEventListener('scroll', toggleScrollTopButton, { passive: true });
-            toggleScrollTopButton();
-        }
-        
-        function showAlert(message, type) {
-            const alert = document.getElementById('bookingAlert');
-            alert.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => alert.innerHTML = '', 5000);
-        }
-        
-        function exportBookings() {
-            if (allBookingsData.length === 0) {
-                showAlert('No bookings to export', 'error');
-                return;
-            }
-            const data = JSON.stringify(allBookingsData, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `room_bookings_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showAlert('Bookings exported successfully!', 'success');
-        }
-        
-        function importBookings(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const ext = file.name.split('.').pop().toLowerCase();
-            event.target.value = '';
-
-            if (ext === 'json') {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    try {
-                        const imported = JSON.parse(e.target.result);
-                        if (!Array.isArray(imported)) throw new Error('Invalid format - file must contain a JSON array');
-                        await processImportedBookings(imported);
-                    } catch (err) {
-                        showAlert('Failed to import: ' + err.message, 'error');
-                    }
-                };
-                reader.readAsText(file);
-
-            } else if (ext === 'xlsx' || ext === 'xls' || ext === 'csv') {
-                if (typeof XLSX === 'undefined') {
-                    showAlert('Excel parser not loaded yet - please wait a moment and try again', 'error');
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-
-                        const imported = rows.map(row => {
-                            // Normalise keys: lowercase, trim, collapse spaces → underscore
-                            const norm = {};
-                            for (const k of Object.keys(row)) {
-                                norm[k.toLowerCase().trim().replace(/\s+/g, '_')] = row[k];
-                            }
-
-                            // Date: Excel Date object or string → YYYY/MM/DD
-                            let date = norm['date'] || '';
-                            if (date instanceof Date) {
-                                date = `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`;
-                            } else {
-                                date = String(date).trim().replace(/-/g, '/');
-                            }
-
-                            // Time: Excel Date object or string → HH:MM
-                            const toTime = v => {
-                                if (v instanceof Date) return `${String(v.getHours()).padStart(2,'0')}:${String(v.getMinutes()).padStart(2,'0')}`;
-                                return String(v || '').trim();
-                            };
-
-                            return {
-                                room:    String(norm['room'] || '').trim(),
-                                date,
-                                start:   toTime(norm['start'] || norm['start_time'] || ''),
-                                end:     toTime(norm['end']   || norm['end_time']   || ''),
-                                title:   String(norm['title'] || norm['booking_title'] || '').trim(),
-                                teacher: String(norm['teacher'] || norm['your_name'] || norm['name'] || '').trim()
-                            };
-                        });
-
-                        await processImportedBookings(imported);
-                    } catch (err) {
-                        showAlert('Failed to import: ' + err.message, 'error');
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-
-            } else {
-                showAlert('Unsupported file type. Please use .json, .xlsx, .xls, or .csv', 'error');
-            }
-        }
-
-        async function processImportedBookings(imported) {
-            if (!Array.isArray(imported) || imported.length === 0) {
-                showAlert('No rows found in file.', 'error');
-                return;
-            }
-
-            const succeeded = [];
-            const failed    = [];
-
-            // Build a session pool from existing DB data so we can detect conflicts.
-            // We also grow this pool with each successfully imported row in this batch.
-            const sessionPool = [
-                ...allScheduleData.map(s => ({ room: s.room, date: normalizeDateFormat(s.date), start: s.start, end: s.end })),
-                ...allBookingsData.map(b => ({ room: b.room, date: normalizeDateFormat(b.date), start: b.start, end: b.end }))
-            ];
-
-            for (let i = 0; i < imported.length; i++) {
-                const b   = imported[i];
-                const row = i + 2; // row 1 = header, so data starts at row 2
-
-                // ── Validation ────────────────────────────────────────────
-                const reasons = [];
-
-                if (!b.room || !String(b.room).trim())
-                    reasons.push('missing <strong>room</strong>');
-                if (!b.date || !String(b.date).trim())
-                    reasons.push('missing <strong>date</strong>');
-                if (!b.start || !String(b.start).trim())
-                    reasons.push('missing <strong>start</strong> time');
-                if (!b.end || !String(b.end).trim())
-                    reasons.push('missing <strong>end</strong> time');
-                if (!b.title || !String(b.title).trim())
-                    reasons.push('missing <strong>title</strong>');
-                if (!b.teacher || !String(b.teacher).trim())
-                    reasons.push('missing <strong>teacher</strong>');
-
-                const normalised = normalizeRoom(b.room || '');
-                if (b.room && isRoomBlocked(normalised))
-                    reasons.push(`room <strong>${normalised}</strong> is blocked from booking`);
-
-                if (b.start && b.end && parseTime(String(b.start)) >= parseTime(String(b.end)))
-                    reasons.push('start time is not before end time');
-
-                // ── Conflict check against existing + already-imported rows ──
-                if (reasons.length === 0 && b.room && b.date && b.start && b.end) {
-                    const bDate  = normalizeDateFormat(String(b.date));
-                    const bStart = parseTime(String(b.start));
-                    const bEnd   = parseTime(String(b.end));
-                    const clash  = sessionPool.find(s =>
-                        s.room === normalised &&
-                        normalizeDateFormat(s.date) === bDate &&
-                        bStart < parseTime(s.end) &&
-                        bEnd   > parseTime(s.start)
-                    );
-                    if (clash) {
-                        reasons.push(`room <strong>${normalised}</strong> already has a booking or class on ${bDate} at ${clash.start}–${clash.end}`);
-                    }
-                }
-
-                if (reasons.length > 0) {
-                    failed.push({ row, data: b, reasons });
-                    continue;
-                }
-
-                // ── Insert ────────────────────────────────────────────────
-                const record = {
-                    room:       normalised,
-                    date:       b.date,
-                    start_time: b.start,
-                    end_time:   b.end,
-                    title:      String(b.title).trim(),
-                    teacher:    String(b.teacher).trim()
-                };
-
-                try {
-                    await createBookingToDb(record);
-                    succeeded.push({ row, record });
-                    // Add to pool so later rows in this batch detect the conflict too
-                    sessionPool.push({ room: normalised, date: normalizeDateFormat(b.date), start: b.start, end: b.end });
-                } catch (err) {
-                    failed.push({ row, data: b, reasons: [err.message || 'Database error'] });
-                }
-            }
-
-            // ── Reload live data ──────────────────────────────────────────
-            if (succeeded.length > 0) loadAllData();
-
-            // ── Build & show report modal ─────────────────────────────────
-            let html = '';
-
-            // Summary bar
-            const total = imported.length;
-            const okCol  = succeeded.length > 0 ? '#16a34a' : '#64748b';
-            const failCol = failed.length   > 0 ? '#dc2626' : '#64748b';
-            html += `<div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
-                <div style="flex:1;min-width:120px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;text-align:center;">
-                    <div style="font-size:28px;font-weight:700;color:${okCol};">${succeeded.length}</div>
-                    <div style="font-size:12px;color:#475569;">Imported successfully</div>
-                </div>
-                <div style="flex:1;min-width:120px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;text-align:center;">
-                    <div style="font-size:28px;font-weight:700;color:${failCol};">${failed.length}</div>
-                    <div style="font-size:12px;color:#475569;">Failed / skipped</div>
-                </div>
-                <div style="flex:1;min-width:120px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;text-align:center;">
-                    <div style="font-size:28px;font-weight:700;color:#334155;">${total}</div>
-                    <div style="font-size:12px;color:#475569;">Total rows</div>
-                </div>
-            </div>`;
-
-            // Failed rows detail
-            if (failed.length > 0) {
-                html += `<div style="font-weight:600;color:#dc2626;margin-bottom:8px;">&#9888; Failed rows</div>`;
-                html += `<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
-                    <thead><tr>
-                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;width:55px;">Row</th>
-                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;width:90px;">Room</th>
-                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;width:100px;">Date</th>
-                        <th style="background:#fef2f2;padding:7px 10px;text-align:left;border-bottom:1px solid #fecaca;color:#64748b;">Reason(s)</th>
-                    </tr></thead><tbody>`;
-                failed.forEach(f => {
-                    html += `<tr>
-                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;color:#64748b;">${f.row}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;">${f.data.room || '<em style="color:#94a3b8">—</em>'}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;">${f.data.date || '<em style="color:#94a3b8">—</em>'}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #fef2f2;color:#dc2626;">${f.reasons.join('; ')}</td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
-            }
-
-            // Succeeded rows summary
-            if (succeeded.length > 0) {
-                html += `<div style="font-weight:600;color:#16a34a;margin-bottom:8px;">&#10003; Successfully imported</div>`;
-                html += `<table style="width:100%;border-collapse:collapse;font-size:13px;">
-                    <thead><tr>
-                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;width:55px;">Row</th>
-                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;width:80px;">Room</th>
-                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;width:100px;">Date</th>
-                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;">Title</th>
-                        <th style="background:#f0fdf4;padding:7px 10px;text-align:left;border-bottom:1px solid #bbf7d0;color:#64748b;">Time</th>
-                    </tr></thead><tbody>`;
-                succeeded.forEach(s => {
-                    html += `<tr>
-                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;color:#64748b;">${s.row}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.room}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.date}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.title}</td>
-                        <td style="padding:7px 10px;border-bottom:1px solid #f0fdf4;">${s.record.start_time}–${s.record.end_time}</td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
-            }
-
-            document.getElementById('importReportBody').innerHTML = html;
-            document.getElementById('importReportModal').classList.add('show');
-        }
-        
-        // Room filter chip panel toggle
-        let selectedRooms = new Set();
-
-        function onRoomChipClick(e) {
-            const chip = e.currentTarget;
-            const room = chip.dataset.room;
-            const panel = document.getElementById('roomFilterPanel');
-            if (room === '') {
-                // All Rooms
-                selectedRooms.clear();
-                panel.querySelectorAll('.room-chip').forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-            } else {
-                // Toggle this room
-                panel.querySelector('.all-chip').classList.remove('active');
-                if (selectedRooms.has(room)) {
-                    selectedRooms.delete(room);
-                    chip.classList.remove('active');
-                } else {
-                    selectedRooms.add(room);
-                    chip.classList.add('active');
-                }
-                if (selectedRooms.size === 0) {
-                    panel.querySelector('.all-chip').classList.add('active');
-                }
-            }
-            // Update button label
-            const label = document.getElementById('roomFilterLabel');
-            label.textContent = selectedRooms.size === 0 ? 'All Rooms' :
-                selectedRooms.size === 1 ? [...selectedRooms][0] :
-                `${selectedRooms.size} rooms selected`;
-            updateDashboard();
-        }
-
-        document.getElementById('roomFilterBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            const btn = this;
-            const panel = document.getElementById('roomFilterPanel');
-            const isOpen = panel.classList.contains('open');
-            panel.classList.toggle('open', !isOpen);
-            btn.classList.toggle('open', !isOpen);
-        });
-
-        document.addEventListener('click', function(e) {
-            const wrap = document.getElementById('roomFilterWrap');
-            if (wrap && !wrap.contains(e.target)) {
-                document.getElementById('roomFilterPanel').classList.remove('open');
-                document.getElementById('roomFilterBtn').classList.remove('open');
-            }
-        });
-    </script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/state.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/setup-sql.js"></script>
+    <script src="assets/js/common-ui.js"></script>
+    <script src="assets/js/room-exam-utils.js"></script>
+    <script src="assets/js/data-access.js"></script>
+    <script src="assets/js/data-loaders.js"></script>
+    <script src="assets/js/bookings-ui.js"></script>
+    <script src="assets/js/bookings-import-export.js"></script>
+    <script src="assets/js/booking-db.js"></script>
+    <script src="assets/js/schedule-ui.js"></script>
+    <script src="assets/js/app-orchestrator.js"></script>
+    <script src="assets/js/main.js"></script>
 
 <style>
 
@@ -2378,7 +640,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
   align-items: center;
   gap: 8px;
   padding: 8px;
-  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
+  padding-bottom: 16px; /* 8px content spacing + 8px transparent area for mouse movement */
   font-size: 12px;
   line-height: 17px;
   background-color: #fafafa;
@@ -2388,7 +650,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
   color: #171717;
 }
 
-/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
+/* Create a transparent bridge area so the mouse can move smoothly to the tooltip */
 .tooltip-content::after {
   content: '';
   position: absolute;
@@ -2431,7 +693,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
   color: #000000;
 }
 
-/* 深色模式支持 */
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .trigger-content {
     background-color: transparent;
@@ -2467,50 +729,50 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
 
 <script>
 /**
- * Iframe 元素高亮注入脚本
- * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ * Iframe element highlight injector script.
+ * Include this script in the target site to support cross-origin iframe highlighting.
  *
- * 使用方法：
- * 1. 将此脚本添加到目标网站的 HTML 中
- * 2. 或通过浏览器扩展、用户脚本等方式注入
+ * Usage:
+ * 1. Add this script to the target site's HTML.
+ * 2. Or inject it through a browser extension, user script, or similar method.
  */
 
 (function () {
   "use strict";
 
-  // 检查是否在 iframe 中
+  // Check whether this is running inside an iframe
   if (window.self === window.top) {
-    return; // 不在 iframe 中，不执行
+    return; // Not inside an iframe, so do nothing
   }
 
-  // 检查是否已经初始化过
+  // Check whether it has already been initialized
   if (window.__iframeHighlightInitialized) {
     return;
   }
   window.__iframeHighlightInitialized = true;
-  console.log("Iframe 高亮脚本已加载");
+  console.log("Iframe highlight script loaded");
 
-  // 创建高亮覆盖层
+  // Create the highlight overlay
   var overlay = document.createElement("div");
   overlay.id = "iframe-highlight-overlay";
   overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
 
-  // 创建悬停高亮框（虚线边框）
+  // Create the hover highlight box (dashed border)
   var highlightBox = document.createElement("div");
   highlightBox.id = "iframe-highlight-box";
   highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
 
-  // 创建选中节点的常驻高亮框（实线边框）
+  // Create the persistent highlight box for the selected node (solid border)
   var selectedBox = document.createElement("div");
   selectedBox.id = "iframe-selected-box";
   selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
 
-  // 创建悬停标签显示
+  // Create the hover label
   var tagLabel = document.createElement("div");
   tagLabel.id = "iframe-tag-label";
   tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
 
-  // 创建选中节点标签
+  // Create the selected node label
   var selectedLabel = document.createElement("div");
   selectedLabel.id = "iframe-selected-label";
   selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
@@ -2520,11 +782,11 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
   overlay.appendChild(selectedLabel);
   document.body.appendChild(overlay);
 
-  // 存储当前选中的元素
+  // Store the currently selected element
   var selectedElement = null;
   var highlightEnabled = false;
 
-  // 更新选中元素的高亮显示
+  // Update the selected element highlight
   function updateSelectedHighlight(element) {
     console.log("updateSelectedHighlight called with:", element);
     if (!element) {
@@ -2538,28 +800,28 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     var rect = element.getBoundingClientRect();
     console.log("Selected element rect:", rect);
 
-    // 更新选中高亮框位置
+    // Update the selected highlight box position
     selectedBox.style.display = "block";
     selectedBox.style.left = "".concat(rect.left - 2, "px");
     selectedBox.style.top = "".concat(rect.top - 2, "px");
     selectedBox.style.width = "".concat(rect.width + 4, "px");
     selectedBox.style.height = "".concat(rect.height + 4, "px");
 
-    // 更新选中标签位置和内容
+    // Update the selected label position and content
     selectedLabel.style.display = "block";
     selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
 
-    // 计算标签位置，确保不超出视窗
+    // Calculate the label position and keep it inside the viewport
     var labelTop = rect.top - 28;
     var labelLeft = rect.left;
 
-    // 如果标签会超出顶部，显示在元素下方
+    // If the label would overflow the top, show it below the element
     if (labelTop < 5) {
       labelTop = rect.bottom + 5;
     }
 
-    // 如果标签会超出右侧，向左调整
-    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    // If the label would overflow the right edge, shift it left
+    var labelWidth = selectedLabel.offsetWidth || 100; // Estimated width
     if (labelLeft + labelWidth > window.innerWidth - 10) {
       labelLeft = window.innerWidth - labelWidth - 10;
     }
@@ -2578,19 +840,19 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     var current = element;
     while (current !== document.documentElement) {
       var selector = '';
-      // 优先检查唯一ID
+      // Prefer a unique ID when available
       if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
         segments.unshift("#".concat(current.id));
-        break; // ID唯一，无需继续向上
+        break; // Unique ID found, no need to continue upward
       }
 
-      // 生成类名选择器（取第一个有效类名）
+      // Generate a class selector using the first valid class name
       var classes = Array.from(current.classList).filter(function (c) {
         return !c.startsWith('js-');
       });
       var className = classes.length > 0 ? ".".concat(classes[0]) : '';
 
-      // 生成位置索引（nth-child）
+      // Generate a positional selector (nth-child)
       var tag = current.tagName.toLowerCase();
       if (!className) {
         var siblings = Array.from(current.parentNode.children);
@@ -2605,14 +867,14 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
       current = current.parentElement;
     }
 
-    // 处理根元素
+    // Handle the root element
     if (current === document.documentElement) {
       segments.unshift('html');
     }
     return segments.join(' > ');
   }
 
-  // 获取元素文本内容
+  // Get the element text content
   function getElementText(element) {
     var _element$textContent;
     if (element.tagName === "INPUT") {
@@ -2625,7 +887,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     return text.length > 50 ? text.substring(0, 50) + "..." : text;
   }
 
-  // 获取元素属性信息
+  // Get the element attribute data
   function getElementAttributes(element) {
     var attrs = {};
     for (var i = 0; i < element.attributes.length; i++) {
@@ -2635,7 +897,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     return attrs;
   }
 
-  // 鼠标悬停事件处理
+  // Handle mouse hover events
   function handleMouseOver(e) {
     if (!highlightEnabled) return;
     var target = e.target;
@@ -2643,12 +905,12 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
       return;
     }
 
-    // 避免高亮 html 和 body 元素
+    // Avoid highlighting the html and body elements
     if (target === document.documentElement || target === document.body) {
       return;
     }
 
-    // 如果是已选中的元素，不显示悬停高亮
+    // Do not show hover highlighting for the selected element
     if (target === selectedElement) {
       highlightBox.style.display = "none";
       tagLabel.style.display = "none";
@@ -2659,34 +921,34 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     var text = getElementText(target);
     var attributes = getElementAttributes(target);
 
-    // 更新悬停高亮框位置
+    // Update the hover highlight box position
     highlightBox.style.display = "block";
     highlightBox.style.left = "".concat(rect.left - 2, "px");
     highlightBox.style.top = "".concat(rect.top - 2, "px");
     highlightBox.style.width = "".concat(rect.width + 4, "px");
     highlightBox.style.height = "".concat(rect.height + 4, "px");
 
-    // 更新标签位置和内容
+    // Update the label position and content
     tagLabel.style.display = "block";
     tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
 
-    // 计算标签位置，确保不超出视窗
+    // Calculate the label position and keep it inside the viewport
     var labelTop = rect.top - 22;
     var labelLeft = rect.left;
 
-    // 如果标签会超出顶部，显示在元素下方
+    // If the label would overflow the top, show it below the element
     if (labelTop < 0) {
       labelTop = rect.bottom + 5;
     }
 
-    // 如果标签会超出右侧，向左调整
+    // If the label would overflow the right edge, shift it left
     if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
       labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
     }
     tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
     tagLabel.style.top = "".concat(labelTop, "px");
 
-    // 发送消息到父窗口
+    // Send the message to the parent window
     var elementInfo = {
       tagName: target.tagName.toLowerCase(),
       rect: {
@@ -2713,16 +975,16 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
         source: "iframe-highlight-injector"
       }, "*");
     } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
+      console.warn("Unable to send message to parent window:", error);
     }
   }
 
-  // 鼠标离开事件处理
+  // Handle mouse leave events
   function handleMouseOut(e) {
     if (!highlightEnabled) return;
     var relatedTarget = e.relatedTarget;
 
-    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    // Do not hide the highlight if the mouse moves onto a highlight-related element
     if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
       return;
     }
@@ -2735,26 +997,26 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
         source: "iframe-highlight-injector"
       }, "*");
     } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
+      console.warn("Unable to send message to parent window:", error);
     }
   }
 
-  // 点击事件处理
+  // Handle click events
   function handleClick(e) {
     var target = e.target;
     if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
       return;
     }
 
-    // 避免处理 html 和 body 元素
+    // Avoid handling the html and body elements
     if (target === document.documentElement || target === document.body) {
       return;
     }
 
-    // 检查是否是交互元素，这些元素需要保留默认行为
+    // Check whether this is an interactive element that should keep its default behavior
     var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
 
-    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    // When highlight mode is enabled, prevent default behavior and propagation for non-interactive elements
     if (highlightEnabled) {
       e.preventDefault();
       e.stopPropagation();
@@ -2769,10 +1031,10 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
       rect: rect
     });
 
-    // 立即更新选中高亮
+    // Update the selected highlight immediately
     updateSelectedHighlight(target);
 
-    // 隐藏悬停高亮，因为现在是选中状态
+    // Hide the hover highlight because the element is now selected
     highlightBox.style.display = "none";
     tagLabel.style.display = "none";
     var elementInfo = {
@@ -2801,11 +1063,11 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
         source: "iframe-highlight-injector"
       }, "*");
     } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
+      console.warn("Unable to send message to parent window:", error);
     }
   }
 
-  // 监听来自父窗口的消息
+  // Listen for messages from the parent window
   function handleParentMessage(event) {
     console.log("Received message from parent:", event.data);
     if (event.data.type === "iframe-highlight-toggle") {
@@ -2851,7 +1113,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     }
   }
 
-  // 启用高亮功能
+  // Enable highlighting
   function enableHighlight() {
     console.log("Enabling highlight");
     document.addEventListener("mouseover", handleMouseOver, true);
@@ -2861,18 +1123,18 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     overlay.style.display = "block";
   }
 
-  // 禁用高亮功能
+  // Disable highlighting
   function disableHighlight() {
     console.log("Disabling highlight");
     highlightEnabled = false;
-    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
-    // 这样可以保留选中状态的显示
+    // Keep the event listeners, but gate their behavior through highlightEnabled
+    // This preserves the selected state display
     highlightBox.style.display = "none";
     tagLabel.style.display = "none";
-    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+    // Do not hide selectedBox and selectedLabel so the selected state remains visible
   }
 
-  // 完全禁用高亮功能（移除所有监听器）
+  // Fully disable highlighting by removing all listeners
   function fullyDisableHighlight() {
     console.log("Fully disabling highlight");
     highlightEnabled = false;
@@ -2886,11 +1148,11 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     selectedLabel.style.display = "none";
   }
 
-  // 添加事件监听
+  // Add event listeners
   enableHighlight();
   window.addEventListener("message", handleParentMessage);
 
-  // 暴露全局函数供外部调用
+  // Expose global functions for external use
   window.__iframeHighlightControl = {
     enable: enableHighlight,
     disable: disableHighlight,
@@ -2902,7 +1164,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
       return selectedElement;
     },
     updateSelected: updateSelectedHighlight,
-    // 通过消息发送开关控制
+    // Send toggle state through a message
     sendToggleMessage: function sendToggleMessage(enabled) {
       window.parent.postMessage({
         type: 'iframe-highlight-status',
@@ -2912,7 +1174,7 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
     }
   };
 
-  // 通知父窗口脚本已加载
+  // Notify the parent window that the script is ready
   try {
     window.parent.postMessage({
       type: "iframe-highlight-ready",
@@ -2924,10 +1186,10 @@ EXECUTE FUNCTION prevent_booking_overlap();`;
       source: "iframe-highlight-injector"
     }, "*");
   } catch (error) {
-    console.warn("无法发送就绪消息到父窗口:", error);
+    console.warn("Unable to send ready message to parent window:", error);
   }
 
-  // 清理函数
+  // Cleanup function
   window.__iframeHighlightCleanup = function () {
     fullyDisableHighlight();
     window.removeEventListener("message", handleParentMessage);
