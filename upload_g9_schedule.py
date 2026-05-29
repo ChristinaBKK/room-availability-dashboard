@@ -2,25 +2,41 @@
 """Upload G9 B-building schedule data to Supabase"""
 
 import json
+import os
 import requests
 
-SUPABASE_URL = "https://fgewwriulwdodmlbsotp.supabase.co"
-SUPABASE_KEY = "sb_publishable_yvdyY62yUu7HgPw7wjy9XQ_jmcje9te"
+DEFAULT_SUPABASE_URL = "https://fgewwriulwdodmlbsotp.supabase.co"
 SCHEDULE_FILE = "g9_b_schedule.json"
+
+
+def get_supabase_config() -> tuple[str, str]:
+    supabase_url = os.getenv("SUPABASE_URL", DEFAULT_SUPABASE_URL)
+    supabase_key = (
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+        or os.getenv("SERVICE_ROLE_KEY")
+        or os.getenv("SUPABASE_KEY")
+        or os.getenv("SUPABASE_ANON_KEY")
+    )
+    if not supabase_key:
+        raise RuntimeError(
+            "Missing Supabase API key. Set SUPABASE_SERVICE_ROLE_KEY, SERVICE_ROLE_KEY, SUPABASE_KEY, or SUPABASE_ANON_KEY."
+        )
+    return supabase_url, supabase_key
 
 def upload_g9_schedule():
     """Upload G9 B-building schedule data to Supabase"""
+    supabase_url, supabase_key = get_supabase_config()
     with open(SCHEDULE_FILE, 'r') as f:
         data = json.load(f)
     
     headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "apikey": supabase_key,
+        "Authorization": f"Bearer {supabase_key}",
         "Content-Type": "application/json",
         "X-Client-Info": "matrix-agent"
     }
     
-    url = f"{SUPABASE_URL}/rest/v1/schedule"
+    url = f"{supabase_url}/rest/v1/schedule"
     
     # Insert in batches
     batch_size = 100

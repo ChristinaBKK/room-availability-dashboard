@@ -1,4 +1,7 @@
 .venv/
 node_modules/
+.env
+.env.*
+!.env.example
 post_change_audit_*.csv
 post_change_audit_*.md
