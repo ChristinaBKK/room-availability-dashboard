@@ -1,0 +1,1527 @@
+{
+  "summary": {
+    "feasible_course_definitions": 20,
+    "blocked_or_missing_course_definitions": 43,
+    "requested_booking_rows": 112,
+    "inserted_booking_rows": 112,
+    "skipped_existing_booking_rows": 0,
+    "failed_booking_rows": 0,
+    "verified_booking_rows": 112,
+    "missing_after_insert": 0,
+    "blocked_list_csv": "course_room_not_feasible_and_missing_june_2026.csv"
+  },
+  "inserted": [
+    {
+      "date": "2026/06/10",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B3039",
+      "title": "Math SL",
+      "teacher": "Shahid Anwar",
+      "program": "IBDP",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "09:05",
+      "end_time": "09:45",
+      "room": "B3039",
+      "title": "Math SL",
+      "teacher": "Shahid Anwar",
+      "program": "IBDP",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3039",
+      "title": "Math SL",
+      "teacher": "Shahid Anwar",
+      "program": "IBDP",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3039",
+      "title": "Math SL",
+      "teacher": "Shahid Anwar",
+      "program": "IBDP",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B3039",
+      "title": "Math SL",
+      "teacher": "Shahid Anwar",
+      "program": "IBDP",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3039",
+      "title": "Math SL",
+      "teacher": "Shahid Anwar",
+      "program": "IBDP",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B3042",
+      "title": "Regular Math A-1",
+      "teacher": "Joy Farhat",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "09:05",
+      "end_time": "09:45",
+      "room": "B3042",
+      "title": "Regular Math A-1",
+      "teacher": "Joy Farhat",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3042",
+      "title": "Regular Math A-1",
+      "teacher": "Joy Farhat",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3042",
+      "title": "Regular Math A-1",
+      "teacher": "Joy Farhat",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B3042",
+      "title": "Regular Math A-1",
+      "teacher": "Joy Farhat",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3042",
+      "title": "Regular Math A-1",
+      "teacher": "Joy Farhat",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4002",
+      "title": "Chemistry A",
+      "teacher": "Selina Sun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "09:05",
+      "end_time": "09:45",
+      "room": "B4002",
+      "title": "Chemistry A",
+      "teacher": "Selina Sun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4002",
+      "title": "Chemistry A",
+      "teacher": "Selina Sun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4002",
+      "title": "Chemistry A",
+      "teacher": "Selina Sun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4002",
+      "title": "Chemistry A",
+      "teacher": "Selina Sun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4002",
+      "title": "Chemistry A",
+      "teacher": "Selina Sun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B2040",
+      "title": "Economics A",
+      "teacher": "Reza Hamroun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "09:05",
+      "end_time": "09:45",
+      "room": "B2040",
+      "title": "Economics A",
+      "teacher": "Reza Hamroun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B2040",
+      "title": "Economics A",
+      "teacher": "Reza Hamroun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B2040",
+      "title": "Economics A",
+      "teacher": "Reza Hamroun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B2040",
+      "title": "Economics A",
+      "teacher": "Reza Hamroun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B2040",
+      "title": "Economics A",
+      "teacher": "Reza Hamroun",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4009",
+      "title": "Chinese A",
+      "teacher": "Jenny Li",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "09:05",
+      "end_time": "09:45",
+      "room": "B4009",
+      "title": "Chinese A",
+      "teacher": "Jenny Li",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4009",
+      "title": "Chinese A",
+      "teacher": "Jenny Li",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4009",
+      "title": "Chinese A",
+      "teacher": "Jenny Li",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4009",
+      "title": "Chinese A",
+      "teacher": "Jenny Li",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4009",
+      "title": "Chinese A",
+      "teacher": "Jenny Li",
+      "program": "CIE",
+      "block": "A"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B1029",
+      "title": "Computer Science",
+      "teacher": "Bill Jiang",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3009",
+      "title": "Chinese B",
+      "teacher": "Ivy Zhu",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4010",
+      "title": "Chinese A",
+      "teacher": "Melody Chen",
+      "program": "IBDP",
+      "block": "B2"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4010",
+      "title": "Chinese A",
+      "teacher": "Melody Chen",
+      "program": "IBDP",
+      "block": "B2"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4009",
+      "title": "Chinese B",
+      "teacher": "Jenny Li",
+      "program": "IBDP",
+      "block": "B2"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4009",
+      "title": "Chinese B",
+      "teacher": "Jenny Li",
+      "program": "IBDP",
+      "block": "B2"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3005",
+      "title": "Physics HL/SL",
+      "teacher": "Logan Tian",
+      "program": "IBDP",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3040",
+      "title": "Regular Math C-1",
+      "teacher": "Narmina Magsudova",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4004",
+      "title": "Chemistry C-1",
+      "teacher": "Khurram Shezad",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B2043",
+      "title": "Economics D-1",
+      "teacher": "Marshall Irby",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "13:00",
+      "end_time": "14:25",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B2041",
+      "title": "Economic C-2 (EU)",
+      "teacher": "Winnie Hu",
+      "program": "CIE",
+      "block": "C"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3044",
+      "title": "TOK (Chinese)",
+      "teacher": "Miya Yang / Matthew Peatman",
+      "program": "IBDP",
+      "block": "C2-TOK"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3044",
+      "title": "TOK (Chinese)",
+      "teacher": "Miya Yang / Matthew Peatman",
+      "program": "IBDP",
+      "block": "C2-TOK"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "10:45",
+      "end_time": "12:10",
+      "room": "B2044",
+      "title": "CAS",
+      "teacher": "#N/A",
+      "program": "IBDP",
+      "block": "C2-CAS"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B3044",
+      "title": "History",
+      "teacher": "Keith Seeley / Matthew Peatman",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4038",
+      "title": "English E-1",
+      "teacher": "Kurt Shelton",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "08:20",
+      "end_time": "09:00",
+      "room": "B4038",
+      "title": "English E-1",
+      "teacher": "Kurt Shelton",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4038",
+      "title": "English E-1",
+      "teacher": "Kurt Shelton",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B4038",
+      "title": "English E-1",
+      "teacher": "Kurt Shelton",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4038",
+      "title": "English E-1",
+      "teacher": "Kurt Shelton",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4038",
+      "title": "English E-1",
+      "teacher": "Kurt Shelton",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4039",
+      "title": "English E-4",
+      "teacher": "Helen Liu",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "08:20",
+      "end_time": "09:00",
+      "room": "B4039",
+      "title": "English E-4",
+      "teacher": "Helen Liu",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4039",
+      "title": "English E-4",
+      "teacher": "Helen Liu",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B4039",
+      "title": "English E-4",
+      "teacher": "Helen Liu",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4039",
+      "title": "English E-4",
+      "teacher": "Helen Liu",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4039",
+      "title": "English E-4",
+      "teacher": "Helen Liu",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4040",
+      "title": "English E-5",
+      "teacher": "Sally Guo",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "08:20",
+      "end_time": "09:00",
+      "room": "B4040",
+      "title": "English E-5",
+      "teacher": "Sally Guo",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4040",
+      "title": "English E-5",
+      "teacher": "Sally Guo",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B4040",
+      "title": "English E-5",
+      "teacher": "Sally Guo",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4040",
+      "title": "English E-5",
+      "teacher": "Sally Guo",
+      "program": "CIE",
+      "block": "E"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "08:20",
+      "end_time": "09:45",
+      "room": "B4040",
+      "title": "English E-5",
+      "teacher": "Sally Guo",
+      "program": "CIE",
+      "block": "E"
+    }
+  ],
+  "skipped_existing": [],
+  "failures": [],
+  "missing_after_insert": [],
+  "blocked_or_missing": [
+    {
+      "course": "Math HL",
+      "program": "IBDP",
+      "block": "A",
+      "teacher": "Rajesh Choyikkunimmal",
+      "room": "B3012",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 08:20-09:45 -> bookings 08:30-09:45 G11 IB Chinese - Paper1 (DC4 Exam)"
+    },
+    {
+      "course": "Regular Math A-2",
+      "program": "CIE",
+      "block": "A",
+      "teacher": "Sheryl Shane Canite",
+      "room": "B3011",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Physics A-2 (Summit) (CIE A).; Live overlap(s): 2026/06/10 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/12 09:05-09:45 -> bookings 09:05-09:45 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/15 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/16 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/17 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/29 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A Summit  (Faisal Qureshi)"
+    },
+    {
+      "course": "Physics A-1",
+      "program": "CIE",
+      "block": "A",
+      "teacher": "Evelyn Yang",
+      "room": "B3004",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A  (Faisal Qureshi) / 2026/06/15 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A (Faisal Qureshi) / 2026/06/16 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block A (Faisal Qureshi) / 2026/06/17 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A (Faisal Qureshi) / 2026/06/29 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A (Faisal Qureshi)"
+    },
+    {
+      "course": "Physics A-2 (Summit)",
+      "program": "CIE",
+      "block": "A",
+      "teacher": "Mike Hu",
+      "room": "B3011",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Regular Math A-2 (CIE A).; Live overlap(s): 2026/06/10 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/12 09:05-09:45 -> bookings 09:05-09:45 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/15 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/16 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/17 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A Summit  (Faisal Qureshi) / 2026/06/29 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A Summit  (Faisal Qureshi)"
+    },
+    {
+      "course": "Physics A-3 (EU)",
+      "program": "CIE",
+      "block": "A",
+      "teacher": "Logan Tian",
+      "room": "B3021",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A EU  (Faisal Qureshi) / 2026/06/12 09:05-09:45 -> bookings 09:05-09:45 G10 TT Physics Block A EU (Faisal Qureshi) / 2026/06/15 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A EU (Faisal Qureshi) / 2026/06/16 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block A EU (Faisal Qureshi) / 2026/06/17 08:20-09:45 -> bookings 08:20-09:45 G10 TT Physics Block A EU (Faisal Qureshi) / 2026/06/29 13:00-14:25 -> bookings 13:00-14:25 G10 TT Physics Block A EU (Faisal Qureshi)"
+    },
+    {
+      "course": "Geography",
+      "program": "CIE",
+      "block": "A",
+      "teacher": "Keith Seeley / Alex Oniango",
+      "room": "B2044",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 08:20-09:45 -> schedule 08:20-09:00 G9 pre-IG Economics (Ms k Ding) / 2026/06/12 09:05-09:45 -> bookings 08:20-09:45 G11 IB EE support  (Chaminda ) / 2026/06/15 13:00-14:25 -> schedule 13:00-13:40 G9 pre-IG Economics (Ms k Ding) / 2026/06/16 10:00-11:25 -> schedule 10:00-10:40 G9 IG Regular Maths - F (Mr S Yang) / 2026/06/17 08:20-09:45 -> schedule 08:20-09:00 G9 pre-IG Economics (Ms k Ding) / 2026/06/29 13:00-14:25 -> schedule 13:00-13:40 G9 pre-IG Economics (Ms k Ding)"
+    },
+    {
+      "course": "Economics 2 HL/SL",
+      "program": "IBDP",
+      "block": "B1",
+      "teacher": "Chaminda Marasinghe",
+      "room": "B2039",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-12:10 -> schedule 11:30-12:10 AS Business 1 (Mr R Hamroun) / 2026/06/11 14:35-16:00 -> schedule 14:35-15:15 AS Business 1 (Mr R Hamroun) / 2026/06/12 10:00-10:40 -> schedule 10:00-10:40 AS Business 1 (Mr R Hamroun) / 2026/06/17 11:30-12:10 -> schedule 11:30-12:10 AS Business 1 (Mr R Hamroun) / 2026/06/18 14:35-16:00 -> schedule 14:35-15:15 AS Business 1 (Mr R Hamroun)"
+    },
+    {
+      "course": "Biology HL/SL",
+      "program": "IBDP",
+      "block": "B1",
+      "teacher": "Fisher Yu",
+      "room": "B4007",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Physics HL/SL (IBDP B1)."
+    },
+    {
+      "course": "Theatre HL/SL",
+      "program": "IBDP",
+      "block": "B1",
+      "teacher": "Chalice Rakgoale",
+      "room": "B2003",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Music (CIE B)."
+    },
+    {
+      "course": "Physics HL/SL",
+      "program": "IBDP",
+      "block": "B1",
+      "teacher": "Logan Tian",
+      "room": "B4007",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Biology HL/SL (IBDP B1)."
+    },
+    {
+      "course": "Physics B-1",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Chester Lim",
+      "room": "B3005",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-14:25 -> bookings 11:30-14:25 G10 TT Physics Block B-1 (Faisal Qureshi) / 2026/06/12 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block B-1 (Faisal Qureshi) / 2026/06/17 11:30-14:25 -> bookings 11:30-14:25 G10 TT Physics Block B-1 (Faisal Qureshi)"
+    },
+    {
+      "course": "Physics B-2",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Evelyn Yang",
+      "room": "B3004",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-14:25 -> bookings 11:30-14:25 G10 TT Physics Block B-2 (Faisal Qureshi) / 2026/06/12 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block B-2 (Faisal Qureshi) / 2026/06/17 11:30-14:25 -> bookings 11:30-14:25 G10 TT Physics Block B-2 (Faisal Qureshi)"
+    },
+    {
+      "course": "Biology",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Ambily Biju",
+      "room": "B3007",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-14:25 -> schedule 11:30-12:10 G9 IG Biology 3 (Ms A Biju) / 2026/06/11 14:35-16:00 -> schedule 14:35-15:15 G9 IG Biology 3 (Ms A Biju) / 2026/06/17 11:30-14:25 -> schedule 11:30-12:10 G9 IG Biology 3 (Ms A Biju) / 2026/06/18 14:35-16:00 -> schedule 14:35-15:15 G9 IG Biology 3 (Ms A Biju)"
+    },
+    {
+      "course": "Economics B-1",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Helgaard Le Roux",
+      "room": "B2041",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-14:25 -> schedule 11:30-12:10 AS Economics 2 (Ms Z Wang) / 2026/06/11 14:35-16:00 -> schedule 14:35-15:15 AS Economics 2 (Ms Z Wang) / 2026/06/12 10:00-11:25 -> schedule 10:00-10:40 AS Economics 2 (Ms Z Wang) / 2026/06/15 14:35-16:00 -> schedule 14:35-15:15 G9 IG Economics TBC (Ms k Ding) / 2026/06/17 11:30-14:25 -> schedule 11:30-12:10 AS Economics 2 (Ms Z Wang) / 2026/06/18 14:35-16:00 -> schedule 14:35-15:15 AS Economics 2 (Ms Z Wang) / ..."
+    },
+    {
+      "course": "Music",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Andy Clark",
+      "room": "B2003",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Theatre HL/SL (IBDP B1)."
+    },
+    {
+      "course": "Economics B-2 (Summit)",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Fahran Nzamy",
+      "room": "MISSING",
+      "status": "Not Feasible",
+      "notes": "No room provided in the request."
+    },
+    {
+      "course": "Regular Maths B (EU)",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Sheryl Shane Canite",
+      "room": "B3011",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-14:25 -> bookings 11:30-12:10 G11IB Economics (Abass Mugabe) / 2026/06/12 10:00-11:25 -> bookings 10:00-11:25 G11IB Economics (Abass Mugabe) / 2026/06/17 11:30-14:25 -> bookings 11:30-12:10 G11IB Economics (Abass Mugabe)"
+    },
+    {
+      "course": "Art (Dual Dose)",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Mark Ford",
+      "room": "B3027",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 11:30-14:25 -> schedule 11:30-12:10 11 AS Art 2 (Ms L Liu) / 2026/06/11 14:35-16:00 -> schedule 14:35-15:15 11 AS Art 2 (Ms L Liu) / 2026/06/12 10:00-11:25 -> schedule 10:00-10:40 11 AS Art 2 (Ms L Liu) / 2026/06/17 11:30-14:25 -> schedule 11:30-12:10 11 AS Art 2 (Ms L Liu) / 2026/06/18 14:35-16:00 -> schedule 14:35-15:15 11 AS Art 2 (Ms L Liu)"
+    },
+    {
+      "course": "Chemistry HL/SL",
+      "program": "IBDP",
+      "block": "C",
+      "teacher": "Judy Zhu",
+      "room": "B4002",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Chemistry C-2 (Summit) (CIE C).; Live overlap(s): 2026/06/10 14:35-16:00 -> schedule 14:35-15:15 AS Chemistry 3 (Ms S Sun) / 2026/06/11 13:00-14:25 -> schedule 13:00-13:40 AS Chemistry 3 (Ms S Sun) / 2026/06/15 10:00-11:25 -> schedule 10:00-10:40 AS Chemistry 3 (Ms S Sun) / 2026/06/16 08:20-09:45 -> schedule 08:20-09:00 AS Chemistry 3 (Ms S Sun) / 2026/06/17 14:35-16:00 -> schedule 14:35-15:15 AS Chemistry 3 (Ms S Sun) / 2026/06/18 13:00-14:25 -> schedule 13:00-13:40 AS Chemistry 3 (Ms S Sun) / ..."
+    },
+    {
+      "course": "Biology HL/SL",
+      "program": "IBDP",
+      "block": "C",
+      "teacher": "Lily Hung",
+      "room": "B4012",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 14:35-16:00 -> schedule 14:35-15:15 AS Biology 2 (Ms L Hung) / 2026/06/11 13:00-14:25 -> schedule 13:00-13:40 AS Biology 2 (Ms L Hung) / 2026/06/15 10:00-11:25 -> schedule 10:00-10:40 AS Biology 2 (Ms L Hung) / 2026/06/16 08:20-09:45 -> schedule 08:20-09:00 AS Biology 2 (Ms L Hung) / 2026/06/17 14:35-16:00 -> schedule 14:35-15:15 AS Biology 2 (Ms L Hung) / 2026/06/18 13:00-14:25 -> schedule 13:00-13:40 AS Biology 2 (Ms L Hung) / ..."
+    },
+    {
+      "course": "Regular Math C-2",
+      "program": "CIE",
+      "block": "C",
+      "teacher": "Shaun Yang",
+      "room": "B3039",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 14:35-16:00 -> schedule 14:35-15:15 G9.5 AS Maths (Mr S Liu) / 2026/06/15 10:00-11:25 -> schedule 10:00-10:40 G9.5 AS Maths (Mr S Liu) / 2026/06/17 14:35-16:00 -> schedule 14:35-15:15 G9.5 AS Maths (Mr S Liu) / 2026/06/29 10:00-11:25 -> schedule 10:00-10:40 G9.5 AS Maths (Mr S Liu)"
+    },
+    {
+      "course": "Further Maths C",
+      "program": "CIE",
+      "block": "C",
+      "teacher": "Rajesh",
+      "room": "B3012",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 13:00-14:25 -> schedule 13:00-13:40 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang) / 2026/06/18 13:00-14:25 -> schedule 13:00-13:40 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang)"
+    },
+    {
+      "course": "Advanced Maths (CIE) C",
+      "program": "CIE",
+      "block": "C",
+      "teacher": "Mandy Chen",
+      "room": "B3041",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/15 10:00-11:25 -> bookings 08:20-16:00 LS Self Study (Leo Li) / 2026/06/16 08:20-09:45 -> bookings 08:20-16:00 LS Self Study (Leo Li) / 2026/06/17 14:35-16:00 -> bookings 08:20-16:00 LS Self Study (Leo Li) / 2026/06/18 13:00-14:25 -> bookings 08:20-16:00 LS Self Study (Leo Li)"
+    },
+    {
+      "course": "Business",
+      "program": "CIE",
+      "block": "C",
+      "teacher": "Joyce Zhou",
+      "room": "B2039",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 14:35-16:00 -> schedule 14:35-15:15 AS Business 2 (Ms J Jacobs-Kraft) / 2026/06/11 13:00-14:25 -> schedule 13:00-13:40 AS Business 2 (Ms J Jacobs-Kraft) / 2026/06/15 10:00-11:25 -> schedule 10:00-10:40 AS Business 2 (Ms J Jacobs-Kraft) / 2026/06/16 08:20-09:45 -> schedule 09:05-09:45 AS Business 2 (Ms J Jacobs-Kraft) / 2026/06/17 14:35-16:00 -> schedule 14:35-15:15 AS Business 2 (Ms J Jacobs-Kraft) / 2026/06/18 13:00-14:25 -> schedule 13:00-13:40 AS Business 2 (Ms J Jacobs-Kraft) / ..."
+    },
+    {
+      "course": "Chemistry C-2 (Summit)",
+      "program": "CIE",
+      "block": "C",
+      "teacher": "Alistair Furze",
+      "room": "B4002",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Chemistry HL/SL (IBDP C).; Live overlap(s): 2026/06/10 14:35-16:00 -> schedule 14:35-15:15 AS Chemistry 3 (Ms S Sun) / 2026/06/11 13:00-14:25 -> schedule 13:00-13:40 AS Chemistry 3 (Ms S Sun) / 2026/06/15 10:00-11:25 -> schedule 10:00-10:40 AS Chemistry 3 (Ms S Sun) / 2026/06/16 08:20-09:45 -> schedule 08:20-09:00 AS Chemistry 3 (Ms S Sun) / 2026/06/17 14:35-16:00 -> schedule 14:35-15:15 AS Chemistry 3 (Ms S Sun) / 2026/06/18 13:00-14:25 -> schedule 13:00-13:40 AS Chemistry 3 (Ms S Sun) / ..."
+    },
+    {
+      "course": "Regular Maths D",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Joy Farhat",
+      "room": "B3042",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 10:00-11:25 -> bookings 10:00-12:00 G11 IB MATHS (Shahid Anwar) / 2026/06/18 10:00-11:25 -> bookings 10:00-12:00 G11 IB MATHS (Shahid Anwar)"
+    },
+    {
+      "course": "Fast Maths (Edexcel)",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Rajesh",
+      "room": "B3012",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 10:00-11:25 -> schedule 10:00-10:40 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang) / 2026/06/12 11:30-12:10 -> bookings 11:00-12:00 G11 IB Maths AA H/SL P2 (DC4 Exam) / 2026/06/15 11:30-12:10 -> schedule 11:30-12:10 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang) / 2026/06/17 10:00-11:25 -> schedule 10:00-10:40 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang) / 2026/06/29 11:30-12:10 -> schedule 11:30-12:10 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang)"
+    },
+    {
+      "course": "Advanced Math (CIE) D",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Eva Wang",
+      "room": "B3040",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 10:00-11:25 -> schedule 10:00-10:40 11 Reg Maths 4 9709 AS (Ms E Wang) / 2026/06/11 10:00-11:25 -> schedule 10:00-10:40 11 Reg Maths 4 9709 AS (Ms E Wang) / 2026/06/12 11:30-12:10 -> schedule 11:30-12:10 11 Reg Maths 4 9709 AS (Ms E Wang) / 2026/06/15 11:30-12:10 -> schedule 11:30-12:10 11 Reg Maths 4 9709 AS (Ms E Wang) / 2026/06/16 14:35-16:00 -> schedule 14:35-15:15 11 Reg Maths 4 9709 AS (Ms E Wang) / 2026/06/17 10:00-11:25 -> schedule 10:00-10:40 11 Reg Maths 4 9709 AS (Ms E Wang) / ..."
+    },
+    {
+      "course": "Physics D",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Raufie Shafie",
+      "room": "B3009",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Chinese D-2 (CIE D).; Live overlap(s): 2026/06/10 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block D (Faisal Qureshi)"
+    },
+    {
+      "course": "Chemistry D",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Selina Sun",
+      "room": "B4004",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 10:00-11:25 -> bookings 10:00-11:25 Grade 11 IB Chemistry (Dr Alistair Furze) / 2026/06/12 11:30-12:10 -> bookings 11:30-12:10 Grade 11 IB Chemistry (Dr Alistair Furze)"
+    },
+    {
+      "course": "Art",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "room": "B3027",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 10:00-11:25 -> bookings 09:00-12:00 G11 AS Art Practical (DC4 Exam)"
+    },
+    {
+      "course": "Chinese D-1",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Miya Yang",
+      "room": "B4011",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/16 14:35-16:00 -> schedule 14:35-15:15 G9.5 Summit Economics (Mr F Nzamy) / 2026/06/18 10:00-11:25 -> bookings 08:20-14:25 IB Chinese SL,IB ToK (Miya Yang)"
+    },
+    {
+      "course": "Chinese D-2",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Ivy Zhu",
+      "room": "B3009",
+      "status": "Not Feasible",
+      "notes": "Internal room clash with requested courses: Physics D (CIE D).; Live overlap(s): 2026/06/10 10:00-11:25 -> bookings 10:00-11:25 G10 TT Physics Block D (Faisal Qureshi)"
+    },
+    {
+      "course": "English",
+      "program": "IBDP",
+      "block": "D",
+      "teacher": "Warwick Midlane",
+      "room": "B4038",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 10:00-11:25 -> bookings 10:40-12:00 G9.5 0580 (DC4 Exam) / 2026/06/10 10:00-11:25 -> bookings 08:30-10:10 G9.5 Chinese - Reading & Writing (DC4 Exam) / 2026/06/10 10:00-11:25 -> bookings 10:35-12:00 G9.5 Summit World History (DC4 Exam) / 2026/06/11 10:00-11:25 -> bookings 10:30-12:00 G9.5 English Listening & Reading (DC4 Exam)"
+    },
+    {
+      "course": "English",
+      "program": "IBDP",
+      "block": "D",
+      "teacher": "Donald Meyer",
+      "room": "B4043",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 10:00-11:25 -> bookings 10:40-12:00 G9.5 0580 (DC4 Exam) / 2026/06/10 10:00-11:25 -> bookings 08:30-10:10 G9.5 Chinese - Reading & Writing (DC4 Exam) / 2026/06/10 10:00-11:25 -> bookings 10:35-12:00 G9.5 Summit World History (DC4 Exam) / 2026/06/11 10:00-11:25 -> bookings 10:30-12:00 G9.5 English Listening & Reading (DC4 Exam)"
+    },
+    {
+      "course": "English",
+      "program": "IBDP",
+      "block": "D",
+      "teacher": "Darren McQuay",
+      "room": "B4040",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/10 10:00-11:25 -> bookings 10:40-12:00 G9.5 0580 (DC4 Exam) / 2026/06/10 10:00-11:25 -> bookings 08:30-10:10 G9.5 Chinese - Reading & Writing (DC4 Exam) / 2026/06/10 10:00-11:25 -> bookings 10:35-12:00 G9.5 Summit World History (DC4 Exam) / 2026/06/11 10:00-11:25 -> bookings 10:30-12:00 G9.5 English Listening & Reading (DC4 Exam)"
+    },
+    {
+      "course": "Economics 1 HL/SL",
+      "program": "IBDP",
+      "block": "E",
+      "teacher": "Chaminda Marasinghe",
+      "room": "B3009",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 08:20-09:45 -> schedule 08:20-09:00 G9 pre-IG Economics (Ms k Ding) / 2026/06/18 08:20-09:45 -> schedule 08:20-09:00 G9 pre-IG Economics (Ms k Ding)"
+    },
+    {
+      "course": "Business H/SL",
+      "program": "IBDP",
+      "block": "E",
+      "teacher": "Jennifer Jacobs-Kraft",
+      "room": "B2039",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 08:20-09:45 -> schedule 08:20-09:00 11G / Life Skills (Mr A Varley) / 2026/06/15 08:20-09:45 -> schedule 08:20-09:00 11A / Life Skills (Ms L Zhu) / 2026/06/18 08:20-09:45 -> schedule 08:20-09:00 11G / Life Skills (Mr A Varley) / 2026/06/29 08:20-09:45 -> schedule 09:05-09:45 AS Business 1 (Mr R Hamroun)"
+    },
+    {
+      "course": "Philosophy H/SL",
+      "program": "IBDP",
+      "block": "E",
+      "teacher": "Matthew Peatman",
+      "room": "B3044",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/15 08:20-09:45 -> bookings 09:00-09:45 G11 IB Philosophy (Matthew Peatman) / 2026/06/29 08:20-09:45 -> bookings 09:00-09:45 G11 IB Philosophy (Matthew Peatman)"
+    },
+    {
+      "course": "English E-2",
+      "program": "CIE",
+      "block": "E",
+      "teacher": "Jenna Wade Dunn",
+      "room": "B4042",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 08:20-09:45 -> bookings 08:30-09:55 G9.5 Summit Chemistry (DC4 Exam) / 2026/06/16 11:30-12:10 -> schedule 11:30-12:10 G9 pre-IG English (Mr T TT19 EXT,Ms T TT24 Aurora, Dai,Ms T TT25 Ariel Wang)"
+    },
+    {
+      "course": "English E-3",
+      "program": "CIE",
+      "block": "E",
+      "teacher": "Lim Wan",
+      "room": "B4043",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/11 08:20-09:45 -> bookings 08:30-09:30 G9.5 Pre-IG Chemistry (DC4 Exam) / 2026/06/12 08:20-09:00 -> bookings 08:30-09:30 G11 IB Physics H/SL Paper 1 (DC4 Exam) / 2026/06/15 08:20-09:45 -> bookings 08:30-09:45 G11 IB Physics H/SL Paper 2 (DC4 Exam)"
+    },
+    {
+      "course": "English E-6",
+      "program": "CIE",
+      "block": "E",
+      "teacher": "Sherry Yuan",
+      "room": "B4041",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/16 11:30-12:10 -> schedule 11:30-12:10 G9.5 Summit English (Mr T TT19 EXT,Ms T TT22 Iris Z, hou,Mr T TT23 Florence Chen)"
+    },
+    {
+      "course": "English E-7",
+      "program": "CIE",
+      "block": "E",
+      "teacher": "Cordelia Jiao",
+      "room": "B4011",
+      "status": "Not Feasible",
+      "notes": "Live overlap(s): 2026/06/18 08:20-09:45 -> bookings 08:20-14:25 IB Chinese SL,IB ToK (Miya Yang)"
+    }
+  ]
+}

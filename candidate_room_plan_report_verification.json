@@ -1,0 +1,9 @@
+{
+  "planned_courses": 12,
+  "planned_booking_rows": 83,
+  "verified_booking_rows": 83,
+  "missing_after_verification": 0,
+  "unresolved_courses": 31,
+  "unresolved_csv": "candidate_room_unresolved_after_plan.csv",
+  "missing_rows": []
+}

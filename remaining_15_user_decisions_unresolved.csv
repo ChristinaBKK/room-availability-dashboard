@@ -1,0 +1,6 @@
+course,program,block,teacher,decision,requested_room,assigned_room,available_room_count,status,resolution
+Regular Maths D,CIE,D,Joy Farhat,find_else,,,1,Unresolved,"Live-feasible rooms exist individually, but no conflict-free global assignment could be produced with the current selections."
+Chinese D-1,CIE,D,Miya Yang,find_else,,,1,Unresolved,"Live-feasible rooms exist individually, but no conflict-free global assignment could be produced with the current selections."
+Chinese D-2,CIE,D,Ivy Zhu,find_else,,,1,Unresolved,"Live-feasible rooms exist individually, but no conflict-free global assignment could be produced with the current selections."
+English E-6,CIE,E,Sherry Yuan,find_else,,,2,Unresolved,"Live-feasible rooms exist individually, but no conflict-free global assignment could be produced with the current selections."
+English E-7,CIE,E,Cordelia Jiao,use,B1029,,2,Unresolved,"Live-feasible rooms exist individually, but no conflict-free global assignment could be produced with the current selections."

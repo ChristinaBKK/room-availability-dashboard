@@ -1,0 +1,262 @@
+{
+  "summary": {
+    "courses_reviewed": 43,
+    "courses_with_live_feasible_candidates": 3,
+    "courses_allocated": 3,
+    "booking_rows": 22,
+    "unresolved_courses": 40
+  },
+  "allocations": [
+    {
+      "course": "Biology",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Ambily Biju",
+      "room": "B4007"
+    },
+    {
+      "course": "Regular Maths B (EU)",
+      "program": "CIE",
+      "block": "B",
+      "teacher": "Sheryl Shane Canite",
+      "room": "B3043"
+    },
+    {
+      "course": "Art",
+      "program": "CIE",
+      "block": "D",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "room": "B4029"
+    }
+  ],
+  "booking_rows": [
+    {
+      "date": "2026/06/10",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/10",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/11",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/12",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/15",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/16",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/17",
+      "start_time": "11:30",
+      "end_time": "14:25",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "10:00",
+      "end_time": "11:25",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/18",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "11:30",
+      "end_time": "12:10",
+      "room": "B4029",
+      "title": "Art",
+      "teacher": "Amanda Milne / Luciana Liu",
+      "program": "CIE",
+      "block": "D"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B3043",
+      "title": "Regular Maths B (EU)",
+      "teacher": "Sheryl Shane Canite",
+      "program": "CIE",
+      "block": "B"
+    },
+    {
+      "date": "2026/06/29",
+      "start_time": "14:35",
+      "end_time": "16:00",
+      "room": "B4007",
+      "title": "Biology",
+      "teacher": "Ambily Biju",
+      "program": "CIE",
+      "block": "B"
+    }
+  ],
+  "execution": {
+    "inserted_booking_rows": 22,
+    "skipped_existing_booking_rows": 0,
+    "failed_booking_rows": 0,
+    "verified_booking_rows": 22,
+    "missing_after_verification": 0,
+    "failed": []
+  }
+}
