@@ -186,7 +186,7 @@ This section converts the per-course workbook feasibility check into one conflic
 | Advanced Maths (CIE) C | CIE | C | Mandy Chen | B3042 | None | First live-feasible workbook option kept. |
 | Art | CIE | D | Amanda Milne / Luciana Liu | B3029 | B4029 | First live-feasible workbook option kept. |
 | Biology HL/SL | IBDP | C | Lily Hung | B3007 | B4005 | Chosen to keep the global plan conflict-free. |
-| Biology | CIE | B | Ambily Biju | B4004 | B4007 | First live-feasible workbook option kept. |
+| Biology | CIE | B | Ambily Biju | B4007 | B4004 | Final room updated to keep B4007 live across all Block B slots. |
 | Business | CIE | C | Joyce Zhou | B1034 | None | First live-feasible workbook option kept. |
 | Chemistry C-2 (Summit) | CIE | C | Alistair Furze | B4005 | None | First live-feasible workbook option kept. |
 | Geography | CIE | A | Keith Seeley / Alex Oniango | B2039 | None | First live-feasible workbook option kept. |
@@ -520,7 +520,7 @@ This section is the authoritative live June rooming list for the supplied course
 | Math SL | IBDP | Block A | SAN | Shahid Anwar | Booked live | B3039 | Single room across booked slots: B3039 | All expected June slots found in live bookings. |
 | Regular Math A-1 | CIE | Block A | JFA | Joy Farhat | Booked live | B3042 | Single room across booked slots: B3042 | All expected June slots found in live bookings. |
 | Regular Math A-2 | CIE | Block A | SCA | Sheryl Shane Canite | Booked live | B3009 | Single room across booked slots: B3009 | All expected June slots found in live bookings. |
-| Physics A-1 | CIE | Block A | EVY | Evelyn Yang | Booked live | B3002, B3004, B3005 | 2026/06/10 08:20-09:45=B3004, B3005; 2026/06/12 09:05-09:45=B3002; 2026/06/15 13:00-14:25=B3004; 2026/06/16 10:00-11:25=B3004; 2026/06/17 08:20-09:45=B3004; 2026/06/29 13:00-14:25=B3004 | Matched via alternate live booking teacher alias. Duplicate live rows on slot(s): 2026/06/10 08:20-09:45=B3004, B3005 |
+| Physics A-1 | CIE | Block A | EVY | Evelyn Yang | Booked live | B3004 | Single room across booked slots: B3004 | Matched via alternate live booking teacher alias. |
 | Chemistry A | CIE | Block A | SSU | Selina Sun | Booked live | B4002 | Single room across booked slots: B4002 | All expected June slots found in live bookings. |
 | Economics A | CIE | Block A | RHA | Reza Hamroun | Booked live | B2040 | Single room across booked slots: B2040 | All expected June slots found in live bookings. |
 | Chinese A | CIE | Block A | JLI | Jenny Li | Booked live | B4009 | Single room across booked slots: B4009 | All expected June slots found in live bookings. |
@@ -529,7 +529,7 @@ This section is the authoritative live June rooming list for the supplied course
 | Geography | CIE | Block A | KSL/AON | Keith Seeley / Alex Oniango | Booked live | B2039 | Single room across booked slots: B2039 | All expected June slots found in live bookings. |
 | Physics B-1 | CIE | Block B | CHL | Chester Lim | Booked live | B3005 | Single room across booked slots: B3005 | Matched via alternate live booking teacher alias. |
 | Physics B-2 | CIE | Block B | EVY | Evelyn Yang | Booked live | B3004 | Single room across booked slots: B3004 | Matched via alternate live booking teacher alias. |
-| Biology | CIE | Block B | ABI | Ambily Biju | Booked live | B4004, B4007 | 2026/06/10 11:30-14:25=B4004, B4007; 2026/06/11 14:35-16:00=B4004, B4007; 2026/06/12 10:00-11:25=B4004, B4007; 2026/06/15 14:35-16:00=B4004, B4007; 2026/06/17 11:30-14:25=B4004, B4007; 2026/06/18 14:35-16:00=B4004, B4007; 2026/06/29 14:35-16:00=B4004, B4007 | Duplicate live rows on slot(s): 2026/06/10 11:30-14:25=B4004, B4007; 2026/06/11 14:35-16:00=B4004, B4007; 2026/06/12 10:00-11:25=B4004, B4007; 2026/06/15 14:35-16:00=B4004, B4007; 2026/06/17 11:30-14:25=B4004, B4007; 2026/06/18 14:35-16:00=B4004, B4007; 2026/06/29 14:35-16:00=B4004, B4007 |
+| Biology | CIE | Block B | ABI | Ambily Biju | Booked live | B4007 | Single room across booked slots: B4007 | All expected June slots found in live bookings after retaining B4007 for every Block B Biology slot. |
 | Economics B-1 | CIE | Block B | HLR | Helgaard Le Roux | Booked live | B1037 | Single room across booked slots: B1037 | All expected June slots found in live bookings. |
 | Computer Science | CIE | Block B | BJI | Bill Jiang | Booked live | B1029 | Single room across booked slots: B1029 | All expected June slots found in live bookings. |
 | Music | CIE | Block B | ACR | Andy Clark | Booked live | B2004 | Single room across booked slots: B2004 | All expected June slots found in live bookings. |
