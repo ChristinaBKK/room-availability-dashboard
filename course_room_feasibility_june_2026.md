@@ -466,7 +466,7 @@ This section records the final authoritative outcome for the remaining 15 rows a
 | Regular Maths D | find_else | None | B3039 + B3042 | Assigned | Booked in the approved two-room plan: B3042 on 2026/06/10, 2026/06/12, 2026/06/15, 2026/06/16, 2026/06/17, and 2026/06/29; B3039 on 2026/06/11 and 2026/06/18. |
 | Fast Maths (Edexcel) | use | B1034 | B1034 | Assigned | Used requested room |
 | Chemistry D | use | B3005 | B3005 | Assigned | Used requested room |
-| Chinese D-1 | find_else | None | B3009 + B3010 | Assigned | Booked in the approved two-room plan: B3010 on 2026/06/10; B3009 for the remaining 7 slots. |
+| Chinese D-1 | find_else | None | B3009 | Assigned | Follow-up live adjustment removed the final B3010 outlier; all 8 June slots now use B3009. |
 | Chinese D-2 | find_else | None | B3010 + B4011 | Assigned | Booked in the approved two-room plan: B4011 on 2026/06/10, 2026/06/11, and 2026/06/12; B3010 for the remaining 5 slots. |
 | Business H/SL | use | B3043 | B3043 | Assigned | Used requested room |
 | English E-2 | use | B3043 | B1029 | Assigned | Requested B3043 could not be used globally; assigned B1029 instead |
@@ -497,11 +497,11 @@ This section began as the two-room feasibility analysis for the final five unres
 
 | Course | Final status | Rooms used | Final authoritative outcome |
 | --- | --- | --- | --- |
-| Chinese D-1 | Booked live | B3009, B3010 | B3010 on 2026/06/10 10:00-11:25; B3009 for the remaining 7 slots. |
-| Chinese D-2 | Booked live | B3010, B4011 | B4011 on 2026/06/10, 2026/06/11, and 2026/06/12; B3010 for the remaining 5 slots. |
+| Chinese D-1 | Booked live | B3009 | Single room across booked slots: B3009 |
+| Chinese D-2 | Booked live | B3010, B4011 | B4011 on 2026/06/10, 2026/06/11, 2026/06/12, and 2026/06/17; B3010 for the remaining 4 slots. |
 | Regular Maths D | Booked live | B3039, B3042 | B3042 on 2026/06/10, 2026/06/12, 2026/06/15, 2026/06/16, 2026/06/17, and 2026/06/29; B3039 on 2026/06/11 and 2026/06/18. |
-| English E-6 | Booked live | B3010, B3012 | B3010 on 2026/06/11 and 2026/06/12; B3012 for the remaining 4 slots. |
-| English E-7 | Booked live | B4011, B4041 | B4011 on 2026/06/11, 2026/06/12, 2026/06/15, and 2026/06/16; B4041 on 2026/06/18 and 2026/06/29. |
+| English E-6 | Booked live | B3010, B3012 | B3010 on 2026/06/11, 2026/06/12, and 2026/06/18; B3012 for the remaining 3 slots. |
+| English E-7 | Booked live | B4011, B4041 | B4041 on 2026/06/11 and 2026/06/18; B4011 on 2026/06/12, 2026/06/15, 2026/06/16, and 2026/06/29. |
 
 ## Final June Live Rooming Info
 
@@ -560,12 +560,12 @@ This section is the authoritative live June rooming list for the supplied course
 | Regular Maths D | CIE | Block D | JFA | Joy Farhat | Booked live | B3039, B3042 | 2026/06/10 10:00-11:25=B3042; 2026/06/11 10:00-11:25=B3039; 2026/06/12 11:30-12:10=B3042; 2026/06/15 11:30-12:10=B3042; 2026/06/16 14:35-16:00=B3042; 2026/06/17 10:00-11:25=B3042; 2026/06/18 10:00-11:25=B3039; 2026/06/29 11:30-12:10=B3042 | All expected June slots found in live bookings. |
 | Fast Maths (Edexcel) | CIE | Block D | RJE | Rajesh | Booked live | B1034 | Single room across booked slots: B1034 | All expected June slots found in live bookings. |
 | Advanced Math (CIE) D | CIE | Block D | WEV | Eva Wang | Booked live | B3043 | Single room across booked slots: B3043 | All expected June slots found in live bookings. |
-| Physics D | CIE | Block D | RSH | Raufie Shafie | Booked live | B3009, B4038 | 2026/06/10 10:00-11:25=B3009; 2026/06/11 10:00-11:25=B4038; 2026/06/12 11:30-12:10=B4038; 2026/06/15 11:30-12:10=B4038; 2026/06/16 14:35-16:00=B4038; 2026/06/17 10:00-11:25=B4038; 2026/06/18 10:00-11:25=B4038; 2026/06/29 11:30-12:10=B4038 | Matched via alternate live booking teacher alias. |
+| Physics D | CIE | Block D | RSH | Raufie Shafie | Booked live | B3007, B4038 | 2026/06/10 10:00-11:25=B3007; 2026/06/11 10:00-11:25=B4038; 2026/06/12 11:30-12:10=B4038; 2026/06/15 11:30-12:10=B4038; 2026/06/16 14:35-16:00=B4038; 2026/06/17 10:00-11:25=B4038; 2026/06/18 10:00-11:25=B4038; 2026/06/29 11:30-12:10=B4038 | Matched via alternate live booking teacher alias. B4038 remains the main room; 2026/06/10 uses B3007 to free B3009 for Chinese D-1. |
 | Chemistry D | CIE | Block D | SSU | Selina Sun | Booked live | B3005 | Single room across booked slots: B3005 | All expected June slots found in live bookings. |
 | History | CIE | Block D | KSL/MPE | Keith Seeley / Matthew Peatman | Booked live | B3044 | Single room across booked slots: B3044 | All expected June slots found in live bookings. |
 | Art | CIE | Block D | AMM/LUL | Amanda Milne / Luciana Liu | Booked live | B3029, B4029 | 2026/06/10 10:00-11:25=B3029, B4029; 2026/06/11 10:00-11:25=B3029, B4029; 2026/06/12 11:30-12:10=B3029, B4029; 2026/06/15 11:30-12:10=B3029, B4029; 2026/06/16 14:35-16:00=B3029, B4029; 2026/06/17 10:00-11:25=B3029, B4029; 2026/06/18 10:00-11:25=B3029, B4029; 2026/06/29 11:30-12:10=B3029, B4029 | Duplicate live rows on slot(s): 2026/06/10 10:00-11:25=B3029, B4029; 2026/06/11 10:00-11:25=B3029, B4029; 2026/06/12 11:30-12:10=B3029, B4029; 2026/06/15 11:30-12:10=B3029, B4029; 2026/06/16 14:35-16:00=B3029, B4029; 2026/06/17 10:00-11:25=B3029, B4029; 2026/06/18 10:00-11:25=B3029, B4029; 2026/06/29 11:30-12:10=B3029, B4029 |
-| Chinese D-1 | CIE | Block D | MYA | Miya Yang | Booked live | B3009, B3010 | 2026/06/10 10:00-11:25=B3010; 2026/06/11 10:00-11:25=B3009; 2026/06/12 11:30-12:10=B3009; 2026/06/15 11:30-12:10=B3009; 2026/06/16 14:35-16:00=B3009; 2026/06/17 10:00-11:25=B3009; 2026/06/18 10:00-11:25=B3009; 2026/06/29 11:30-12:10=B3009 | All expected June slots found in live bookings. |
-| Chinese D-2 | CIE | Block D | IZH | Ivy Zhu | Booked live | B3010, B4011 | 2026/06/10 10:00-11:25=B4011; 2026/06/11 10:00-11:25=B4011; 2026/06/12 11:30-12:10=B4011; 2026/06/15 11:30-12:10=B3010; 2026/06/16 14:35-16:00=B3010; 2026/06/17 10:00-11:25=B3010; 2026/06/18 10:00-11:25=B3010; 2026/06/29 11:30-12:10=B3010 | All expected June slots found in live bookings. |
+| Chinese D-1 | CIE | Block D | MYA | Miya Yang | Booked live | B3009 | Single room across booked slots: B3009 | All expected June slots found in live bookings after moving the 2026/06/10 session from B3010 into B3009. |
+| Chinese D-2 | CIE | Block D | IZH | Ivy Zhu | Booked live | B3010, B4011 | 2026/06/10 10:00-11:25=B4011; 2026/06/11 10:00-11:25=B4011; 2026/06/12 11:30-12:10=B4011; 2026/06/15 11:30-12:10=B3010; 2026/06/16 14:35-16:00=B3010; 2026/06/17 10:00-11:25=B4011; 2026/06/18 10:00-11:25=B3010; 2026/06/29 11:30-12:10=B3010 | All expected June slots found in live bookings. Thursday consistency could not be fully normalized because B4011 is occupied by IB Chinese SL,IB ToK on 2026/06/18. |
 | English | IBDP | Block D | WMI | Warwick Midlane | Booked live | B2039 | Single room across booked slots: B2039 | All expected June slots found in live bookings. |
 | English | IBDP | Block D | DME | Donald Meyer | Booked live | B2040 | Single room across booked slots: B2040 | All expected June slots found in live bookings. |
 | English | IBDP | Block D | DMC | Darren McQuay | Booked live | B2043 | Single room across booked slots: B2043 | All expected June slots found in live bookings. |
@@ -577,6 +577,6 @@ This section is the authoritative live June rooming list for the supplied course
 | English E-3 | CIE | Block E | LWA | Lim Wan | Booked live | B4009 | Single room across booked slots: B4009 | All expected June slots found in live bookings. |
 | English E-4 | CIE | Block E | HLI | Helen Liu | Booked live | B4039 | Single room across booked slots: B4039 | All expected June slots found in live bookings. |
 | English E-5 | CIE | Block E | SGU | Sally Guo | Booked live | B4040 | Single room across booked slots: B4040 | All expected June slots found in live bookings. |
-| English E-6 | CIE | Block E | SYU | Sherry Yuan | Booked live | B3010, B3012 | 2026/06/11 08:20-09:45=B3010; 2026/06/12 08:20-09:00=B3010; 2026/06/15 08:20-09:45=B3012; 2026/06/16 11:30-12:10=B3012; 2026/06/18 08:20-09:45=B3012; 2026/06/29 08:20-09:45=B3012 | All expected June slots found in live bookings. |
-| English E-7 | CIE | Block E | CJI | Cordelia Jiao | Booked live | B4011, B4041 | 2026/06/11 08:20-09:45=B4011; 2026/06/12 08:20-09:00=B4011; 2026/06/15 08:20-09:45=B4011; 2026/06/16 11:30-12:10=B4011; 2026/06/18 08:20-09:45=B4041; 2026/06/29 08:20-09:45=B4041 | All expected June slots found in live bookings. |
+| English E-6 | CIE | Block E | SYU | Sherry Yuan | Booked live | B3010, B3012 | 2026/06/11 08:20-09:45=B3010; 2026/06/12 08:20-09:00=B3010; 2026/06/15 08:20-09:45=B3012; 2026/06/16 11:30-12:10=B3012; 2026/06/18 08:20-09:45=B3010; 2026/06/29 08:20-09:45=B3012 | All expected June slots found in live bookings. |
+| English E-7 | CIE | Block E | CJI | Cordelia Jiao | Booked live | B4011, B4041 | 2026/06/11 08:20-09:45=B4041; 2026/06/12 08:20-09:00=B4011; 2026/06/15 08:20-09:45=B4011; 2026/06/16 11:30-12:10=B4011; 2026/06/18 08:20-09:45=B4041; 2026/06/29 08:20-09:45=B4011 | All expected June slots found in live bookings. Same-weekday room usage is now aligned: Thursdays use B4041 and Mondays use B4011. |
 
