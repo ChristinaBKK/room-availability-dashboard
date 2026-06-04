@@ -47,6 +47,21 @@
         .room-chip:hover { border-color: #667eea; color: #667eea; }
         .room-chip.active { background: #667eea; color: white; border-color: #667eea; }
         .room-chip.all-chip { font-weight: 600; }
+
+        .room-view-filter-wrap { position: relative; }
+        .room-view-filter-btn { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; background: white; cursor: pointer; white-space: nowrap; min-width: 130px; }
+        .room-view-filter-btn:hover, .room-view-filter-btn.open { border-color: #667eea; }
+        .room-view-filter-btn .arrow { margin-left: auto; transition: transform 0.2s; }
+        .room-view-filter-btn.open .arrow { transform: rotate(180deg); }
+        .room-view-filter-panel { display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 200; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); padding: 12px; min-width: 320px; max-width: 480px; }
+        .room-view-filter-panel.open { display: block; }
+        .room-view-chip-group { margin-bottom: 10px; }
+        .room-view-chip-group-label { font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
+        .room-view-chip-row { display: flex; flex-wrap: wrap; gap: 5px; }
+        .room-view-chip { padding: 4px 10px; border-radius: 16px; border: 1.5px solid #cbd5e0; background: white; color: #4a5568; font-size: 12px; cursor: pointer; transition: all 0.12s; white-space: nowrap; }
+        .room-view-chip:hover { border-color: #667eea; color: #667eea; }
+        .room-view-chip.active { background: #667eea; color: white; border-color: #667eea; }
+        .room-view-chip.all-chip { font-weight: 600; }
         
         /* Alert Styles */
         .conflict-alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px 30px; margin: 20px 30px; }
@@ -65,6 +80,22 @@
         
         .content { padding: 20px 30px; }
         .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .room-view-grid { display: flex; flex-direction: column; gap: 18px; }
+        .room-view-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
+        .room-view-card-header { background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 100%); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .room-view-card-header h3 { font-size: 18px; }
+        .room-view-card-body { padding: 15px; }
+        .room-view-date-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .room-view-day { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; min-width: 0; }
+        .room-view-day.empty { border-style: dashed; }
+        .room-view-day-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; font-weight: 700; color: #0f172a; }
+        .room-view-day-count { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; padding: 2px 8px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-size: 12px; }
+        .room-view-session { padding: 10px; border-radius: 8px; margin-bottom: 8px; background: white; border-left: 3px solid #0f766e; }
+        .room-view-session:last-child { margin-bottom: 0; }
+        .room-view-session .time { font-weight: 600; color: #334155; font-size: 14px; }
+        .room-view-session .component { font-size: 13px; color: #64748b; margin: 4px 0; overflow-wrap: anywhere; }
+        .room-view-session .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: #94a3b8; }
+        .room-view-empty { color: #94a3b8; font-size: 13px; }
         .tag-protection { background: #fef3c7; color: #92400e; }
         .exam-protection-banner { padding: 10px 15px; border-top: 1px solid #fde68a; background: #fffbeb; }
         .room-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
@@ -292,6 +323,7 @@
     
     <div class="tabs">
         <div class="tab active" data-tab="schedule">Schedule View</div>
+      <div class="tab" data-tab="room-view">Room View</div>
         <div class="tab" data-tab="booking">Book a Room</div>
         <div class="tab" data-tab="bookings">All Bookings<span class="badge" id="bookingsBadge" style="display:none;">0</span></div>
         <div class="tab" data-tab="info">Room Info</div>
@@ -365,6 +397,41 @@
             <div class="room-grid" id="roomGrid"></div>
         </div>
     </div>
+
+      <!-- Room View Tab -->
+      <div id="room-view-tab" class="tab-content">
+        <div class="controls">
+          <div class="control-group">
+            <label for="roomViewStartDate">Start Date:</label>
+            <input type="date" id="roomViewStartDate">
+          </div>
+          <div class="control-group">
+            <label for="roomViewEndDate">End Date:</label>
+            <input type="date" id="roomViewEndDate">
+          </div>
+          <div class="control-group">
+            <label>Rooms:</label>
+            <div class="room-view-filter-wrap" id="roomViewFilterWrap">
+              <button class="room-view-filter-btn" id="roomViewFilterBtn" type="button">
+                <span id="roomViewFilterLabel">All Rooms</span>
+                <svg class="arrow" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </button>
+              <div class="room-view-filter-panel" id="roomViewFilterPanel"></div>
+            </div>
+          </div>
+          <button class="refresh-btn" id="roomViewRefreshBtn" type="button">Refresh View</button>
+        </div>
+
+        <div class="content">
+          <div class="summary-cards">
+            <div class="summary-card"><div class="number" id="roomViewRoomCount">0</div><div class="label">Rooms in View</div></div>
+            <div class="summary-card"><div class="number" id="roomViewDateCount">0</div><div class="label">Dates in Range</div></div>
+            <div class="summary-card"><div class="number" id="roomViewSessionCount">0</div><div class="label">Total Sessions</div></div>
+            <div class="summary-card"><div class="number" id="roomViewCellCount">0</div><div class="label">Occupied Room-Days</div></div>
+          </div>
+          <div class="room-view-grid" id="roomViewContent"></div>
+        </div>
+      </div>
     
     <!-- Booking Tab -->
     <div id="booking-tab" class="tab-content">
@@ -584,6 +651,7 @@
     <script src="assets/js/bookings-import-export.js"></script>
     <script src="assets/js/booking-db.js"></script>
     <script src="assets/js/schedule-ui.js"></script>
+    <script src="assets/js/room-view-ui.js"></script>
     <script src="assets/js/app-orchestrator.js"></script>
     <script src="assets/js/main.js"></script>
 

@@ -19,3 +19,7 @@ var bookingsListLoaded = false;
 var selectedBookingDates = new Set();
 var bookingsAddMode = false;
 var selectedRooms = new Set();
+var roomViewStartDate = null;
+var roomViewEndDate = null;
+var roomViewSelectedRooms = new Set();
+var roomViewInitialized = false;

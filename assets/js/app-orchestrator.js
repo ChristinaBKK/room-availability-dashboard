@@ -11,6 +11,7 @@ window.AppOrchestrator = {
         getSelectedDate,
         populateFilters,
         updateDashboard,
+        loadRoomViewRange,
         renderAllBookings,
         getState,
         setState
@@ -127,6 +128,13 @@ window.AppOrchestrator = {
 
         async function refreshActiveTabData(force = false) {
             const { activeTab } = getState();
+            if (activeTab === 'room-view') {
+                await loadRoomViewRange(force);
+                setStatus('status-dot', 'Room view refreshed');
+                updateLastUpdated();
+                return;
+            }
+
             if (activeTab === 'bookings') {
                 await loadBookingCount(force);
                 await renderAllBookings(force);

@@ -14,6 +14,7 @@
         const { createBookingsImportExport } = window.AppBookingsImportExport;
         const { createBookingDb } = window.AppBookingDb;
         const { createScheduleUi } = window.AppScheduleUi;
+        const { createRoomViewUi } = window.AppRoomViewUi;
         const { createAppOrchestrator } = window.AppOrchestrator;
         const {
             updateBookingsBadge,
@@ -162,6 +163,10 @@
                 if (Object.prototype.hasOwnProperty.call(updates, 'selectedWeekdays')) selectedWeekdays = updates.selectedWeekdays;
                 if (Object.prototype.hasOwnProperty.call(updates, 'pendingBooking')) pendingBooking = updates.pendingBooking;
                 if (Object.prototype.hasOwnProperty.call(updates, 'activeTab')) activeTab = updates.activeTab;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewStartDate')) roomViewStartDate = updates.roomViewStartDate;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewEndDate')) roomViewEndDate = updates.roomViewEndDate;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewSelectedRooms')) roomViewSelectedRooms = updates.roomViewSelectedRooms;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewInitialized')) roomViewInitialized = updates.roomViewInitialized;
             }
         });
         const { exportBookings, importBookings } = createBookingsImportExport({
@@ -210,6 +215,31 @@
                 if (Object.prototype.hasOwnProperty.call(updates, 'selectedRooms')) selectedRooms = updates.selectedRooms;
             }
         });
+        const {
+            initRoomViewUi,
+            loadRoomViewRange
+        } = createRoomViewUi({
+            formatDate,
+            normalizeDateFormat,
+            getTodayInputDate,
+            getBRoomInventory,
+            isRoomBlocked,
+            parseTime,
+            ensureDayDataLoaded,
+            getState: () => ({
+                roomViewStartDate,
+                roomViewEndDate,
+                roomViewSelectedRooms,
+                roomViewInitialized,
+                dayDataCache
+            }),
+            setState: updates => {
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewStartDate')) roomViewStartDate = updates.roomViewStartDate;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewEndDate')) roomViewEndDate = updates.roomViewEndDate;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewSelectedRooms')) roomViewSelectedRooms = updates.roomViewSelectedRooms;
+                if (Object.prototype.hasOwnProperty.call(updates, 'roomViewInitialized')) roomViewInitialized = updates.roomViewInitialized;
+            }
+        });
         const orchestrator = createAppOrchestrator({
             supabaseUrl: SUPABASE_URL,
             supabaseAnonKey: SUPABASE_ANON_KEY,
@@ -221,6 +251,7 @@
             getSelectedDate,
             populateFilters,
             updateDashboard,
+            loadRoomViewRange: (...args) => loadRoomViewRange(...args),
             renderAllBookings,
             getState: () => ({
                 autoRefreshInterval,
@@ -261,6 +292,7 @@
         function initApp() {
             document.getElementById('setupSQL').textContent = SETUP_SQL;
             initScheduleUi();
+            initRoomViewUi();
             initTabs();
             initBookingForm();
             initBookingsDateFilter();
@@ -277,6 +309,7 @@
                     this.classList.add('active');
                     document.getElementById(this.dataset.tab + '-tab').classList.add('active');
                     activeTab = this.dataset.tab;
+                    if (this.dataset.tab === 'room-view') loadRoomViewRange();
                     if (this.dataset.tab === 'bookings') renderAllBookings();
                     if (this.dataset.tab === 'info') updateExamRoomsDisplay();
                 });
