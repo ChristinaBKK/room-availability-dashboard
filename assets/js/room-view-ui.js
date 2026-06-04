@@ -30,6 +30,12 @@ window.AppRoomViewUi = {
             return dates;
         }
 
+        function isWeekend(dateStr) {
+            const [year, month, day] = dateStr.split('/').map(Number);
+            const dayOfWeek = new Date(year, month - 1, day).getDay();
+            return dayOfWeek === 0 || dayOfWeek === 6;
+        }
+
         function getRoomInventory() {
             return getBRoomInventory()
                 .map(room => ({ room, display: room }))
@@ -54,22 +60,22 @@ window.AppRoomViewUi = {
                 'Floor 4': rooms.filter(room => /^B4/.test(room.room))
             };
 
-            let html = '<div class="room-view-chip-group"><div class="room-view-chip-row">';
-            html += `<button class="room-view-chip room-view-all-chip${nextSelectedRooms.size === 0 ? ' active' : ''}" data-room="" type="button">All Rooms</button>`;
+            let html = '<div class="room-chip-group"><div class="room-chip-row">';
+            html += `<button class="room-chip all-chip${nextSelectedRooms.size === 0 ? ' active' : ''}" data-room="" type="button">All Rooms</button>`;
             html += '</div></div>';
 
             for (const [groupName, groupRooms] of Object.entries(groups)) {
                 if (!groupRooms.length) continue;
-                html += `<div class="room-view-chip-group"><div class="room-view-chip-group-label">${groupName}</div><div class="room-view-chip-row">`;
+                html += `<div class="room-chip-group"><div class="room-chip-group-label">${groupName}</div><div class="room-chip-row">`;
                 groupRooms.forEach(room => {
                     const labelText = room.display + (isRoomBlocked(room.room) ? ' ✕' : '');
-                    html += `<button class="room-view-chip${nextSelectedRooms.has(room.room) ? ' active' : ''}" data-room="${room.room}" type="button">${labelText}</button>`;
+                    html += `<button class="room-chip${nextSelectedRooms.has(room.room) ? ' active' : ''}" data-room="${room.room}" type="button">${labelText}</button>`;
                 });
                 html += '</div></div>';
             }
 
             panel.innerHTML = html;
-            panel.querySelectorAll('.room-view-chip').forEach(chip => chip.addEventListener('click', onRoomViewChipClick));
+            panel.querySelectorAll('.room-chip').forEach(chip => chip.addEventListener('click', onRoomViewChipClick));
 
             label.textContent = nextSelectedRooms.size === 0 ? 'All Rooms' : nextSelectedRooms.size === 1 ? [...nextSelectedRooms][0] : `${nextSelectedRooms.size} rooms selected`;
         }
@@ -116,10 +122,10 @@ window.AppRoomViewUi = {
 
             if (room === '') {
                 nextSelectedRooms.clear();
-                panel.querySelectorAll('.room-view-chip').forEach(roomChip => roomChip.classList.remove('active'));
+                panel.querySelectorAll('.room-chip').forEach(roomChip => roomChip.classList.remove('active'));
                 chip.classList.add('active');
             } else {
-                const allChip = panel.querySelector('.room-view-all-chip');
+                const allChip = panel.querySelector('.all-chip');
                 if (allChip) allChip.classList.remove('active');
 
                 if (nextSelectedRooms.has(room)) {
@@ -253,8 +259,16 @@ window.AppRoomViewUi = {
 
             const dates = getDateRange(range.startDate, range.endDate);
             await Promise.all(dates.map(date => ensureDayDataLoaded(date, force)));
+
+            const { dayDataCache } = getState();
+            const datesForDisplay = dates.filter(date => {
+                if (!isWeekend(date)) return true;
+                const cachedDay = dayDataCache.get(date);
+                return Boolean(cachedDay && cachedDay.bookingsData && cachedDay.bookingsData.length > 0);
+            });
+
             syncRoomViewFilters();
-            renderRoomViewContent(dates);
+            renderRoomViewContent(datesForDisplay);
         }
 
         function initRoomViewUi() {
