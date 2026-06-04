@@ -7,6 +7,9 @@ import requests
 
 DEFAULT_SUPABASE_URL = "https://fgewwriulwdodmlbsotp.supabase.co"
 SCHEDULE_FILE = "room_schedule_data.json"
+CLASS_NAME_ALIASES = {
+    "ADVANCED MATH C (CIE)": "Advanced Maths (CIE) C",
+}
 
 
 def get_supabase_config() -> tuple[str, str]:
@@ -22,6 +25,13 @@ def get_supabase_config() -> tuple[str, str]:
             "Missing Supabase API key. Set SUPABASE_SERVICE_ROLE_KEY, SERVICE_ROLE_KEY, SUPABASE_KEY, or SUPABASE_ANON_KEY."
         )
     return supabase_url, supabase_key
+
+
+def normalize_class_name(value: str) -> str:
+    class_name = (value or "").strip()
+    if not class_name:
+        return ""
+    return CLASS_NAME_ALIASES.get(class_name.upper(), class_name)
 
 def setup_tables():
     """Create tables via SQL"""
@@ -193,7 +203,7 @@ def upload_schedule():
                 "date": item.get("Date", ""),
                 "start_time": item.get("Start Time", ""),
                 "end_time": item.get("End Time", ""),
-                "class_name": item.get("Class", ""),
+                "class_name": normalize_class_name(item.get("Class", "")),
                 "room": item.get("Room", ""),
                 "teacher": item.get("Teacher", "")
             })

@@ -7,6 +7,9 @@ import requests
 
 DEFAULT_SUPABASE_URL = "https://fgewwriulwdodmlbsotp.supabase.co"
 SCHEDULE_FILE = "g9_b_schedule.json"
+CLASS_NAME_ALIASES = {
+    "ADVANCED MATH C (CIE)": "Advanced Maths (CIE) C",
+}
 
 
 def get_supabase_config() -> tuple[str, str]:
@@ -22,6 +25,13 @@ def get_supabase_config() -> tuple[str, str]:
             "Missing Supabase API key. Set SUPABASE_SERVICE_ROLE_KEY, SERVICE_ROLE_KEY, SUPABASE_KEY, or SUPABASE_ANON_KEY."
         )
     return supabase_url, supabase_key
+
+
+def normalize_class_name(value: str) -> str:
+    class_name = (value or "").strip()
+    if not class_name:
+        return ""
+    return CLASS_NAME_ALIASES.get(class_name.upper(), class_name)
 
 def upload_g9_schedule():
     """Upload G9 B-building schedule data to Supabase"""
@@ -53,7 +63,7 @@ def upload_g9_schedule():
                 "date": item.get("date", ""),
                 "start_time": item.get("start_time", ""),
                 "end_time": item.get("end_time", ""),
-                "class_name": item.get("class_name", ""),
+                "class_name": normalize_class_name(item.get("class_name", "")),
                 "room": item.get("room", ""),
                 "teacher": item.get("teacher", "")
             })
