@@ -15,9 +15,6 @@ import requests
 
 DEFAULT_SUPABASE_URL = "https://fgewwriulwdodmlbsotp.supabase.co"
 SCHEDULE_COLUMNS = ("date", "start_time", "end_time", "class_name", "room", "teacher")
-CLASS_NAME_ALIASES = {
-    "ADVANCED MATH C (CIE)": "Advanced Maths (CIE) C",
-}
 
 
 def get_supabase_config() -> tuple[str, str]:
@@ -44,13 +41,6 @@ def normalize_room(value: str) -> str:
         "B SEMINAR ROOM A": "B-Seminar Room A",
     }
     return aliases.get(room, room)
-
-
-def normalize_class_name(value: str) -> str:
-    class_name = (value or "").strip()
-    if not class_name:
-        return ""
-    return CLASS_NAME_ALIASES.get(class_name.upper(), class_name)
 
 
 def normalize_date(value: str) -> str:
@@ -89,7 +79,7 @@ def load_candidates(path: Path) -> list[dict[str, str]]:
                     "date": normalize_date(row["Date"]),
                     "start_time": row["Start"].strip(),
                     "end_time": row["End"].strip(),
-                    "class_name": normalize_class_name(row["Course"]),
+                    "class_name": row["Course"].strip(),
                     "room": normalize_room(row["Room"]),
                     "teacher": row["Teacher"].strip(),
                     "source_day": row["Day"].strip(),
