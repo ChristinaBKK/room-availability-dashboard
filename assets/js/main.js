@@ -135,7 +135,6 @@
             displayDateToInputValue,
             getTodayDisplayDate,
             parseTime,
-            normalizeRoom,
             getRequestHeaders,
             getSortedSelectedBookingDates,
             getBRoomInventory,

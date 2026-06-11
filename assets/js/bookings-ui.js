@@ -7,7 +7,6 @@ window.AppBookingsUi = {
         displayDateToInputValue,
         getTodayDisplayDate,
         parseTime,
-        normalizeRoom,
         getRequestHeaders,
         getSortedSelectedBookingDates,
         getBRoomInventory,
@@ -198,7 +197,7 @@ window.AppBookingsUi = {
                 return false;
             }
 
-            const dayData = await ensureDayDataLoaded(date);
+            const dayData = await ensureDayDataLoaded(date, true);
             const daySessions = [
                 ...dayData.scheduleData,
                 ...dayData.bookingsData.map(booking => ({ date: booking.date, start: booking.start, end: booking.end, room: booking.room }))
@@ -225,11 +224,14 @@ window.AppBookingsUi = {
                 return;
             }
 
-            const dayData = await ensureDayDataLoaded(date);
+            // Force a fresh fetch so suggestions reflect the live DB, not a stale
+            // cache that another session may have invalidated. This keeps the list
+            // in lockstep with the conflict check used at booking time.
+            const dayData = await ensureDayDataLoaded(date, true);
             const daySessions = [
                 ...dayData.scheduleData,
                 ...dayData.bookingsData.map(booking => ({ date: booking.date, start: booking.start, end: booking.end, room: booking.room }))
-            ].filter(session => normalizeDateFormat(session.date) === normalizeDateFormat(date));
+            ];
 
             const available = [];
             const unavailable = [];
@@ -243,19 +245,12 @@ window.AppBookingsUi = {
                     return;
                 }
 
-                const roomDaySessions = daySessions.filter(session => normalizeRoom(session.room) === normalizeRoom(room));
-                let availableNow = true;
-                for (const session of roomDaySessions) {
-                    if (parseTime(start) < parseTime(session.end) && parseTime(end) > parseTime(session.start)) {
-                        availableNow = false;
-                        break;
-                    }
-                }
-
-                if (availableNow) {
-                    available.push(room);
-                } else {
+                // Use the same conflict check as submit/confirm/insert. A room with
+                // no sessions on this day has no conflict and is therefore available.
+                if (hasRoomTimeConflict(room, date, start, end, [], daySessions)) {
                     unavailable.push(room);
+                } else {
+                    available.push(room);
                 }
             });
 
@@ -312,7 +307,7 @@ window.AppBookingsUi = {
                 return;
             }
 
-            const dayData = await ensureDayDataLoaded(date);
+            const dayData = await ensureDayDataLoaded(date, true);
             const daySessions = [
                 ...dayData.scheduleData,
                 ...dayData.bookingsData.map(booking => ({ date: booking.date, start: booking.start, end: booking.end, room: booking.room }))
@@ -391,7 +386,7 @@ window.AppBookingsUi = {
                         createdCount++;
                     }
                 } else {
-                    const dayData = await ensureDayDataLoaded(date);
+                    const dayData = await ensureDayDataLoaded(date, true);
                     const daySessions = [
                         ...dayData.scheduleData,
                         ...dayData.bookingsData.map(booking => ({ date: booking.date, start: booking.start, end: booking.end, room: booking.room }))

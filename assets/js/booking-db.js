@@ -21,33 +21,27 @@ window.AppBookingDb = {
             const dateVariants = getDateVariants(bookingDate);
             const orFilter = dateVariants.map(date => `date.eq.${date}`).join(',');
 
+            // Filter by date only and match the room client-side with normalizeRoom.
+            // A server-side room=eq.<normalized> filter would miss rows stored under
+            // alias names (e.g. "Meeting Room" -> B2036, "TOEFL Testing ICT Lab" -> B1037),
+            // letting genuinely-conflicting bookings slip through.
+            const headers = {
+                apikey: supabaseAnonKey,
+                Authorization: 'Bearer ' + supabaseAnonKey
+            };
+
             const [roomSessionsResp, scheduleResp, bookingsResp] = await Promise.all([
                 fetch(
-                    supabaseUrl + '/rest/v1/room_sessions?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
-                    {
-                        headers: {
-                            apikey: supabaseAnonKey,
-                            Authorization: 'Bearer ' + supabaseAnonKey
-                        }
-                    }
+                    supabaseUrl + '/rest/v1/room_sessions?select=date,start_time,end_time,room&or=(' + encodeURIComponent(orFilter) + ')',
+                    { headers }
                 ),
                 fetch(
-                    supabaseUrl + '/rest/v1/schedule?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
-                    {
-                        headers: {
-                            apikey: supabaseAnonKey,
-                            Authorization: 'Bearer ' + supabaseAnonKey
-                        }
-                    }
+                    supabaseUrl + '/rest/v1/schedule?select=date,start_time,end_time,room&or=(' + encodeURIComponent(orFilter) + ')',
+                    { headers }
                 ),
                 fetch(
-                    supabaseUrl + '/rest/v1/bookings?select=date,start_time,end_time,room&room=eq.' + encodeURIComponent(bookingRoom) + '&or=(' + encodeURIComponent(orFilter) + ')',
-                    {
-                        headers: {
-                            apikey: supabaseAnonKey,
-                            Authorization: 'Bearer ' + supabaseAnonKey
-                        }
-                    }
+                    supabaseUrl + '/rest/v1/bookings?select=date,start_time,end_time,room&or=(' + encodeURIComponent(orFilter) + ')',
+                    { headers }
                 )
             ]);
 
