@@ -336,9 +336,20 @@ window.AppBookingsUi = {
             document.getElementById('confirmModal').classList.add('show');
         }
 
+        let confirmInFlight = false;
+
         async function confirmBooking() {
+            // Guard against double-fire (e.g. double-click on Confirm). Without this,
+            // a second invocation re-runs the pre-insert conflict check, finds the row
+            // the first run just created, and falsely reports "already booked".
+            if (confirmInFlight) return;
+
             const { pendingBooking, activeTab } = getState();
             if (!pendingBooking) return;
+
+            confirmInFlight = true;
+            const confirmBtn = document.getElementById('confirmBookingBtn');
+            if (confirmBtn) confirmBtn.disabled = true;
 
             const { room, date, start, end, title, teacher, isRecurring, weekdays } = pendingBooking;
             let createdCount = 0;
@@ -395,6 +406,7 @@ window.AppBookingsUi = {
                 }
 
                 closeModal();
+                setState({ pendingBooking: null });
                 document.getElementById('bookingForm').reset();
                 document.querySelectorAll('.weekday-chip').forEach(chip => chip.classList.remove('selected'));
                 setState({ selectedWeekdays: [] });
@@ -412,6 +424,9 @@ window.AppBookingsUi = {
                 document.getElementById('successModal').classList.add('show');
             } catch (error) {
                 showAlert('Booking failed: ' + error.message, 'error');
+            } finally {
+                confirmInFlight = false;
+                if (confirmBtn) confirmBtn.disabled = false;
             }
         }
 
